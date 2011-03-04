@@ -12,16 +12,24 @@ require_relative 'header'
 #
 # Memory is stored in big endian
 
+# Also included as memory space, yet separated from the
+# RAM itself: the stack, program counter, local vars ($01 to $0f)
+# and item at top of stack (variable $00)
+
 module Gruesome
 	module Z
 
 		# This class holds the memory for the virtual machine
 		class Memory
+			attr_accessor :program_counter
+
 			def initialize(contents)
+				@stack = []
 				@memory = contents
 
 				# Get the header information
 				@header = Header.new(@memory)
+				@program_counter = @header.entry
 
 				# With the header info, discover the bounds of each memory region
 				@dyn_base = 0x0
@@ -132,6 +140,24 @@ module Gruesome
 
 			def contents
 				@memory
+			end
+
+			# Read from variable number index
+			def readv(index)
+				if index >= 16
+					index -= 16
+					readw(@header.global_var_addr + (index*2))
+				else
+				end
+			end
+
+			# Write value to variable number index
+			def writev(index, value)
+				if index >= 16
+					index -= 16
+					writew(@header.global_var_addr + (index*2), value)
+				else
+				end
 			end
 		end
 	end
