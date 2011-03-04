@@ -1,4 +1,4 @@
-# The Z-Machine has a RISC instruction set with 1 byte opcodes with
+# The Z-Machine has a RISC-like instruction set with 1 byte opcodes with
 # the exception of several extension opcodes of 2 bytes.
 #
 # The operands are variable length, however, mostly for size constraint reasons.
@@ -192,10 +192,14 @@ module Gruesome
 					pc = pc + 1
 				end
 
+				# Create an Instruction class to hold this metadata
 				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination)
+
+				# Store in the instruction cache
 				@instruction_cache[orig_pc] = inst
 
-				puts Opcode.name(opcode_class, opcode, @header.version)
+				# print out the instruction
+				line = Opcode.name(opcode_class, opcode, @header.version)
 			end
 		end
 	end
