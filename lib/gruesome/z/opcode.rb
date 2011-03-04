@@ -179,5 +179,255 @@ module Gruesome
 
 			result
 		end
+
+		def Opcode.is_valid?(opcode_class, opcode, version)
+			result = true
+			if opcode_class == OpcodeClass::OP0
+				case opcode
+				when Opcode::SAVE
+					result = false if version < 5
+				when Opcode::RESTORE
+					result = false if version < 5
+				when Opcode::SHOW_STATUS
+					result = false if version < 3
+				when Opcode::VERIFY
+					result = false if version < 3
+				when Opcode::PIRACY
+					result = false if version < 5
+				end
+			elsif opcode_class == OpcodeClass::OP1
+				case opcode
+				when Opcode::CALL_1S
+					result = false if version < 4
+				end
+			elsif opcode_class == OpcodeClass::OP2
+				case opcode
+				when Opcode::CALL_2S
+					result = false if version < 4
+				when Opcode::CALL_2N
+					result = false if version < 5
+				when Opcode::SET_COLOUR
+					result = false if version < 5
+				when Opcode::THROW
+					result = false if version < 5
+				end
+			elsif opcode_class == OpcodeClass::VAR
+				case opcode
+				when Opcode::SPLIT_WINDOW
+					result = false if version < 3
+				when Opcode::SET_WINDOW
+					result = false if version < 3
+				when Opcode::CALL_VS2
+					result = false if version < 4
+				when Opcode::ERASE_WINDOW
+					result = false if version < 4
+				when Opcode::ERASE_LINE
+					result = false if version < 4
+				when Opcode::SET_CURSOR
+					result = false if version < 4
+				when Opcode::GET_CURSOR
+					result = false if version < 4
+				when Opcode::SET_TEXT_STYLE
+					result = false if version < 4
+				when Opcode::BUFFER_MODE
+					result = false if version < 4
+				when Opcode::OUTPUT_STREAM
+					result = false if version < 3
+				when Opcode::INPUT_STREAM
+					result = false if version < 3
+				when Opcode::SOUND_EFFECT
+					result = false if version < 5
+				when Opcode::READ_CHAR
+					result = false if version < 4
+				when Opcode::SCAN_TABLE
+					result = false if version < 4
+				when Opcode::NOT_2
+					result = false if version < 5
+				when Opcode::CALL_VN
+					result = false if version < 5
+				when Opcode::CALL_VN2
+					result = false if version < 5
+				when Opcode::TOKENIZE
+					result = false if version < 5
+				when Opcode::ENCODE_TEXT
+					result = false if version < 5
+				when Opcode::COPY_TABLE
+					result = false if version < 5
+				when Opcode::PRINT_TABLE
+					result = false if version < 5
+				when Opcode::CHECK_ARG_COUNT
+					result = false if version < 5
+				end
+			elsif opcode_class == OpcodeClass::EXT
+				result = false if version < 5
+
+				case opcode
+				when Opcode::EXT_SAVE_TABLE, EXT_RESTORE_TABLE, EXT_LOG_SHIFT,
+						EXT_ART_SHIFT, EXT_SET_FONT, EXT_SAVE_UNDO, EXT_RESTORE_UNDO,
+						EXT_PRINT_UNICODE, EXT_CHECK_UNICODE
+				else
+					result = false if version < 6
+				end
+			end
+			result
+		end
+
+		def Opcode.name(opcode_class, opcode, version)
+			if not is_valid?(opcode_class, opcode, version)
+				"invalid"
+			elsif opcode_class == OpcodeClass::OP0
+				case opcode
+				when Opcode::RTRUE then "rtrue"
+				when Opcode::RFALSE then "rfalse"
+				when Opcode::PRINT then "print"
+				when Opcode::PRINT_RET then "print_ret"
+				when Opcode::NOP then "nop"
+				when Opcode::SAVE then "save"
+				when Opcode::RESTORE then "restore"
+				when Opcode::RESTART then "restart"
+				when Opcode::RET_POPPED then "ret_popped"
+				when Opcode::POP, CATCH
+					if version <= 4
+						"pop"
+					else
+						"catch"
+					end
+				when Opcode::QUIT then "quit"
+				when Opcode::NEW_LINE then "new_line"
+				when Opcode::SHOW_STATUS then "show_status"
+				when Opcode::VERIFY then "verify"
+				when Opcode::PIRACY then "piracy"
+				end
+			elsif opcode_class == OpcodeClass::OP1
+				case opcode
+				when Opcode::JZ then "jz"
+				when Opcode::GET_SIBLING then "get_sibling"
+				when Opcode::GET_CHILD then "get_child"
+				when Opcode::GET_PARENT then "get_parent"
+				when Opcode::GET_PROP_LEN then "get_prop_len"
+				when Opcode::INC then "inc"
+				when Opcode::DEC then "dec"
+				when Opcode::PRINT_ADDR then "print_addr"
+				when Opcode::CALL_1S then "call_1s"
+				when Opcode::REMOVE_OBJ then "remove_obj"
+				when Opcode::PRINT_OBJ then "print_obj"
+				when Opcode::RET then "ret"
+				when Opcode::JUMP then "jump"
+				when Opcode::PRINT_PADDR then "print_paddr"
+				when Opcode::LOAD then "load"
+				when Opcode::NOT, CALL_1N
+					if version <= 4
+						"not"
+					else
+						"call_1n"
+					end
+				end
+			elsif opcode_class == OpcodeClass::OP2
+				case opcode
+				when Opcode::JE then "je"
+				when Opcode::JL then "jl"
+				when Opcode::JG then "jg"
+				when Opcode::DEC_CHK then "dec_chk"
+				when Opcode::INC_CHK then "inc_chk"
+				when Opcode::JIN then "jin"
+				when Opcode::TEST then "test"
+				when Opcode::OR then "or"
+				when Opcode::AND then "and"
+				when Opcode::TEST_ATTR then "test_attr"
+				when Opcode::SET_ATTR then "set_attr"
+				when Opcode::CLEAR_ATTR then "clear_attr"
+				when Opcode::STORE then "store"
+				when Opcode::INSERT_OBJ then "insert_obj"
+				when Opcode::LOADW then "loadw"
+				when Opcode::LOADB then "loadb"
+				when Opcode::GET_PROP then "get_prop"
+				when Opcode::GET_PROP_ADDR then "get_prop_addr"
+				when Opcode::GET_NEXT_PROP then "get_next_prop"
+				when Opcode::ADD then "add"
+				when Opcode::SUB then "sub"
+				when Opcode::MUL then "mul"
+				when Opcode::DIV then "div"
+				when Opcode::MOD then "mod"
+				when Opcode::CALL_2S then "call_2s"
+				when Opcode::CALL_2N then "call_2n"
+				when Opcode::SET_COLOUR then "set_colour"
+				when Opcode::THROW then "throw"
+				end
+			elsif opcode_class == OpcodeClass::VAR
+				case opcode
+				when Opcode::CALL, CALL_VS
+					if version < 4
+						"call"
+					else
+						"call_vs"
+					end
+				when Opcode::STOREW then "storew"
+				when Opcode::STOREB then "storeb"
+				when Opcode::PUT_PROP then "put_prop"
+				when Opcode::SREAD, AREAD
+					if version < 5
+						"sread"
+					else
+						"aread"
+					end
+				when Opcode::PRINT_CHAR then "print_char"
+				when Opcode::PRINT_NUM then "print_num"
+				when Opcode::RANDOM then "random"
+				when Opcode::PUSH then "push"
+				when Opcode::PULL then "pull"
+				when Opcode::SPLIT_WINDOW then "split_window"
+				when Opcode::SET_WINDOW then "set_window"
+				when Opcode::CALL_VS2 then "call_vs2"
+				when Opcode::ERASE_WINDOW then "erase_window"
+				when Opcode::ERASE_LINE then "erase_line"
+				when Opcode::SET_CURSOR then "set_cursor"
+				when Opcode::GET_CURSOR then "get_cursor"
+				when Opcode::SET_TEXT_STYLE then "set_text_style"
+				when Opcode::BUFFER_MODE then "buffer_mode"
+				when Opcode::OUTPUT_STREAM then "output_stream"
+				when Opcode::INPUT_STREAM then "input_stream"
+				when Opcode::SOUND_EFFECT then "sound_effect"
+				when Opcode::READ_CHAR then "read_char"
+				when Opcode::SCAN_TABLE then "scan_table"
+				when Opcode::NOT_2 then "not"
+				when Opcode::CALL_VN then "call_vn"
+				when Opcode::CALL_VN2 then "call_vn2"
+				when Opcode::TOKENIZE then "tokenize"
+				when Opcode::ENCODE_TEXT then "encode_text"
+				when Opcode::COPY_TABLE then "copy_table"
+				when Opcode::PRINT_TABLE then "print_table"
+				when Opcode::CHECK_ARG_COUNT then "check_arg_count"
+				end
+			elsif opcode_class == OpcodeClass::EXT
+				case opcode
+				when Opcode::EXT_SAVE_TABLE then "save_table"
+				when Opcode::EXT_RESTORE_TABLE then "restore_table"
+				when Opcode::EXT_LOG_SHIFT then "log_shift"
+				when Opcode::EXT_ART_SHIFT then "art_shift"
+				when Opcode::EXT_SET_FONT then "set_font"
+				when Opcode::EXT_DRAW_PICTURE then "draw_picture"
+				when Opcode::EXT_PICTURE_DATA then "picture_data"
+				when Opcode::EXT_ERASE_PICTURE then "erase_picture"
+				when Opcode::EXT_SET_MARGINS then "set_margins"
+				when Opcode::EXT_SAVE_UNDO then "save_undo"
+				when Opcode::EXT_RESTORE_UNDO then "restore_undo"
+				when Opcode::EXT_PRINT_UNICODE then "print_unicode"
+				when Opcode::EXT_CHECK_UNICODE then "check_unicode"
+				when Opcode::EXT_MOVE_WINDOW then "move_window"
+				when Opcode::EXT_WINDOW_SIZE then "window_size"
+				when Opcode::EXT_WINDOW_STYLE then "window_style"
+				when Opcode::EXT_GET_WIND_PROP then "get_wind_prop"
+				when Opcode::EXT_SCROLL_WINDOW then "scroll_window"
+				when Opcode::EXT_POP_STACK then "pop_stack"
+				when Opcode::EXT_READ_MOUSE then "read_mouse"
+				when Opcode::EXT_MOUSE_WINDOW then "mouse_window"
+				when Opcode::EXT_PUSH_STACK then "push_stack"
+				when Opcode::EXT_PUT_WIND_PROP then "put_wind_prop"
+				when Opcode::EXT_PRINT_FORM then "print_form"
+				when Opcode::EXT_MAKE_MENU then "make_menu"
+				when Opcode::EXT_PICTURE_TABLE then "picture_table"
+				end
+			end
+		end
 	end
 end

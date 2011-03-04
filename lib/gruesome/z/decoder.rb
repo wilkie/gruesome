@@ -21,11 +21,13 @@ module Gruesome
 		class Decoder
 			def initialize(memory)
 				@memory = memory
+				@instruction_cache = {}
 				@header = Header.new(@memory.contents)
 			end
 
 			def decode
 				pc = @memory.program_counter
+				orig_pc = pc
 
 				# Determine type and form of the operand
 				# along with the number of operands
@@ -190,7 +192,10 @@ module Gruesome
 					pc = pc + 1
 				end
 
-				Instruction.new(opcode, opcode_class, operand_types, operand_values, destination)
+				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination)
+				@instruction_cache[orig_pc] = inst
+
+				puts Opcode.name(opcode_class, opcode, @header.version)
 			end
 		end
 	end
