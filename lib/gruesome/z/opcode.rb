@@ -134,5 +134,50 @@ module Gruesome
 			EXT_MAKE_MENU	= 0x1b
 			EXT_PICTURE_TABLE = 0x1c
 		end
+
+		def Opcode.is_store?(opcode_class, opcode, version)
+			result = false
+			if opcode_class == OpcodeClass::OP2
+				case opcode
+				when Opcode::OR, Opcode::AND, Opcode::LOADB, Opcode::LOADW,
+					Opcode::GET_PROP, Opcode::GET_PROP_ADDR, Opcode::GET_NEXT_PROP,
+					Opcode::ADD, Opcode::SUB, Opcode::MUL, Opcode::DIV, Opcode::MOD,
+					Opcode::CALL_2S
+					result = true
+				end
+			elsif opcode_class == OpcodeClass::OP1
+				case opcode
+				when Opcode::GET_SIBLING, Opcode::GET_CHILD, Opcode::GET_PARENT,
+					Opcode::GET_PROP_LEN, Opcode::CALL_1S
+					result = true
+				end
+
+				if version < 5
+					case opcode
+					when Opcode::NOT
+						result = true
+					end
+				end
+			elsif opcode_class == OpcodeClass::OP0
+				case opcode
+				when Opcode::SAVE, Opcode::RESTORE, Opcode::CATCH,
+					result = true
+				end
+			elsif opcode_class == OpcodeClass::VAR
+				case opcode
+				when Opcode::CALL, Opcode::RANDOM, Opcode::CALL_VS2, 
+					Opcode::READ_CHAR, Opcode::SCAN_TABLE, Opcode::NOT_2
+					result = true
+				end
+
+				if version >= 5
+					if opcode == Opcode::AREAD
+						result = true
+					end
+				end
+			end
+
+			result
+		end
 	end
 end

@@ -25,6 +25,7 @@ module Gruesome
 
 				# III. Instantiate CPU
 				@cpu = Decoder.new(@memory)
+				@cpu.decode
 			end
 		end
 	end

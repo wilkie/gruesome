@@ -9,8 +9,10 @@
 # OPCODE_TYPE (opt) :: 1 to 2 bytes, divided into 2-bit fields
 # OPERANDS :: 0 to 8 given, each 1 or 2 bytes, or an unlimited length string
 
-require_relative 'operand_type'
 require_relative 'opcode'
+require_relative 'operand_type'
+require_relative 'opcode_class'
+require_relative 'instruction'
 
 module Gruesome
 	module Z
@@ -19,60 +21,66 @@ module Gruesome
 		class Decoder
 			def initialize(memory)
 				@memory = memory
+				@header = Header.new(@memory.contents)
 			end
 
-			def decode()
+			def decode
 				pc = @memory.program_counter
 
 				# Determine type and form of the operand
 				# along with the number of operands
 
 				# read first byte to get opcode
-				opcode = @memory.readb(pc)
+				opcode = @memory.force_readb(pc)
 				pc = pc + 1
 
 				# opcode form is top 2 bits
 				opcode_form = (opcode >> 6) & 3
 				operand_count = 0
 				operand_types = Array.new(8) { OperandType::OMITTED }
+				operand_values = Array.new(8) { 0 }
 
-				if opcode_form == 2 # short form
+				if opcode_form == 2
 					# operand count is determined by bits 4 and 5
 					if ((opcode >> 4) & 3) == 3
 						operand_count = 0
+						opcode_class = OpcodeClass::OP0
 					else
 						operand_count = 1
+						opcode_class = OpcodeClass::OP1
 					end
 
 					operand_types[0] = (opcode >> 4) & 3
 
 					# opcode is given as bottom 4 bits
 					opcode = opcode & 0b1111
-				elsif opcode_form == 3 # variable form
+				elsif opcode_form == 3
 					if (opcode & 0b100000) == 0
 						# when bit 5 is clear, there are two operands
 						operand_count = 2
+						opcode_class = OpcodeClass::OP2
 					else
 						# otherwise, there are VAR number
 						operand_count = 8
+						opcode_class = OpcodeClass::VAR
 					end
 
 					# opcode is given as bottom 5 bits
 					opcode = opcode & 0b11111
 				elsif opcode == 190 # extended form
-					opcode_form = 1
+					opcode_form = OpcodeClass::EXT
 
 					# VAR number
 					operand_count = 8
 
 					# opcode is given as the next byte
-					opcode = @memory.readb(pc)
+					opcode = @memory.force_readb(pc)
 					pc = pc + 1
 				else # long form
-					opcode_form = 0
 
 					# there are always 2 operands
 					operand_count = 2
+					opcode_form = OpcodeClass::OP2
 
 					# bit 6 of opcode is type of operand 1
 					type = opcode & 0b1000000
@@ -97,7 +105,7 @@ module Gruesome
 				end
 
 				# handle VAR operands
-				if operand_count == 8
+				if opcode_class == OpcodeClass::VAR or opcode_class == OperandForm::EXT
 					# each type for the operands is given by reading
 					# the next 1 or 2 bytes.
 					#
@@ -108,7 +116,7 @@ module Gruesome
 					# If a type is deemed omitted, every subsequent
 					# type must also be omitted
 
-					byte = @memory.readb(pc)
+					byte = @memory.force_readb(pc)
 					pc = pc + 1
 
 					operand_types[0] = (byte >> 6) & 3
@@ -116,21 +124,73 @@ module Gruesome
 					operand_types[2] = (byte >> 2) & 3
 					operand_types[3] = byte & 3
 
+					# Get the number of operands
+					idx = -1
+					first_omitted = -1
+					operand_count = operand_types.inject(0) do |i|
+						idx = idx + 1
+						if i == OperandType::OMITTED
+							first_omitted = idx
+							i
+						elsif first_omitted == -1
+							i + 1
+						else
+							# Error, OMITTED was found, but another type
+							# was defined as not omitted
+							# We will ignore
+							i
+						end
+					end
+
 					if opcode == Opcode::CALL_VS2 or opcode == Opcode::CALL_VN2
 						# Certain opcodes can have up to 8 operands!
 						# These are given by a second byte
-						byte = @memory.readb(pc)
+						byte = @memory.force_readb(pc)
 						pc = pc + 1
 
 						operand_types[4] = (byte >> 6) & 3
 						operand_types[5] = (byte >> 4) & 3
 						operand_types[6] = (byte >> 2) & 3
 						operand_types[7] = byte & 3
+
+						# update operand_count once more
+						operand_count = operand_types.inject(operand_count) do |i|
+							idx = idx + 1
+							if i == OperandType::OMITTED
+								first_omitted = idx
+								i
+							elsif first_omitted == -1
+								i + 1
+							else
+								# Error, OMITTED was found, but another type
+								# was defined as not omitted
+								# We will ignore
+								i
+							end
+						end
 					end
 				end
-			end
 
-			def execute(instruction)
+				# Retrieve the operand values
+				operand_types.each do |i|
+					if i == OperandType::SMALL || OperandType::VARIABLE
+						operand_values << @memory.force_readb(pc)
+						pc = pc + 1
+					elsif i == OperandType::LARGE 
+						operand_values << @memory.force_readw(pc)
+						pc = pc + 2
+					end
+				end
+
+				# If the opcode stores, we need to pull the next byte to get the
+				# destination of the result
+				destination = -1
+				if Opcode.is_store?(opcode_class, opcode, @header.version)
+					destination = @memory.force_readb(pc)
+					pc = pc + 1
+				end
+
+				Instruction.new(opcode, opcode_class, operand_types, operand_values, destination)
 			end
 		end
 	end
