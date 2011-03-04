@@ -16,6 +16,11 @@ require_relative 'header'
 # RAM itself: the stack, program counter, local vars ($01 to $0f)
 # and item at top of stack (variable $00)
 
+# The stack is weird. Every function call starts with an empty stack
+# and any work left in the stack upon a return is lost. So there are
+# actually many stacks... one stack to hold the stacks in play, and
+# a stack for each active function.
+
 module Gruesome
 	module Z
 
@@ -144,7 +149,10 @@ module Gruesome
 
 			# Read from variable number index
 			def readv(index)
-				if index >= 16
+				if index == 0
+					# pop from stack
+					@stack.pop
+				elsif index >= 16
 					index -= 16
 					readw(@header.global_var_addr + (index*2))
 				else
@@ -153,7 +161,11 @@ module Gruesome
 
 			# Write value to variable number index
 			def writev(index, value)
-				if index >= 16
+				value %= 65536
+				if index == 0
+					# push to stack
+					@stack.push value
+				elsif index >= 16
 					index -= 16
 					writew(@header.global_var_addr + (index*2), value)
 				else
