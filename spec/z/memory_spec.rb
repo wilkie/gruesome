@@ -1,9 +1,9 @@
-require_relative '../../lib/grue/z/memory'
+require_relative '../../lib/gruesome/z/memory'
 
-describe Grue::Z::Memory do
+describe Gruesome::Z::Memory do
 	before(:each) do
 		zork = File.open('test/zork1.z3', 'r')
-		@zork_memory = Grue::Z::Memory.new(zork.read(zork.size))
+		@zork_memory = Gruesome::Z::Memory.new(zork.read(zork.size))
 	end
 
 	describe "#readb" do

@@ -1,7 +1,7 @@
 require_relative 'header'
 require_relative 'memory'
 
-module Grue
+module Gruesome
 	module Z
 
 		# The class that initializes and maintains a Z-Machine

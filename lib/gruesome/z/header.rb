@@ -1,6 +1,6 @@
 require 'bit-struct'
 
-module Grue
+module Gruesome
 	module Z
 
 		# Z-Story File Header

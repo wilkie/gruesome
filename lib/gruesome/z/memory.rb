@@ -12,7 +12,7 @@ require_relative 'header'
 #
 # Memory is stored in big endian
 
-module Grue
+module Gruesome
 	module Z
 
 		# This class holds the memory for the virtual machine

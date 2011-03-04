@@ -1,3 +1,3 @@
-require_relative 'lib/grue/z/machine'
+require_relative 'lib/gruesome/z/machine'
 
-m = Grue::Z::Machine.new('test/zork1.z3')
+m = Gruesome::Z::Machine.new('test/zork1.z3')
