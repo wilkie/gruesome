@@ -1,5 +1,17 @@
 require_relative 'header'
 
+# The Z-Machine Memory is a simple array of bytes
+#
+# There are three regions: Dynamic, Static, and High
+#
+# Dynamic Memory can be read and written to by a program
+# Static Memory can only be read
+# High Memory cannot be accessed by load/store instructions
+#
+# High Memory can overlap Static, but never Dynamic
+#
+# Memory is stored in big endian
+
 module Grue
 	module Z
 
