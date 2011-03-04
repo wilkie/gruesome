@@ -1,5 +1,6 @@
 require_relative 'header'
 require_relative 'memory'
+require_relative 'decoder'
 
 module Gruesome
 	module Z
@@ -21,6 +22,9 @@ module Gruesome
 
 				# II. Read header (at address 0x0000)
 				@header = Header.new(@memory.contents)
+
+				# III. Instantiate CPU
+				@cpu = Decoder.new(@memory)
 			end
 		end
 	end
