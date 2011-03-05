@@ -32,12 +32,20 @@ module Gruesome
 				when Opcode::MUL
 					@memory.writev(instruction.destination,
 						unsigned_to_signed(instruction.operands[0]) * unsigned_to_signed(instruction.operands[1]))
+				when Opcode::DIV
+					result = unsigned_to_signed(instruction.operands[0]).to_f / unsigned_to_signed(instruction.operands[1]).to_f
+					if result < 0
+						result = -(result.abs.floor)
+					else
+						result = result.floor
+					end
+					@memory.writev(instruction.destination, result)
 				end
 			end
 
 			def unsigned_to_signed(op)
 				sign = op & 0x8000
-				if sign 
+				if sign != 0
 					-(65536 - op)
 				else
 					op

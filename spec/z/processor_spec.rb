@@ -142,5 +142,71 @@ describe Gruesome::Z::Memory do
 				@zork_memory.program_counter.should eql(12345)
 			end
 		end
+
+		describe "div" do
+			it "should divide one negative and one positive short together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
+						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+						 [-11+65536, 2],
+						 128,
+						 nil,
+						 nil,
+						 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(-5+65536)
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			it "should divide one positive and one negative short together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
+						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+						 [11, -2+65536],
+						 128,
+						 nil,
+						 nil,
+						 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(-5+65536)
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			it "should divide two positive shorts together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
+						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+						 [11, 2],
+						 128,
+						 nil,
+						 nil,
+						 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(5)
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			it "should divide two negative shorts together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
+						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+						 [-11+65536, -2+65536],
+						 128,
+						 nil,
+						 nil,
+						 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(5)
+				@zork_memory.program_counter.should eql(12345)
+			end
+		end
 	end
 end
