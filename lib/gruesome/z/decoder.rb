@@ -186,14 +186,14 @@ module Gruesome
 
 				# If the opcode stores, we need to pull the next byte to get the
 				# destination of the result
-				destination = -1
+				destination = nil
 				if Opcode.is_store?(opcode_class, opcode, @header.version)
 					destination = @memory.force_readb(pc)
 					pc = pc + 1
 				end
 
 				# If the opcode is a branch, we need to pull the offset info
-				branch_destination = -1
+				branch_destination = nil
 				branch_condition = false
 				if Opcode.is_branch?(opcode_class, opcode, @header.version)
 					branch_offset = @memory.force_readb(pc)

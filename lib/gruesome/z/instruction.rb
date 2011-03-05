@@ -30,11 +30,11 @@ module Gruesome
 					result = " " + element.to_s
 				end
 
-				if @destination != -1
+				if @destination != nil
 					line = line + " -> " + @destination.to_s
 				end
 
-				if @branch_to != -1
+				if @branch_to != nil
 					line = line + " goto $" + @branch_to + " on " + @branch_on
 				end
 
