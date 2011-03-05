@@ -54,6 +54,8 @@ module Gruesome
 					@memory.writev(instruction.destination, instruction.operands[0] | instruction.operands[1])
 				when Opcode::AND
 					@memory.writev(instruction.destination, instruction.operands[0] & instruction.operands[1])
+				when Opcode::STORE
+					@memory.writev(instruction.operands[0], instruction.operands[1])
 				end
 			end
 
