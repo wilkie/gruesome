@@ -120,6 +120,13 @@ module Gruesome
 				# We need the opcode and opcode_class to be combined
 				opcode = (opcode << 2) | opcode_class
 
+				# convert some moved opcodes
+				if (@header.version <= 4)
+					if opcode == Opcode::CALL_1N
+						opcode = Opcode::NOT
+					end
+				end
+
 				# handle VAR operands
 				if opcode_form == 3 or opcode_class == OpcodeClass::VAR or opcode_class == OpcodeClass::EXT
 					# each type for the operands is given by reading

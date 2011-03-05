@@ -52,7 +52,7 @@ module Gruesome
 			JUMP			= (0x0c << 2) | OpcodeClass::OP1
 			PRINT_PADDR		= (0x0d << 2) | OpcodeClass::OP1
 			LOAD			= (0x0e << 2) | OpcodeClass::OP1
-			NOT				= (0x0f << 2) | OpcodeClass::OP1 # version 1-4
+			NOT_2			= (0x0f << 2) | OpcodeClass::OP1 # version 1-4
 			CALL_1N			= (0x0f << 2) | OpcodeClass::OP1 # version 5
 
 			# 0OP
@@ -103,7 +103,7 @@ module Gruesome
 			SOUND_EFFECT	= (0x15 << 2) | OpcodeClass::VAR
 			READ_CHAR		= (0x16 << 2) | OpcodeClass::VAR
 			SCAN_TABLE		= (0x17 << 2) | OpcodeClass::VAR
-			NOT_2			= (0x18 << 2) | OpcodeClass::VAR # version 5/6
+			NOT				= (0x18 << 2) | OpcodeClass::VAR # version 5/6
 			CALL_VN			= (0x19 << 2) | OpcodeClass::VAR
 			CALL_VN2		= (0x1a << 2) | OpcodeClass::VAR
 			TOKENIZE		= (0x1b << 2) | OpcodeClass::VAR
