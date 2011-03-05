@@ -37,55 +37,48 @@ describe Gruesome::Z::Processor do
 
 		describe "Output Instructions" do
 			before(:each) do
+				# We take over stdout so that we can see what it prints
 				@stdout = $stdout
+				$stdout = StringIO.new
 			end
 
 			after(:each) do
 				$stdout = @stdout
+
+				# The program counter should not be changed
+				@zork_memory.program_counter.should eql(12345)
 			end
 
 			describe "print" do
 				it "should print out the string given as an operand to stdout" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT,
 													 [Gruesome::Z::OperandType::STRING],
 													 ["Hello World"], nil, nil, nil, 0)
 
-					$stdout = StringIO.new
 					@processor.execute(i)
 					$stdout.string.should eql("Hello World")
-
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "print_addr" do
 				it "should print out the string located at the byte address given by the operand" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_ADDR,
 													 [Gruesome::Z::OperandType::LARGE],
 													 [0x4291], nil, nil, nil, 0)
 
-					$stdout = StringIO.new
 					@processor.execute(i)
 					$stdout.string.should eql("grue")
-
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "print_char" do
 				it "should print out the Z-character given by the operand" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_CHAR,
 													 [Gruesome::Z::OperandType::LARGE],
 													 [0x0c], nil, nil, nil, 0)
 
-					$stdout = StringIO.new
 					@processor.execute(i)
 					$stdout.string.should eql("g")
-
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
@@ -99,7 +92,6 @@ describe Gruesome::Z::Processor do
 
 			describe "not" do
 				it "should perform a logical negation on the operand and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::NOT,
 													 [Gruesome::Z::OperandType::LARGE],
 													 [12345], 128, nil, nil, 0)
@@ -107,13 +99,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql((~12345)+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "and" do
 				it "should bitwise and two signed shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::AND,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-12345+65536, 12344], 128, nil, nil, 0)
@@ -121,13 +111,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql((-12345 & 12344) & 65535)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "or" do
 				it "should bitwise or two signed shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::OR,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-12345+65536, 12344], 128, nil, nil, 0)
@@ -135,13 +123,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql((-12345 | 12344) & 65535)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "add" do
 				it "should add two signed shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::ADD,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-12345+65536, 12344], 128, nil, nil, 0)
@@ -149,13 +135,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-1+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "sub" do
 				it "should subtract two signed shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::SUB,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-12345+65536, 12344], 128, nil, nil, 0)
@@ -163,13 +147,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-24689+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "mul" do
 				it "should multiply two signed shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MUL,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-12345+65536, 12344], 128, nil, nil, 0)
@@ -177,13 +159,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(50056)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "div" do
 				it "should divide one negative and one positive short together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-11+65536, 2], 128, nil, nil, 0)
@@ -191,11 +171,9 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-5+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 
 				it "should divide one positive and one negative short together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [11, -2+65536], 128, nil, nil, 0)
@@ -203,11 +181,9 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-5+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 
 				it "should divide two positive shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [11, 2], 128, nil, nil, 0)
@@ -215,11 +191,9 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(5)
-					@zork_memory.program_counter.should eql(12345)
 				end
 
 				it "should divide two negative shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-11+65536, -2+65536], 128, nil, nil, 0)
@@ -227,13 +201,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(5)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "mul" do
 				it "should modulo one negative and one positive short together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-13+65536, 5], 128, nil, nil, 0)
@@ -241,11 +213,9 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-3+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 
 				it "should modulo one positive and one negative short together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [13, -5+65536], 128, nil, nil, 0)
@@ -253,11 +223,9 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(3)
-					@zork_memory.program_counter.should eql(12345)
 				end
 
 				it "should modulo two positive shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [13, 5], 128, nil, nil, 0)
@@ -265,11 +233,9 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(3)
-					@zork_memory.program_counter.should eql(12345)
 				end
 
 				it "should modulo two negative shorts together and assign to the appropriate variable" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
 													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 													 [-13+65536, -5+65536], 128, nil, nil, 0)
@@ -277,13 +243,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-3+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "store" do
 				it "should store the value into the variable referenced by the operand" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::STORE,
 													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
 													 [128, -13+65536], nil, nil, nil, 0)
@@ -291,13 +255,11 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-13+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 
 			describe "store" do
 				it "should store the value into the variable referenced by the operand" do
-					@zork_memory.program_counter = 12345
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::STORE,
 													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
 													 [128, -13+65536], nil, nil, nil, 0)
@@ -305,7 +267,6 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-13+65536)
-					@zork_memory.program_counter.should eql(12345)
 				end
 			end
 		end
