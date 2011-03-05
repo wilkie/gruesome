@@ -129,18 +129,18 @@ module Gruesome
 					# Get the number of operands
 					idx = -1
 					first_omitted = -1
-					operand_count = operand_types.inject(0) do |i|
+					operand_count = operand_types.inject(0) do |result, element|
 						idx = idx + 1
-						if i == OperandType::OMITTED
+						if element == OperandType::OMITTED
 							first_omitted = idx
-							i
+							result
 						elsif first_omitted == -1
-							i + 1
+							result + 1
 						else
 							# Error, OMITTED was found, but another type
 							# was defined as not omitted
 							# We will ignore
-							i
+							result
 						end
 					end
 
@@ -156,18 +156,18 @@ module Gruesome
 						operand_types[7] = byte & 3
 
 						# update operand_count once more
-						operand_count = operand_types.inject(operand_count) do |i|
+						operand_count = operand_types.inject(operand_count) do |result, element|
 							idx = idx + 1
-							if i == OperandType::OMITTED
+							if element == OperandType::OMITTED
 								first_omitted = idx
-								i
+								result
 							elsif first_omitted == -1
-								i + 1
+								result + 1
 							else
 								# Error, OMITTED was found, but another type
 								# was defined as not omitted
 								# We will ignore
-								i
+								result
 							end
 						end
 					end
@@ -192,14 +192,61 @@ module Gruesome
 					pc = pc + 1
 				end
 
+				# If the opcode is a branch, we need to pull the offset info
+				branch_destination = -1
+				branch_condition = false
+				if Opcode.is_branch?(opcode_class, opcode, @header.version)
+					branch_offset = @memory.force_readb(pc)
+					pc = pc + 1
+
+					# if bit 7 is set, the branch occurs on a true condition
+					# false otherwise
+					if (branch_offset & 0b10000000) != 0
+						branch_condition = true
+					end
+
+					# if bit 6 is clear, the branch offset is 14 bits (6 from first byte 
+					# and the 8 from the next byte) This is _signed_
+					if (branch_offset & 0b01000000) == 0
+						branch_offset = branch_offset & 0b111111
+						branch_offset = branch_offset << 8
+						branch_offset = branch_offset | @memory.force_readb(pc)
+						pc = pc + 1
+					else # otherwise, the offset is simply the remaining 6 bits _unsigned_
+						branch_offset = branch_offset & 0b111111
+					end
+
+					# calculate actual destination from the offset
+					if branch_offset < 2
+						# a return
+						branch_destination = branch_offset
+					else
+						branch_destination = pc + branch_offset - 2
+					end
+				end
+
 				# Create an Instruction class to hold this metadata
-				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination)
+				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination, branch_destination, branch_condition)
 
 				# Store in the instruction cache
 				@instruction_cache[orig_pc] = inst
 
 				# print out the instruction
-				line = Opcode.name(opcode_class, opcode, @header.version)
+				line = "at $" + sprintf("%04x", orig_pc) + ": " + inst.to_s(@header.version)
+
+				line = line + operand_values.inject("") do |result, element|
+					result = " " + element.to_s
+				end
+
+				if destination != -1
+					line = line + " -> " + destination.to_s
+				end
+
+				if branch_destination != -1
+					line = line + " goto $" + branch_destination + " on " + branch_condition
+				end
+
+				puts line
 			end
 		end
 	end

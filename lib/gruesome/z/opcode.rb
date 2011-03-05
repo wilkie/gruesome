@@ -180,53 +180,6 @@ module Gruesome
 			result
 		end
 
-		def Opcode.is_branch?(opcode_class, opcode, version)
-			if Opcode.is_invalid?(opcode_class, opcode, version)
-				return false
-			end
-
-			result = false
-			if opcode_class == OpcodeClass::OP0
-				case opcode
-				when Opcode::SAVE
-					if version < 4
-						result = true
-					end
-				when Opcode::RESTORE
-					if version < 4
-						result = true
-					end
-				when Opcode::VERIFY, Opcode::PIRACY
-					result = true
-				end
-			elsif opcode_class == OpcodeClass::OP1
-				case opcode
-				when Opcode::JZ, Opcode::GET_SIBLING, Opcode::GET_CHILD
-					result = true
-				end
-			elsif opcode_class == OpcodeClass::OP2
-				case opcode
-				when Opcode::JE, Opcode::JL, Opcode::JG, 
-						Opcode::DEC_CHK, Opcode::INC_CHK, Opcode::JIN,
-						Opcode::TEST, Opcode::TEST_ATTR
-					result = true
-				end
-			elsif opcode_class == OpcodeClass::VAR
-				case opcode
-				when Opcode::SCAN_TABLE, Opcode::CHECK_ARG_COUNT
-					result = true
-				end
-			elsif opcode_class == OpcodeClass::EXT
-				case opcode
-				when Opcode::EXT_PICTURE_DATA, 
-						Opcode::PUSH_STACK, Opcode::MAKE_MENU
-					result = true
-				end
-			end
-
-			result
-		end
-
 		def Opcode.is_valid?(opcode_class, opcode, version)
 			result = true
 			if opcode_class == OpcodeClass::OP0
@@ -316,6 +269,53 @@ module Gruesome
 					result = false if version < 6
 				end
 			end
+			result
+		end
+
+		def Opcode.is_branch?(opcode_class, opcode, version)
+			if is_valid?(opcode_class, opcode, version)
+				return false
+			end
+
+			result = false
+			if opcode_class == OpcodeClass::OP0
+				case opcode
+				when Opcode::SAVE
+					if version < 4
+						result = true
+					end
+				when Opcode::RESTORE
+					if version < 4
+						result = true
+					end
+				when Opcode::VERIFY, Opcode::PIRACY
+					result = true
+				end
+			elsif opcode_class == OpcodeClass::OP1
+				case opcode
+				when Opcode::JZ, Opcode::GET_SIBLING, Opcode::GET_CHILD
+					result = true
+				end
+			elsif opcode_class == OpcodeClass::OP2
+				case opcode
+				when Opcode::JE, Opcode::JL, Opcode::JG, 
+						Opcode::DEC_CHK, Opcode::INC_CHK, Opcode::JIN,
+						Opcode::TEST, Opcode::TEST_ATTR
+					result = true
+				end
+			elsif opcode_class == OpcodeClass::VAR
+				case opcode
+				when Opcode::SCAN_TABLE, Opcode::CHECK_ARG_COUNT
+					result = true
+				end
+			elsif opcode_class == OpcodeClass::EXT
+				case opcode
+				when Opcode::EXT_PICTURE_DATA, 
+						Opcode::PUSH_STACK, Opcode::MAKE_MENU
+					result = true
+				end
+			end
+
 			result
 		end
 
