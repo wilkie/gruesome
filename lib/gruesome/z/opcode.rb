@@ -167,8 +167,9 @@ module Gruesome
 				end
 			elsif opcode_class == OpcodeClass::OP0
 				case opcode
-				when Opcode::SAVE, Opcode::RESTORE, Opcode::CATCH,
+				when Opcode::SAVE, Opcode::RESTORE, Opcode::CATCH
 					result = true
+				else
 				end
 			elsif opcode_class == OpcodeClass::VAR
 				case opcode
