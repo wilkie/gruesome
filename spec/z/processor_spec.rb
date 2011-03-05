@@ -269,6 +269,18 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readv(128).should eql(-13+65536)
 				end
 			end
+
+			describe "storeb" do
+				it "should store the value into the byte address given by the operands providing base and offset" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::STOREB,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [2000, 100, 123], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readb(2000+100).should eql(123)
+				end
+			end
 		end
 	end
 end
