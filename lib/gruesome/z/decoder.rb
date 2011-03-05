@@ -40,8 +40,6 @@ module Gruesome
 				opcode = @memory.force_readb(pc)
 				pc = pc + 1
 
-				puts sprintf("%02x", opcode)
-
 				# opcode form is top 2 bits
 				opcode_form = (opcode >> 6) & 3
 				operand_count = 0
@@ -222,19 +220,9 @@ module Gruesome
 						alphabet = @alphabet
 					end
 
-					chrs = []
-					until continue == false do
-						byte1 = @memory.force_readb(pc)
-						byte2 = @memory.force_readb(pc+1)
-
-						pc = pc + 2
-
-						chrs << ((byte1 >> 2) & 0b11111)
-						chrs << (((byte1 & 0b11) << 3) | (byte2 >> 5))
-						chrs << (byte2 & 0b11111)
-					
-						continue = (byte1 & 0b10000000) == 0
-					end
+					result = @memory.force_readzstr(pc, alphabet)
+					pc = pc + result[0]
+					chrs = result[1]
 
 					# convert the string from ZSCII to UTF8
 					operand_types << OperandType::STRING

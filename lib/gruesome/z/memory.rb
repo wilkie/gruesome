@@ -174,6 +174,27 @@ module Gruesome
 				else
 				end
 			end
+
+			def force_readzstr(index, alphabet)
+				chrs = []
+				continue = true
+				orig_index = index
+
+				until continue == false do
+					byte1 = force_readb(index)
+					byte2 = force_readb(index+1)
+
+					index += 2
+
+					chrs << ((byte1 >> 2) & 0b11111)
+					chrs << (((byte1 & 0b11) << 3) | (byte2 >> 5))
+					chrs << (byte2 & 0b11111)
+
+					continue = (byte1 & 0b10000000) == 0
+				end
+
+				return [index - orig_index, chrs]
+			end
 		end
 	end
 end
