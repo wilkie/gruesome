@@ -38,8 +38,9 @@ module Gruesome
 					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
 
+					@processor.execute(i)
+
 					if i.opcode == Opcode::RET or i.opcode == Opcode::QUIT or i.opcode == Opcode::JUMP
-						@processor.execute(i)
 						break
 					end
 				end
