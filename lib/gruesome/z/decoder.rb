@@ -185,10 +185,13 @@ module Gruesome
 					end
 				end
 
+				# We need the opcode and opcode_class to be combined
+				opcode = (opcode << 2) | opcode_class
+
 				# If the opcode stores, we need to pull the next byte to get the
 				# destination of the result
 				destination = nil
-				if Opcode.is_store?(opcode_class, opcode, @header.version)
+				if Opcode.is_store?(opcode, @header.version)
 					destination = @memory.force_readb(pc)
 					pc = pc + 1
 				end
@@ -196,7 +199,7 @@ module Gruesome
 				# If the opcode is a branch, we need to pull the offset info
 				branch_destination = nil
 				branch_condition = false
-				if Opcode.is_branch?(opcode_class, opcode, @header.version)
+				if Opcode.is_branch?(opcode, @header.version)
 					branch_offset = @memory.force_readb(pc)
 					pc = pc + 1
 
@@ -227,7 +230,7 @@ module Gruesome
 				end
 
 				# Create an Instruction class to hold this metadata
-				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination, branch_destination, branch_condition, pc - orig_pc)
+				inst = Instruction.new(opcode, operand_types, operand_values, destination, branch_destination, branch_condition, pc - orig_pc)
 
 				# Store in the instruction cache
 				@instruction_cache[orig_pc] = inst

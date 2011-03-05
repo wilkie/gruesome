@@ -26,10 +26,19 @@ module Gruesome
 				# III. Instantiate CPU
 				@cpu = Decoder.new(@memory)
 
+#				@memory.program_counter = 10809
+#				num_locals = @memory.force_readb(@memory.program_counter)
+#				@memory.program_counter += 1
+#				@memory.program_counter += num_locals * 2
+
 				100.times do
 					i = @cpu.decode
 					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
+
+					if i.opcode == Opcode::RET or i.opcode == Opcode::QUIT or i.opcode == Opcode::JUMP
+						break
+					end
 				end
 			end
 		end
