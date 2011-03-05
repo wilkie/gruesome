@@ -20,6 +20,8 @@ module Gruesome
 					puts instruction.operands[0]
 				when Opcode::PRINT_ADDR
 					puts ZSCII.translate(0, @header.version, @memory.force_readzstr(instruction.operands[0]))
+				when Opcode::PRINT_CHAR
+					puts ZSCII.translate(0, @header.version, [instruction.operands[0]])
 				end
 			end
 
