@@ -58,6 +58,8 @@ module Gruesome
 					@memory.writev(instruction.operands[0], instruction.operands[1])
 				when Opcode::STOREB
 					@memory.writeb(instruction.operands[0] + unsigned_to_signed(instruction.operands[1]), instruction.operands[2])
+				when Opcode::STOREW
+					@memory.writew(instruction.operands[0] + unsigned_to_signed(instruction.operands[1]), instruction.operands[2])
 				end
 			end
 
