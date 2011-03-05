@@ -20,6 +20,120 @@ describe Gruesome::Z::Processor do
 			after(:each) do
 			end
 
+			describe "je" do
+				it "should branch if the first operand is equal to one of four operands" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, 
+														 Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-12345+65536), 123, 1234, (-12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should not branch if the first operand is not equal to one of four operands" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, 
+														 Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-123+65536), 123, 1234, (12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should not branch if the first operand is equal to one of four operands and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, 
+														 Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-12345+65536), 1234, 123, (-12345+65536)], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should branch if the first operand is not equal to one of four operands and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, 
+														 Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-123+65536), 123, 12345, 12344], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should branch if the first operand is equal to one of three operands" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-12345+65536), 123, (-12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should not branch if the first operand is not equal to one of three operands" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-123+65536), 123, (12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should not branch if the first operand is equal to one of three operands and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-12345+65536), 123, (-12345+65536)], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should branch if the first operand is not equal to one of three operands and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-123+65536), 12345, 12344], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should branch if the first operand is equal to the second of two operands" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-12345+65536), (-12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should not branch if the first operand is not equal to the second of two operands" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-123+65536), (12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should not branch if the first operand is equal to the second of two operands and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-12345+65536), (-12345+65536)], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should branch if the first operand is not equal to the second of two operands and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JE,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-123+65536), (12345+65536)], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+			end
+
 			describe "jump" do
 				it "should update the program counter via a signed offset" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JUMP,

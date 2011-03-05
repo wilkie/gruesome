@@ -18,6 +18,14 @@ module Gruesome
 				when Opcode::JUMP
 					@memory.program_counter += unsigned_to_signed(instruction.operands[0])
 					@memory.program_counter -= 2
+				when Opcode::JE
+					result = instruction.operands[1..-1].inject(false) { |result, element|
+						result | (instruction.operands[0] == element)
+					}
+					if (result and instruction.branch_on) or (!result and !instruction.branch_on)
+						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						@memory.program_counter -= 2
+					end
 				when Opcode::PRINT
 					print instruction.operands[0]
 				when Opcode::PRINT_ADDR
