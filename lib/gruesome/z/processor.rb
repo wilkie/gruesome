@@ -23,14 +23,16 @@ module Gruesome
 					print ZSCII.translate(0, @header.version, @memory.force_readzstr(instruction.operands[0], 0)[1])
 				when Opcode::PRINT_CHAR
 					print ZSCII.translate(0, @header.version, [instruction.operands[0]])
+				when Opcode::ADD
+					@memory.writev(instruction.destination,
+						unsigned_to_signed(instruction.operands[0]) + unsigned_to_signed(instruction.operands[1]))
 				end
 			end
 
 			def unsigned_to_signed(op)
 				sign = op & 0x8000
-				op = 65536 - op
 				if sign 
-					-op
+					-(65536 - op)
 				else
 					op
 				end

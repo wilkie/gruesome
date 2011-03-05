@@ -117,7 +117,7 @@ module Gruesome
 
 			def force_writeb(address, value)
 				if address < @memory.size
-					@memory.setbyte(address, (value % 256))
+					@memory.setbyte(address, (value & 255))
 				else
 					# XXX: Access Violation
 					nil
@@ -126,8 +126,8 @@ module Gruesome
 
 			def force_writew(address, value)
 				if (address + 1) < @memory.size
-					low_byte = value % 256
-					high_byte = (value >> 8) % 256
+					low_byte = value & 255
+					high_byte = (value >> 8) & 255
 
 					if @endian == 'little'
 						tmp = high_byte
