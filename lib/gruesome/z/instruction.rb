@@ -24,7 +24,21 @@ module Gruesome
 			end
 
 			def to_s(version)
-				Opcode.name(@class, @opcode, version)
+				line = Opcode.name(@class, @opcode, version)
+
+				line = line + @operands.inject("") do |result, element|
+					result = " " + element.to_s
+				end
+
+				if @destination != -1
+					line = line + " -> " + @destination.to_s
+				end
+
+				if @branch_to != -1
+					line = line + " goto $" + @branch_to + " on " + @branch_on
+				end
+
+				line
 			end
 		end
 	end

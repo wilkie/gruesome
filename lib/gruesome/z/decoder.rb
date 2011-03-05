@@ -233,19 +233,6 @@ module Gruesome
 
 				# print out the instruction
 				line = "at $" + sprintf("%04x", orig_pc) + ": " + inst.to_s(@header.version)
-
-				line = line + operand_values.inject("") do |result, element|
-					result = " " + element.to_s
-				end
-
-				if destination != -1
-					line = line + " -> " + destination.to_s
-				end
-
-				if branch_destination != -1
-					line = line + " goto $" + branch_destination + " on " + branch_condition
-				end
-
 				puts line
 			end
 		end
