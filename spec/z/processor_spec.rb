@@ -16,7 +16,7 @@ describe Gruesome::Z::Processor do
 			@zork_memory.program_counter = 12345
 		end
 
-		describe "Branch Instructions" do
+		describe "Branch Instruction" do
 			after(:each) do
 			end
 
@@ -146,13 +146,13 @@ describe Gruesome::Z::Processor do
 			end
 		end
 
-		describe "Store Instructions" do
+		describe "Store Instruction" do
 			after(:each) do
 				@zork_memory.program_counter.should eql(12345)
 			end
 		end
 
-		describe "Output Instructions" do
+		describe "Output Instruction" do
 			before(:each) do
 				# We take over stdout so that we can see what it prints
 				@stdout = $stdout
@@ -201,7 +201,7 @@ describe Gruesome::Z::Processor do
 
 		end
 
-		describe "Other Instructions" do
+		describe "Instruction" do
 			after(:each) do
 				# The program counter should not be changed
 				@zork_memory.program_counter.should eql(12345)
