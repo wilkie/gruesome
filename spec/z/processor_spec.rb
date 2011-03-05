@@ -4,6 +4,9 @@ require_relative '../../lib/gruesome/z/opcode'
 require_relative '../../lib/gruesome/z/memory'
 require_relative '../../lib/gruesome/z/processor'
 
+# Note: The Z-Machine implementation, upon execution, 
+# already moves the PC to the next instruction
+
 describe Gruesome::Z::Processor do
 	describe "#execute" do
 		before(:each) do
@@ -21,7 +24,7 @@ describe Gruesome::Z::Processor do
 				it "should update the program counter via a signed offset" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JUMP,
 													 [Gruesome::Z::OperandType::LARGE],
-													 [(-12345+65536)], nil, nil, nil, 0)
+													 [(-12343+65536)], nil, nil, nil, 0)
 
 					@processor.execute(i)
 					@zork_memory.program_counter.should eql(0)

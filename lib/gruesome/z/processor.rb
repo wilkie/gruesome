@@ -17,6 +17,7 @@ module Gruesome
 				case instruction.opcode
 				when Opcode::JUMP
 					@memory.program_counter += unsigned_to_signed(instruction.operands[0])
+					@memory.program_counter -= 2
 				when Opcode::PRINT
 					print instruction.operands[0]
 				when Opcode::PRINT_ADDR
