@@ -53,8 +53,6 @@ module Gruesome
 					# XXX: ERROR
 				end
 
-				puts "end of memory: $" + sprintf("%04x", @memory.length)
-
 				# Check machine endianess
 				@endian = [1].pack('S')[0] == 1 ? 'little' : 'big'
 			end
@@ -64,7 +62,6 @@ module Gruesome
 					force_readb(address)
 				else
 					# XXX: Access violation
-					puts("illegal")
 					nil
 				end
 			end
