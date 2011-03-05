@@ -21,12 +21,9 @@ describe Gruesome::Z::Memory do
 			it "should update the program counter via a signed offset" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JUMP,
-									[Gruesome::Z::OperandType::LARGE],
-									[(-12345+65536)],
-									nil,
-									nil,
-									nil,
-									0)
+						[Gruesome::Z::OperandType::LARGE],
+						[(-12345+65536)], nil, nil, nil, 0)
+
 				@processor.execute(i)
 				@zork_memory.program_counter.should eql(0)
 			end
@@ -36,12 +33,8 @@ describe Gruesome::Z::Memory do
 			it "should print out the string given as an operand to stdout" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT,
-												 [Gruesome::Z::OperandType::STRING],
-												 ["Hello World"],
-												 nil,
-												 nil,
-												 nil,
-												 0)
+						 [Gruesome::Z::OperandType::STRING],
+						 ["Hello World"], nil, nil, nil, 0)
 
 				$stdout = StringIO.new
 				@processor.execute(i)
@@ -55,12 +48,8 @@ describe Gruesome::Z::Memory do
 			it "should print out the string located at the byte address given by the operand" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_ADDR,
-												 [Gruesome::Z::OperandType::LARGE],
-												 [0x4291],
-												 nil,
-												 nil,
-												 nil,
-												 0)
+							[Gruesome::Z::OperandType::LARGE],
+							[0x4291], nil, nil, nil, 0)
 
 				$stdout = StringIO.new
 				@processor.execute(i)
@@ -75,11 +64,7 @@ describe Gruesome::Z::Memory do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_CHAR,
 												 [Gruesome::Z::OperandType::LARGE],
-												 [0x0c],
-												 nil,
-												 nil,
-												 nil,
-												 0)
+												 [0x0c], nil, nil, nil, 0)
 
 				$stdout = StringIO.new
 				@processor.execute(i)
@@ -93,12 +78,8 @@ describe Gruesome::Z::Memory do
 			it "should add two signed shorts together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::ADD,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [-12345+65536, 12344],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-12345+65536, 12344], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
@@ -111,12 +92,8 @@ describe Gruesome::Z::Memory do
 			it "should subtract two signed shorts together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::SUB,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [-12345+65536, 12344],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-12345+65536, 12344], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
@@ -129,12 +106,8 @@ describe Gruesome::Z::Memory do
 			it "should multiply two signed shorts together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MUL,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [-12345+65536, 12344],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-12345+65536, 12344], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
@@ -147,12 +120,8 @@ describe Gruesome::Z::Memory do
 			it "should divide one negative and one positive short together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [-11+65536, 2],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-11+65536, 2], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
@@ -163,12 +132,8 @@ describe Gruesome::Z::Memory do
 			it "should divide one positive and one negative short together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [11, -2+65536],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [11, -2+65536], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
@@ -179,12 +144,8 @@ describe Gruesome::Z::Memory do
 			it "should divide two positive shorts together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [11, 2],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [11, 2], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
@@ -195,12 +156,8 @@ describe Gruesome::Z::Memory do
 			it "should divide two negative shorts together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
 				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DIV,
-						 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
-						 [-11+65536, -2+65536],
-						 128,
-						 nil,
-						 nil,
-						 0)
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-11+65536, -2+65536], 128, nil, nil, 0)
 
 				@processor.execute(i)
 
