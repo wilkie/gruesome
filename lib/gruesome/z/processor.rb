@@ -50,6 +50,8 @@ module Gruesome
 					@memory.writev(instruction.destination, result.to_i)
 				when Opcode::NOT
 					@memory.writev(instruction.destination, ~(instruction.operands[0]))
+				when Opcode::OR
+					@memory.writev(instruction.destination, instruction.operands[0] | instruction.operands[1])
 				end
 			end
 

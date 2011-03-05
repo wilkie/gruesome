@@ -88,6 +88,20 @@ describe Gruesome::Z::Memory do
 			end
 		end
 
+		describe "or" do
+			it "should bitwise or two signed shorts together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::OR,
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-12345+65536, 12344], 128, nil, nil, 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql((-12345 | 12344) & 65535)
+				@zork_memory.program_counter.should eql(12345)
+			end
+		end
+
 		describe "add" do
 			it "should add two signed shorts together and assign to the appropriate variable" do
 				@zork_memory.program_counter = 12345
