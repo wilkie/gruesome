@@ -39,7 +39,15 @@ module Gruesome
 					else
 						result = result.floor
 					end
-					@memory.writev(instruction.destination, result)
+					@memory.writev(instruction.destination, result.to_i)
+				when Opcode::MOD
+					a = unsigned_to_signed(instruction.operands[0])
+					b = unsigned_to_signed(instruction.operands[1])
+					result = a.abs % b.abs
+					if a < 0 
+						result = -result
+					end
+					@memory.writev(instruction.destination, result.to_i)
 				end
 			end
 

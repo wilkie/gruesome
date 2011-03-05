@@ -165,5 +165,55 @@ describe Gruesome::Z::Memory do
 				@zork_memory.program_counter.should eql(12345)
 			end
 		end
+
+		describe "mul" do
+			it "should modulo one negative and one positive short together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-13+65536, 5], 128, nil, nil, 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(-3+65536)
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			it "should modulo one positive and one negative short together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [13, -5+65536], 128, nil, nil, 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(3)
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			it "should modulo two positive shorts together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [13, 5], 128, nil, nil, 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(3)
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			it "should modulo two negative shorts together and assign to the appropriate variable" do
+				@zork_memory.program_counter = 12345
+				i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::MOD,
+												 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+												 [-13+65536, -5+65536], 128, nil, nil, 0)
+
+				@processor.execute(i)
+
+				@zork_memory.readv(128).should eql(-3+65536)
+				@zork_memory.program_counter.should eql(12345)
+			end
+		end
 	end
 end
