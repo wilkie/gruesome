@@ -1,6 +1,9 @@
 module Gruesome
 	module Z
 		module Opcode
+
+			# 2OP
+			
 			JE				= 0x01
 			JL				= 0x02
 			JG				= 0x03
@@ -211,6 +214,10 @@ module Gruesome
 				when Opcode::THROW
 					result = false if version < 5
 				end
+
+				if opcode > 0x1c or opcode == 0x00
+					result = false
+				end
 			elsif opcode_class == OpcodeClass::VAR
 				case opcode
 				when Opcode::SPLIT_WINDOW
@@ -402,7 +409,7 @@ module Gruesome
 				end
 			elsif opcode_class == OpcodeClass::VAR
 				case opcode
-				when Opcode::CALL, CALL_VS
+				when Opcode::CALL, Opcode::CALL_VS
 					if version < 4
 						"call"
 					else
@@ -411,7 +418,7 @@ module Gruesome
 				when Opcode::STOREW then "storew"
 				when Opcode::STOREB then "storeb"
 				when Opcode::PUT_PROP then "put_prop"
-				when Opcode::SREAD, AREAD
+				when Opcode::SREAD, Opcode::AREAD
 					if version < 5
 						"sread"
 					else

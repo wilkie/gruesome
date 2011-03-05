@@ -26,15 +26,11 @@ module Gruesome
 				# III. Instantiate CPU
 				@cpu = Decoder.new(@memory)
 
-				i = @cpu.decode
-				puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
-				@memory.program_counter += i.length
-				i = @cpu.decode
-				@memory.program_counter += i.length
-				i = @cpu.decode
-				@memory.program_counter += i.length
-				i = @cpu.decode
-				@memory.program_counter += i.length
+				100.times do
+					i = @cpu.decode
+					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+					@memory.program_counter += i.length
+				end
 			end
 		end
 	end

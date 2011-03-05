@@ -30,9 +30,9 @@ module Gruesome
 
 				idx = -1
 				line = line + @operands.inject("") do |result, element|
-					idx = idx + 1
+					idx += 1
 					if @types[idx] == OperandType::VARIABLE
-						result + " %" + sprintf("%2x", element.to_s)
+						result + " %" + sprintf("%02x", element)
 					else
 						result + " " + element.to_s
 					end

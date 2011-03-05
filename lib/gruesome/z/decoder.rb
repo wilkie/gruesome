@@ -70,7 +70,7 @@ module Gruesome
 					# opcode is given as bottom 5 bits
 					opcode = opcode & 0b11111
 				elsif opcode == 190 # extended form
-					opcode_form = OpcodeClass::EXT
+					opcode_class = OpcodeClass::EXT
 
 					# VAR number
 					operand_count = 8
@@ -82,7 +82,7 @@ module Gruesome
 
 					# there are always 2 operands
 					operand_count = 2
-					opcode_form = OpcodeClass::OP2
+					opcode_class = OpcodeClass::OP2
 
 					# bit 6 of opcode is type of operand 1
 					type = opcode & 0b1000000
