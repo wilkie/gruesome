@@ -5,6 +5,9 @@ module Gruesome
 			SMALL = 1
 			VARIABLE = 2
 			OMITTED = 3
+
+			# Special case
+			STRING = 4
 		end
 	end
 end

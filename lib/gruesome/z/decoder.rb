@@ -13,6 +13,7 @@ require_relative 'opcode'
 require_relative 'operand_type'
 require_relative 'opcode_class'
 require_relative 'instruction'
+require_relative 'zscii'
 
 module Gruesome
 	module Z
@@ -23,9 +24,12 @@ module Gruesome
 				@memory = memory
 				@instruction_cache = {}
 				@header = Header.new(@memory.contents)
+
+				# For versions 1 and 2, there is a permanent alphabet
+				@alphabet = 0
 			end
 
-			def decode
+			def fetch
 				pc = @memory.program_counter
 				orig_pc = pc
 
@@ -36,12 +40,15 @@ module Gruesome
 				opcode = @memory.force_readb(pc)
 				pc = pc + 1
 
+				puts sprintf("%02x", opcode)
+
 				# opcode form is top 2 bits
 				opcode_form = (opcode >> 6) & 3
 				operand_count = 0
 				operand_types = Array.new(8) { OperandType::OMITTED }
 				operand_values = []
 
+				# SHORT
 				if opcode_form == 2
 					# operand count is determined by bits 4 and 5
 					if ((opcode >> 4) & 3) == 3
@@ -56,6 +63,8 @@ module Gruesome
 
 					# opcode is given as bottom 4 bits
 					opcode = opcode & 0b1111
+
+				# VARIABLE
 				elsif opcode_form == 3
 					if (opcode & 0b100000) == 0
 						# when bit 5 is clear, there are two operands
@@ -69,6 +78,8 @@ module Gruesome
 
 					# opcode is given as bottom 5 bits
 					opcode = opcode & 0b11111
+
+				# EXTENDED
 				elsif opcode == 190 # extended form
 					opcode_class = OpcodeClass::EXT
 
@@ -78,7 +89,9 @@ module Gruesome
 					# opcode is given as the next byte
 					opcode = @memory.force_readb(pc)
 					pc = pc + 1
-				else # long form
+
+				# LONG
+				else 
 
 					# there are always 2 operands
 					operand_count = 2
@@ -106,8 +119,11 @@ module Gruesome
 					opcode = opcode & 0b11111
 				end
 
+				# We need the opcode and opcode_class to be combined
+				opcode = (opcode << 2) | opcode_class
+
 				# handle VAR operands
-				if opcode_class == OpcodeClass::VAR or opcode_class == OpcodeClass::EXT
+				if opcode_form == 3 or opcode_class == OpcodeClass::VAR or opcode_class == OpcodeClass::EXT
 					# each type for the operands is given by reading
 					# the next 1 or 2 bytes.
 					#
@@ -185,15 +201,49 @@ module Gruesome
 					end
 				end
 
-				# We need the opcode and opcode_class to be combined
-				opcode = (opcode << 2) | opcode_class
-
 				# If the opcode stores, we need to pull the next byte to get the
 				# destination of the result
 				destination = nil
 				if Opcode.is_store?(opcode, @header.version)
 					destination = @memory.force_readb(pc)
 					pc = pc + 1
+				end
+
+				# The opcode may indicate that it's argument is a string literal
+				if Opcode.has_string?(opcode, @header.version)
+					str = ""
+					# Now we read in 2-byte words until the most significant bit is set
+					# We unencode them from the ZSCII encoding
+
+					continue = true
+
+					alphabet = 0
+					if (@header.version < 3)
+						alphabet = @alphabet
+					end
+
+					chrs = []
+					until continue == false do
+						byte1 = @memory.force_readb(pc)
+						byte2 = @memory.force_readb(pc+1)
+
+						pc = pc + 2
+
+						chrs << ((byte1 >> 2) & 0b11111)
+						chrs << (((byte1 & 0b11) << 3) | (byte2 >> 5))
+						chrs << (byte2 & 0b11111)
+					
+						continue = (byte1 & 0b10000000) == 0
+					end
+
+					# convert the string from ZSCII to UTF8
+					operand_types << OperandType::STRING
+					operand_values << ZSCII.translate(@alphabet, @header.version, chrs)
+
+					# determine shift locks
+					if (@header.version < 3)
+						@alphabet = ZSCII.eval_alphabet(@alphabet, @header.version, chrs)
+					end
 				end
 
 				# If the opcode is a branch, we need to pull the offset info

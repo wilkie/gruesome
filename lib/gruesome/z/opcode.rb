@@ -140,6 +140,20 @@ module Gruesome
 			EXT_PICTURE_TABLE = (0x1c << 2) | OpcodeClass::EXT
 		end
 
+		def Opcode.has_string?(opcode, version)
+			opcode_class = opcode & 3
+
+			result = false
+			if opcode_class == OpcodeClass::OP0
+				case opcode
+				when Opcode::PRINT, Opcode::PRINT_RET
+					result = true
+				end
+			end
+
+			result
+		end
+
 		def Opcode.is_store?(opcode, version)
 			opcode_class = opcode & 3
 

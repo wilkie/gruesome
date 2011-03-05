@@ -1,6 +1,7 @@
 require_relative 'header'
 require_relative 'memory'
 require_relative 'decoder'
+require_relative 'processor'
 
 module Gruesome
 	module Z
@@ -24,7 +25,8 @@ module Gruesome
 				@header = Header.new(@memory.contents)
 
 				# III. Instantiate CPU
-				@cpu = Decoder.new(@memory)
+				@decoder = Decoder.new(@memory)
+				@processor = Processor.new(@memory)
 
 #				@memory.program_counter = 10809
 #				num_locals = @memory.force_readb(@memory.program_counter)
@@ -32,14 +34,19 @@ module Gruesome
 #				@memory.program_counter += num_locals * 2
 
 				100.times do
-					i = @cpu.decode
+					i = @decoder.fetch
 					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
 
 					if i.opcode == Opcode::RET or i.opcode == Opcode::QUIT or i.opcode == Opcode::JUMP
+						@processor.execute(i)
 						break
 					end
 				end
+
+				i = @decoder.fetch
+				puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+				@memory.program_counter += i.length
 			end
 		end
 	end
