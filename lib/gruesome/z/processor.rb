@@ -29,6 +29,9 @@ module Gruesome
 				when Opcode::SUB
 					@memory.writev(instruction.destination,
 						unsigned_to_signed(instruction.operands[0]) - unsigned_to_signed(instruction.operands[1]))
+				when Opcode::MUL
+					@memory.writev(instruction.destination,
+						unsigned_to_signed(instruction.operands[0]) * unsigned_to_signed(instruction.operands[1]))
 				end
 			end
 
