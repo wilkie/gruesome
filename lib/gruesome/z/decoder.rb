@@ -40,7 +40,7 @@ module Gruesome
 				opcode_form = (opcode >> 6) & 3
 				operand_count = 0
 				operand_types = Array.new(8) { OperandType::OMITTED }
-				operand_values = Array.new(8) { 0 }
+				operand_values = []
 
 				if opcode_form == 2
 					# operand count is determined by bits 4 and 5
@@ -107,7 +107,7 @@ module Gruesome
 				end
 
 				# handle VAR operands
-				if opcode_class == OpcodeClass::VAR or opcode_class == OperandForm::EXT
+				if opcode_class == OpcodeClass::VAR or opcode_class == OpcodeClass::EXT
 					# each type for the operands is given by reading
 					# the next 1 or 2 bytes.
 					#
@@ -174,8 +174,9 @@ module Gruesome
 				end
 
 				# Retrieve the operand values
+				operand_types = operand_types.slice(0, operand_count)
 				operand_types.each do |i|
-					if i == OperandType::SMALL || OperandType::VARIABLE
+					if i == OperandType::SMALL or i == OperandType::VARIABLE
 						operand_values << @memory.force_readb(pc)
 						pc = pc + 1
 					elsif i == OperandType::LARGE 
@@ -226,14 +227,12 @@ module Gruesome
 				end
 
 				# Create an Instruction class to hold this metadata
-				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination, branch_destination, branch_condition)
+				inst = Instruction.new(opcode, opcode_class, operand_types, operand_values, destination, branch_destination, branch_condition, pc - orig_pc)
 
 				# Store in the instruction cache
 				@instruction_cache[orig_pc] = inst
 
-				# print out the instruction
-				line = "at $" + sprintf("%04x", orig_pc) + ": " + inst.to_s(@header.version)
-				puts line
+				inst
 			end
 		end
 	end
