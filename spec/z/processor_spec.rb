@@ -264,6 +264,40 @@ describe Gruesome::Z::Processor do
 			after(:each) do
 				@zork_memory.program_counter.should eql(12345)
 			end
+
+			describe "load" do
+				it "should store the value of the variable into the result" do
+					@zork_memory.writev(128, 30)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::LOAD,
+													 [Gruesome::Z::OperandType::VARIABLE],
+													 [128], 130, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(130).should eql(30)
+				end
+			end
+
+			describe "loadb" do
+				it "should store the value of the byte at the location given by the base and offset into the result" do
+					@zork_memory.writeb(2589+200, 127)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::LOADB,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [2589, 200], 130, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(130).should eql(127)
+				end
+			end
+
+			describe "loadw" do
+				it "should store the value of the word at the location given by the base and offset into the result" do
+					@zork_memory.writew(2480+200, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::LOADW,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [2480, 100], 130, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(130).should eql(12345)
+				end
+			end
+
 		end
 
 		describe "Output Instruction" do
@@ -521,7 +555,7 @@ describe Gruesome::Z::Processor do
 
 					@processor.execute(i)
 
-					@zork_memory.readw(2000+100).should eql(12345)
+					@zork_memory.readw(2000+200).should eql(12345)
 				end
 			end
 		end

@@ -46,6 +46,12 @@ module Gruesome
 						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
 						@memory.program_counter -= 2
 					end
+				when Opcode::LOAD
+					@memory.writev(instruction.destination, @memory.readv(instruction.operands[0]))
+				when Opcode::LOADB
+					@memory.writev(instruction.destination, @memory.readb(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])))
+				when Opcode::LOADW
+					@memory.writev(instruction.destination, @memory.readw(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])*2))
 				when Opcode::PRINT
 					print instruction.operands[0]
 				when Opcode::PRINT_ADDR
@@ -88,7 +94,7 @@ module Gruesome
 				when Opcode::STOREB
 					@memory.writeb(instruction.operands[0] + unsigned_to_signed(instruction.operands[1]), instruction.operands[2])
 				when Opcode::STOREW
-					@memory.writew(instruction.operands[0] + unsigned_to_signed(instruction.operands[1]), instruction.operands[2])
+					@memory.writew(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])*2, instruction.operands[2])
 				end
 			end
 
