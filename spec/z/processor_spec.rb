@@ -172,6 +172,45 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "jl" do
+				it "should branch if the first operand is less than the second" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JL,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-23456+65536), (-12345+65536)], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should not branch if the first operand is not less than the second" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JL,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [12345, 12345], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should not branch if the first operand is less than the second and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JL,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [(-23456+65536), (-12345+65536)], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should branch if the first operand is not less than the second and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JL,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [12345, (-12345+65536)], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+			end
+
+
 			describe "jump" do
 				it "should update the program counter via a signed offset" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JUMP,
