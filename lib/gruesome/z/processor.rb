@@ -26,6 +26,12 @@ module Gruesome
 						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
 						@memory.program_counter -= 2
 					end
+				when Opcode::JG
+					result = unsigned_to_signed(instruction.operands[0]) > unsigned_to_signed(instruction.operands[1])
+					if (result and instruction.branch_on) or (!result and !instruction.branch_on)
+						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						@memory.program_counter -= 2
+					end
 				when Opcode::PRINT
 					print instruction.operands[0]
 				when Opcode::PRINT_ADDR
