@@ -210,6 +210,43 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "jz" do
+				it "should branch if the first operand is zero" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JZ,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should not branch if the first operand is not zero" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JZ,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [12345], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should not branch if the first operand is zero and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JZ,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should branch if the first operand is not zero and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JZ,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [12345], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+			end
 
 			describe "jump" do
 				it "should update the program counter via a signed offset" do

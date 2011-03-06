@@ -22,13 +22,13 @@ module Gruesome
 					result = instruction.operands[1..-1].inject(false) { |result, element|
 						result | (instruction.operands[0] == element)
 					}
-					if (result and instruction.branch_on) or (!result and !instruction.branch_on)
+					if (result == instruction.branch_on)
 						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
 						@memory.program_counter -= 2
 					end
 				when Opcode::JG
 					result = unsigned_to_signed(instruction.operands[0]) > unsigned_to_signed(instruction.operands[1])
-					if (result and instruction.branch_on) or (!result and !instruction.branch_on)
+					if (result == instruction.branch_on)
 						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
 						@memory.program_counter -= 2
 					end
@@ -36,7 +36,13 @@ module Gruesome
 					# XXX: JIN is an object instruction
 				when Opcode::JL
 					result = unsigned_to_signed(instruction.operands[0]) < unsigned_to_signed(instruction.operands[1])
-					if (result and instruction.branch_on) or (!result and !instruction.branch_on)
+					if (result == instruction.branch_on)
+						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						@memory.program_counter -= 2
+					end
+				when Opcode::JZ
+					result = instruction.operands[0] == 0
+					if (result == instruction.branch_on)
 						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
 						@memory.program_counter -= 2
 					end
