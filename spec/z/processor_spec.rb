@@ -1028,6 +1028,30 @@ describe Gruesome::Z::Processor do
 						@object_table.object_has_attribute?(2, 31).should eql(true)
 					end
 				end
+
+				describe "set_attr" do
+					it "should set the attribute when it exists in the object attribute list without altering other attributes" do
+						@object_table.object_has_attribute?(2, 26).should eql(false)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::SET_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2, 26], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_has_attribute?(2, 26).should eql(true)
+						@object_table.object_has_attribute?(2, 31).should eql(true)
+					end
+
+					it "should do nothing when the attribute is already set" do
+						@object_table.object_has_attribute?(2, 25).should eql(true)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::SET_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2, 25], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_has_attribute?(2, 25).should eql(true)
+						@object_table.object_has_attribute?(2, 31).should eql(true)
+					end
+				end
 			end
 		end
 

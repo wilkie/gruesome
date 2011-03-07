@@ -170,6 +170,8 @@ module Gruesome
 					routine_return(1)
 				when Opcode::RFALSE
 					routine_return(0)
+				when Opcode::SET_ATTR
+					@object_table.object_set_attribute(operands[0], operands[1])
 				when Opcode::TEST
 					result = (operands[0] & operands[1]) == operands[1]
 					if (result == instruction.branch_on)
