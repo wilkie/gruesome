@@ -733,6 +733,7 @@ describe Gruesome::Z::Processor do
 
 			describe "print_addr" do
 				it "should print out the string located at the byte address given by the operand" do
+					# 'grue' is written at 0x4291
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_ADDR,
 													 [Gruesome::Z::OperandType::LARGE],
 													 [0x4291], nil, nil, nil, 0)
@@ -961,7 +962,7 @@ describe Gruesome::Z::Processor do
 				@zork_memory.force_writeb(addr+5, 0)
 				@zork_memory.force_writeb(addr+6, 2)
 
-				@zork_memory.force_writew(addr+7, 0)
+				@zork_memory.force_writew(addr+7, 0x300)
 
 				addr += 9
 
@@ -981,7 +982,7 @@ describe Gruesome::Z::Processor do
 				@zork_memory.force_writeb(addr+5, 3)
 				@zork_memory.force_writeb(addr+6, 0)
 
-				@zork_memory.force_writew(addr+7, 0)
+				@zork_memory.force_writew(addr+7, 0x300)
 
 				addr += 9
 
@@ -1001,14 +1002,48 @@ describe Gruesome::Z::Processor do
 				@zork_memory.force_writeb(addr+5, 2)
 				@zork_memory.force_writeb(addr+6, 0)
 
-				@zork_memory.force_writew(addr+7, 0)
+				@zork_memory.force_writew(addr+7, 0x4290)
 
 				addr += 9
+
+				# Properties Table
+				#
+				# 'grue' is written at 0x4291
+				# So, lets abuse that
+				#
+				# Give the short-name a length of 4
+				@zork_memory.force_writeb(0x4290, 2)
 
 				@object_table = Gruesome::Z::ObjectTable.new(@zork_memory)
 
 				# need to reinstantiate the processor
 				@processor = Gruesome::Z::Processor.new(@zork_memory)
+			end
+
+			describe "Output Instruction" do
+				before(:each) do
+					# We take over stdout so that we can see what it prints
+					@stdout = $stdout
+					$stdout = StringIO.new
+				end
+
+				after(:each) do
+					$stdout = @stdout
+
+					# The program counter should not be changed
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				describe "print_obj" do
+					it "should print to stdout out the short name of the object whose index is given as an operand" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_OBJ,
+														 [Gruesome::Z::OperandType::LARGE],
+														 [3], nil, nil, nil, 0)
+
+						@processor.execute(i)
+						$stdout.string.should eql("grue")
+					end
+				end
 			end
 
 			describe "Branch Instruction" do

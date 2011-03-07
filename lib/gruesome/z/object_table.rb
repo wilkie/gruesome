@@ -99,7 +99,8 @@ module Gruesome
 				entry = object_entry(index)
 				prop_address = entry[:properties_address]
 
-				text_len = @memory.force_readb(prop_address)
+				# text_len is the maximum number of bytes the string can have
+				text_len = @memory.force_readb(prop_address) * 2
 				chrs = @memory.force_readzstr(prop_address+1, text_len)[1]
 
 				ZSCII.translate(0, @header.version, chrs, @abbreviation_table)
@@ -163,10 +164,8 @@ module Gruesome
 				entry = object_entry(index)
 				prop_address = entry[:properties_address]
 				
-				# get the length of the string and pad such that the 
-				# length is considered even
-				text_len = @memory.force_readb(prop_address)
-				text_len += text_len % 2
+				# get the length of the string in bytes
+				text_len = @memory.force_readb(prop_address) * 2
 				prop_address += 1
 
 				prop_address += text_len
