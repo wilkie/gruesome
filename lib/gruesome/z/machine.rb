@@ -39,10 +39,6 @@ module Gruesome
 					end
 				end
 
-				i = @decoder.fetch
-				puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
-				@memory.program_counter += i.length
-
 				puts "Done."
 			end
 		end

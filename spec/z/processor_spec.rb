@@ -123,6 +123,29 @@ describe Gruesome::Z::Processor do
 
 					@zork_memory.readv(128).should eql(123)
 				end
+
+				it "should be able to push the result (given as an immediate) to the stack if the call requests variable 0" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 0, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RET,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [123], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(0).should eql(123)
+				end
+
 			end
 
 			describe "jg" do
