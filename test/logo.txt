@@ -39,8 +39,8 @@ GGG    GGG  GGG   GGG GGG   GGG GGG      GGG   GGG GGG   GGG GGG   GGG GGG
 
 
                                                                                  
-        .....                                                                    
-         ^GGGG.                                          .....                      
+        .....                                              .....                 
+         ^GGGG.                                          .GGGG^                     
            ^GGGG.                                      .GGGG^                       
   ......    GGGGGG.   ...   ...   ......   .....     .GGGG^  ...   ...   ......
 .GGGGGGGG.  GGG^GGGG. GGG   GGG .GGGGGGG .GGGGGGG. .GGGG^GG. GGGG.GGGG .GGGGGGG
@@ -57,8 +57,8 @@ GGG    GGG  GGG   GGG GGG   GGG GGG      GGG   GGG GGG   GGG GGG   GGG GGG
 
 █▄▀░▒▓▓
                                                                                  
-        ▄▄▄▄▄                                                                    
-         ▀████▄                                          ▄▄▄▄▄                      
+        ▄▄▄▄▄                                              ▄▄▄▄▄                       
+         ▀████▄                                          ▄████▀                     
            ▀████▄                                      ▄████▀                       
   ▄▄▄▄▄▄    ██████▄   ▄▄▄   ▄▄▄   ▄▄▄▄▄▄   ▄▄▄▄▄     ▄████▀  ▄▄▄   ▄▄▄   ▄▄▄▄▄▄
 ▄████████▄  ██▓▀████▄ ██▓   ███ ▄███████ ▄███████▄ ▄████▀██▄ ████▄████ ▄███████
