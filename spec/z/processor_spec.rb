@@ -1157,6 +1157,54 @@ describe Gruesome::Z::Processor do
 					end
 				end
 
+				describe "get_parent" do
+					# Note:
+					#  - Object 1 has no parents
+					#  - Object 2 has a parent: Object 1
+
+					it "should not branch if the parent object index of the requested object is 0" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PARENT,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1], 128, 2000, true, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+					it "should branch if the parent object index exists for the requested object" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PARENT,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2], 128, 2000, true, 0)
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345+2000-2)
+					end
+
+					it "should branch if the parent object index of the requested object is 0 and condition is negated" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PARENT,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1], 128, 2000, false, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345+2000-2)
+					end
+
+					it "should not branch if the parent object index exists for the requested object and condition is negated" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PARENT,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2], 128, 2000, false, 0)
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+
+					it "should store the parent object index to the destination variable" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PARENT,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2], 128, 2000, true, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(1)
+					end
+				end
 
 				describe "test_attr" do
 					it "should branch if the object has the attribute set" do
