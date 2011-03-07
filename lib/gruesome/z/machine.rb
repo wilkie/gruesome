@@ -2,6 +2,8 @@ require_relative 'header'
 require_relative 'memory'
 require_relative 'decoder'
 require_relative 'processor'
+require_relative 'abbreviation_table'
+require_relative 'object_table'
 
 module Gruesome
 	module Z
@@ -24,6 +26,7 @@ module Gruesome
 				# II. Read header (at address 0x0000) and associated tables
 				@header = Header.new(@memory.contents)
 				@abbreviation_table = AbbreviationTable.new(@memory)
+				@object_table = ObjectTable.new(@memory)
 
 				# III. Instantiate CPU
 				@decoder = Decoder.new(@memory, @abbreviation_table)
@@ -31,7 +34,7 @@ module Gruesome
 
 				100.times do
 					i = @decoder.fetch
-					#puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
 					@processor.execute(i)
 

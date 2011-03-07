@@ -231,7 +231,7 @@ module Gruesome
 				end
 			end
 
-			def force_readzstr(index)
+			def force_readzstr(index, max_len = -1)
 				chrs = []
 				continue = true
 				orig_index = index
@@ -247,6 +247,10 @@ module Gruesome
 					chrs << (byte2 & 0b11111)
 
 					continue = (byte1 & 0b10000000) == 0
+
+					if max_len != -1 and (index - orig_index) >= max_len
+						break
+					end
 				end
 
 				return [index - orig_index, chrs]
