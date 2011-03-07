@@ -118,8 +118,6 @@ module Gruesome
 				when Opcode::GET_PARENT
 					parent = @object_table.object_get_parent(operands[0])
 					@memory.writev(instruction.destination, parent)
-					result = parent != 0
-					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::GET_SIBLING
 					sibling = @object_table.object_get_sibling(operands[0])
 					@memory.writev(instruction.destination, sibling)

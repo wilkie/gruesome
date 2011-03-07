@@ -18,6 +18,8 @@ describe Gruesome::Z::Processor do
 			@zork_memory.program_counter = 12345
 		end
 
+		# Note: The decoder already gets the exact branch address
+		# which is why we don't specify an offset here
 		describe "Branch Instruction" do
 			after(:each) do
 			end
