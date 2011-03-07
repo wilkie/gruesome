@@ -134,12 +134,18 @@ module Gruesome
 					end
 				when Opcode::NEW_LINE
 					puts
+				when Opcode::POP
+					# get rid of the first item on stack
+					@memory.readv(0)
 				when Opcode::PRINT
 					print operands[0]
 				when Opcode::PRINT_ADDR
 					print ZSCII.translate(0, @header.version, @memory.force_readzstr(operands[0], 0)[1])
 				when Opcode::PRINT_CHAR
 					print ZSCII.translate(0, @header.version, [operands[0]])
+				when Opcode::PUSH
+					# add value to stack
+					@memory.writev(0, operands[0])
 				when Opcode::RET
 					routine_return(operands[0])
 				when Opcode::RTRUE

@@ -920,6 +920,30 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readw(2000+200).should eql(12345)
 				end
 			end
+
+			describe "push" do
+				it "should push the value on the stack such that a read of variable %00 will yield that value" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PUSH,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [23456], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(0).should eql(23456)
+				end
+			end
+
+			describe "pop" do
+				it "should throw away the most recently pushed item on the stack" do
+					@zork_memory.writev(0, 23456)
+					@zork_memory.writev(0, 34567)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::POP, 
+													 [], [], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					@zork_memory.readv(0).should eql(23456)
+				end
+			end
 		end
 	end
 end
