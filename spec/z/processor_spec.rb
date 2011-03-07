@@ -1016,6 +1016,17 @@ describe Gruesome::Z::Processor do
 						@object_table.object_has_attribute?(2, 25).should eql(false)
 						@object_table.object_has_attribute?(2, 31).should eql(true)
 					end
+
+					it "should do nothing when the attribute is already cleared" do
+						@object_table.object_has_attribute?(2, 26).should eql(false)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CLEAR_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2, 26], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_has_attribute?(2, 26).should eql(false)
+						@object_table.object_has_attribute?(2, 31).should eql(true)
+					end
 				end
 			end
 		end
