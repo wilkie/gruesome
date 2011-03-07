@@ -120,6 +120,10 @@ module Gruesome
 					print ZSCII.translate(0, @header.version, [instruction.operands[0]])
 				when Opcode::RET
 					routine_return(instruction.operands[0])
+				when Opcode::RTRUE
+					routine_return(1)
+				when Opcode::RFALSE
+					routine_return(0)
 				when Opcode::ADD
 					@memory.writev(instruction.destination,
 						unsigned_to_signed(instruction.operands[0]) + unsigned_to_signed(instruction.operands[1]))

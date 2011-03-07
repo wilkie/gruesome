@@ -145,7 +145,94 @@ describe Gruesome::Z::Processor do
 
 					@zork_memory.readv(0).should eql(123)
 				end
+			end
 
+			describe "rfalse" do
+				it "should set the variable indicated by the call with 0" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RFALSE,
+													 [], [], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql(0)
+				end
+
+				it "should push 0 to the caller's stack when indicated" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 0, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RFALSE,
+													 [], [], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(0).should eql(0)
+				end
+			end
+
+			describe "rtrue" do
+				it "should set the variable indicated by the call with 1" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RTRUE,
+													 [], [], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql(1)
+				end
+
+				it "should push 1 to the caller's stack when indicated" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 0, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RTRUE,
+													 [], [], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(0).should eql(1)
+				end
 			end
 
 			describe "jg" do
