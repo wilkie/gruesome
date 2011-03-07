@@ -64,22 +64,35 @@ module Gruesome
 			def execute(instruction)
 				# TODO: Replace VARIABLE types with the values of the VARIABLE at that location
 
+				# there are some exceptions
+				if instruction.opcode == Opcode::STORE
+					operands = instruction.operands
+				else
+					operands = instruction.operands.each_with_index.map do |operand, idx|
+						if instruction.types[idx] == OperandType::VARIABLE
+							@memory.readv(operand)
+						else
+							operand
+						end
+					end
+				end
+
 				case instruction.opcode
 				when Opcode::ART_SHIFT
-					places = unsigned_to_signed(instruction.operands[1])
+					places = unsigned_to_signed(operands[1])
 					if places < 0
-						@memory.writev(instruction.destination, unsigned_to_signed(instruction.operands[0]) >> places.abs)
+						@memory.writev(instruction.destination, unsigned_to_signed(operands[0]) >> places.abs)
 					else
-						@memory.writev(instruction.destination, instruction.operands[0] << places)
+						@memory.writev(instruction.destination, operands[0] << places)
 					end
 				when Opcode::CALL, Opcode::CALL_1N
-					routine_call(@memory.packed_address_to_byte_address(instruction.operands[0]), instruction.operands[1..-1], instruction.destination)
+					routine_call(@memory.packed_address_to_byte_address(operands[0]), operands[1..-1], instruction.destination)
 				when Opcode::JUMP
-					@memory.program_counter += unsigned_to_signed(instruction.operands[0])
+					@memory.program_counter += unsigned_to_signed(operands[0])
 					@memory.program_counter -= 2
 				when Opcode::JE
-					result = instruction.operands[1..-1].inject(false) { |result, element|
-						result | (instruction.operands[0] == element)
+					result = operands[1..-1].inject(false) { |result, element|
+						result | (operands[0] == element)
 					}
 					if (result == instruction.branch_on)
 						@memory.program_counter += instruction.branch_to
@@ -87,7 +100,7 @@ module Gruesome
 						@memory.program_counter -= 2
 					end
 				when Opcode::JG
-					result = unsigned_to_signed(instruction.operands[0]) > unsigned_to_signed(instruction.operands[1])
+					result = unsigned_to_signed(operands[0]) > unsigned_to_signed(operands[1])
 					if (result == instruction.branch_on)
 						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
@@ -95,55 +108,55 @@ module Gruesome
 				when Opcode::JIN
 					# XXX: JIN is an object instruction
 				when Opcode::JL
-					result = unsigned_to_signed(instruction.operands[0]) < unsigned_to_signed(instruction.operands[1])
+					result = unsigned_to_signed(operands[0]) < unsigned_to_signed(operands[1])
 					if (result == instruction.branch_on)
 						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
 				when Opcode::JZ
-					result = instruction.operands[0] == 0
+					result = operands[0] == 0
 					if (result == instruction.branch_on)
 						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
 				when Opcode::LOAD
-					@memory.writev(instruction.destination, @memory.readv(instruction.operands[0]))
+					@memory.writev(instruction.destination, operands[0])
 				when Opcode::LOADB
-					@memory.writev(instruction.destination, @memory.readb(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])))
+					@memory.writev(instruction.destination, @memory.readb(operands[0] + unsigned_to_signed(operands[1])))
 				when Opcode::LOADW
-					@memory.writev(instruction.destination, @memory.readw(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])*2))
+					@memory.writev(instruction.destination, @memory.readw(operands[0] + unsigned_to_signed(operands[1])*2))
 				when Opcode::LOG_SHIFT
-					places = unsigned_to_signed(instruction.operands[1])
+					places = unsigned_to_signed(operands[1])
 					if places < 0
-						@memory.writev(instruction.destination, instruction.operands[0] >> places.abs)
+						@memory.writev(instruction.destination, operands[0] >> places.abs)
 					else
-						@memory.writev(instruction.destination, instruction.operands[0] << places)
+						@memory.writev(instruction.destination, operands[0] << places)
 					end
 				when Opcode::NEW_LINE
 					puts
 				when Opcode::PRINT
-					print instruction.operands[0]
+					print operands[0]
 				when Opcode::PRINT_ADDR
-					print ZSCII.translate(0, @header.version, @memory.force_readzstr(instruction.operands[0], 0)[1])
+					print ZSCII.translate(0, @header.version, @memory.force_readzstr(operands[0], 0)[1])
 				when Opcode::PRINT_CHAR
-					print ZSCII.translate(0, @header.version, [instruction.operands[0]])
+					print ZSCII.translate(0, @header.version, [operands[0]])
 				when Opcode::RET
-					routine_return(instruction.operands[0])
+					routine_return(operands[0])
 				when Opcode::RTRUE
 					routine_return(1)
 				when Opcode::RFALSE
 					routine_return(0)
 				when Opcode::ADD
 					@memory.writev(instruction.destination,
-						unsigned_to_signed(instruction.operands[0]) + unsigned_to_signed(instruction.operands[1]))
+						unsigned_to_signed(operands[0]) + unsigned_to_signed(operands[1]))
 				when Opcode::SUB
 					@memory.writev(instruction.destination,
-						unsigned_to_signed(instruction.operands[0]) - unsigned_to_signed(instruction.operands[1]))
+						unsigned_to_signed(operands[0]) - unsigned_to_signed(operands[1]))
 				when Opcode::MUL
 					@memory.writev(instruction.destination,
-						unsigned_to_signed(instruction.operands[0]) * unsigned_to_signed(instruction.operands[1]))
+						unsigned_to_signed(operands[0]) * unsigned_to_signed(operands[1]))
 				when Opcode::DIV
-					result = unsigned_to_signed(instruction.operands[0]).to_f / unsigned_to_signed(instruction.operands[1]).to_f
+					result = unsigned_to_signed(operands[0]).to_f / unsigned_to_signed(operands[1]).to_f
 					if result < 0
 						result = -(result.abs.floor)
 					else
@@ -151,25 +164,25 @@ module Gruesome
 					end
 					@memory.writev(instruction.destination, result.to_i)
 				when Opcode::MOD
-					a = unsigned_to_signed(instruction.operands[0])
-					b = unsigned_to_signed(instruction.operands[1])
+					a = unsigned_to_signed(operands[0])
+					b = unsigned_to_signed(operands[1])
 					result = a.abs % b.abs
 					if a < 0 
 						result = -result
 					end
 					@memory.writev(instruction.destination, result.to_i)
 				when Opcode::NOT
-					@memory.writev(instruction.destination, ~(instruction.operands[0]))
+					@memory.writev(instruction.destination, ~(operands[0]))
 				when Opcode::OR
-					@memory.writev(instruction.destination, instruction.operands[0] | instruction.operands[1])
+					@memory.writev(instruction.destination, operands[0] | operands[1])
 				when Opcode::AND
-					@memory.writev(instruction.destination, instruction.operands[0] & instruction.operands[1])
+					@memory.writev(instruction.destination, operands[0] & operands[1])
 				when Opcode::STORE
-					@memory.writev(instruction.operands[0], instruction.operands[1])
+					@memory.writev(operands[0], operands[1])
 				when Opcode::STOREB
-					@memory.writeb(instruction.operands[0] + unsigned_to_signed(instruction.operands[1]), instruction.operands[2])
+					@memory.writeb(operands[0] + unsigned_to_signed(operands[1]), operands[2])
 				when Opcode::STOREW
-					@memory.writew(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])*2, instruction.operands[2])
+					@memory.writew(operands[0] + unsigned_to_signed(operands[1])*2, operands[2])
 				end
 			end
 
