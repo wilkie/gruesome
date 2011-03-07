@@ -200,6 +200,12 @@ module Gruesome
 				when Opcode::PUSH
 					# add value to stack
 					@memory.writev(0, operands[0])
+				when Opcode::PUT_PROP
+					object_id = operands[0]
+					prop_id = operands[1]
+					prop_value = operands[2]
+
+					@object_table.object_set_property_word(object_id, prop_id, prop_value)
 				when Opcode::REMOVE_OBJ
 					@object_table.object_remove_object(operands[0])
 				when Opcode::RET

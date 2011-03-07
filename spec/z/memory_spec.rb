@@ -21,7 +21,7 @@ describe Gruesome::Z::Memory do
 		end
 
 		it "should not read a byte in high memory" do
-			@zork_memory.readb(0x4E37).should eql(nil)
+			lambda {@zork_memory.readb(0x4E37)}.should raise_error(RuntimeError)
 		end
 	end
 
@@ -40,7 +40,7 @@ describe Gruesome::Z::Memory do
 		end
 
 		it "should not read a word in high memory" do
-			@zork_memory.readw(0x4E36).should eql(nil)
+			lambda{@zork_memory.readw(0x4E36)}.should raise_error(RuntimeError)
 		end
 	end
 
@@ -51,15 +51,18 @@ describe Gruesome::Z::Memory do
 		end
 
 		it "should not write a byte in static memory" do
-			@zork_memory.writeb(0x2E53, 128)
-			@zork_memory.readb(0x2E53).should eql(47)
-			@zork_memory.writeb(0x4E36, 128)
-			@zork_memory.readb(0x4E36).should eql(0)
+			@zork_memory.force_writeb(0x2E53, 123)
+			lambda{@zork_memory.writeb(0x2E53, 128)}.should raise_error(RuntimeError)
+			@zork_memory.readb(0x2E53).should eql(123)
+			@zork_memory.force_writeb(0x4E36, 123)
+			lambda{@zork_memory.writeb(0x4E36, 128)}.should raise_error(RuntimeError)
+			@zork_memory.readb(0x4E36).should eql(123)
 		end
 
 		it "should not write a byte in high memory" do
-			@zork_memory.writeb(0x4E37, 128)
-			@zork_memory.readb(0x4E37).should eql(nil)
+			@zork_memory.force_writeb(0x4E37, 123)
+			lambda{@zork_memory.writeb(0x4E37, 128)}.should raise_error(RuntimeError)
+			@zork_memory.force_readb(0x4E37).should eql(123)
 		end
 	end
 
@@ -70,15 +73,18 @@ describe Gruesome::Z::Memory do
 		end
 
 		it "should not write a word in static memory" do
-			@zork_memory.writew(0x2E53, 12345)
-			@zork_memory.readw(0x2E53).should eql(12127)
-			@zork_memory.writew(0x4E35, 12345)
-			@zork_memory.readw(0x4E35).should eql(256)
+			@zork_memory.force_writew(0x2E53, 23456)
+			lambda{@zork_memory.writew(0x2E53, 12345)}.should raise_error(RuntimeError)
+			@zork_memory.readw(0x2E53).should eql(23456)
+			@zork_memory.force_writew(0x4E35, 23456)
+			lambda{@zork_memory.writew(0x4E35, 12345)}.should raise_error(RuntimeError)
+			@zork_memory.readw(0x4E35).should eql(23456)
 		end
 
 		it "should not write a word in high memory" do
-			@zork_memory.writew(0x4E36, 12345)
-			@zork_memory.force_readw(0x4E36).should eql(0)
+			@zork_memory.force_writew(0x4E36, 23456)
+			lambda{@zork_memory.writew(0x4E36, 12345)}.should raise_error(RuntimeError)
+			@zork_memory.force_readw(0x4E36).should eql(23456)
 		end
 	end
 end

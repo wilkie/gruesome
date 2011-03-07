@@ -357,6 +357,25 @@ module Gruesome
 					property_data[0]
 				end
 			end
+
+			def object_set_property_word(index, property_number, value)
+				properties = object_properties(index)
+
+				property_info = properties[property_number]
+
+				if property_info == nil
+					raise "put_prop attempted to set a property value for a property that did not exist"
+				else
+					if property_info[:size] == 1
+						value &= 0xff
+						@memory.force_writeb(property_info[:property_data_address], value)
+					elsif property_info[:size] == 2
+						@memory.force_writew(property_info[:property_data_address], value)
+					else
+						raise "put_prop attempted to set a property whose data size is larger than a word"
+					end
+				end
+			end
 		end
 	end
 end

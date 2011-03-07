@@ -1280,6 +1280,35 @@ describe Gruesome::Z::Processor do
 					@zork_memory.program_counter.should eql(12345)
 				end
 
+				describe "put_prop" do
+					it "should set the property in the object's list when it is a byte" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PUT_PROP,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 20, 234], nil, nil, nil, 0)
+						@processor.execute(i)
+						@object_table.object_get_property_word(3, 20).should eql(234)
+					end
+
+					it "should store the least significant part of the value to the property in the object's list when the property is a byte" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PUT_PROP,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 20, 0x5432], nil, nil, nil, 0)
+						@processor.execute(i)
+						@object_table.object_get_property_word(3, 20).should eql(0x32)
+					end
+
+					it "should set the property in the object's list when it is a word" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PUT_PROP,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 15, 54321], nil, nil, nil, 0)
+						@processor.execute(i)
+						@object_table.object_get_property_word(3, 15).should eql(54321)
+					end
+	
+					# XXX: Check for halt when property does not exist
+				end
+
+
 				describe "get_prop" do
 					it "should retrieve the property in the object's list when it is a byte" do
 						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP,
@@ -1448,7 +1477,7 @@ describe Gruesome::Z::Processor do
 
 					@processor.execute(i)
 
-					@zork_memory.readb(2000+100).should eql(123)
+					@zork_memory.force_readb(2000+100).should eql(123)
 				end
 			end
 
@@ -1460,7 +1489,7 @@ describe Gruesome::Z::Processor do
 
 					@processor.execute(i)
 
-					@zork_memory.readw(2000+200).should eql(12345)
+					@zork_memory.force_readw(2000+200).should eql(12345)
 				end
 			end
 
