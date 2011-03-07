@@ -201,6 +201,16 @@ module Gruesome
 			result
 		end
 
+		def Opcode.is_variable_by_reference?(opcode, version)
+			case opcode
+			when Opcode::PULL, Opcode::STORE, 
+					Opcode::INC, Opcode::DEC,
+					Opcode::DEC_CHK, Opcode::INC_CHK
+				return true
+			end
+			return false
+		end
+
 		def Opcode.is_valid?(opcode, version)
 			opcode_class = opcode & 7
 
