@@ -21,12 +21,13 @@ module Gruesome
 				memory_size = [0x10000, file.size].min
 				@memory = Memory.new(file.read(memory_size))
 
-				# II. Read header (at address 0x0000)
+				# II. Read header (at address 0x0000) and associated tables
 				@header = Header.new(@memory.contents)
+				@abbreviation_table = AbbreviationTable.new(@memory)
 
 				# III. Instantiate CPU
-				@decoder = Decoder.new(@memory)
-				@processor = Processor.new(@memory)
+				@decoder = Decoder.new(@memory, @abbreviation_table)
+				@processor = Processor.new(@memory, @abbreviation_table)
 
 				100.times do
 					i = @decoder.fetch

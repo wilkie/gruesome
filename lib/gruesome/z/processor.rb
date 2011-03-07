@@ -4,13 +4,15 @@ require_relative 'instruction'
 require_relative 'opcode'
 require_relative 'header'
 require_relative 'zscii'
+require_relative 'abbreviation_table'
 
 module Gruesome
 	module Z
 		class Processor
-			def initialize(memory)
+			def initialize(memory, abbreviation_table)
 				@memory = memory
 				@header = Header.new(@memory.contents)
+				@abbreviation_table = abbreviation_table
 			end
 
 			def routine_call(address, arguments, result_variable = nil)
@@ -140,9 +142,9 @@ module Gruesome
 				when Opcode::PRINT
 					print operands[0]
 				when Opcode::PRINT_ADDR
-					print ZSCII.translate(0, @header.version, @memory.force_readzstr(operands[0], 0)[1])
+					print ZSCII.translate(0, @header.version, @memory.force_readzstr(operands[0])[1], @abbreviation_table)
 				when Opcode::PRINT_CHAR
-					print ZSCII.translate(0, @header.version, [operands[0]])
+					print ZSCII.translate(0, @header.version, [operands[0]], @abbreviation_table)
 				when Opcode::PULL
 					if @header.version == 6
 						# TODO: Version 6 PULL instruction

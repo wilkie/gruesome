@@ -231,7 +231,7 @@ module Gruesome
 				end
 			end
 
-			def force_readzstr(index, alphabet)
+			def force_readzstr(index)
 				chrs = []
 				continue = true
 				orig_index = index

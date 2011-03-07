@@ -3,6 +3,7 @@ require_relative '../../lib/gruesome/z/operand_type'
 require_relative '../../lib/gruesome/z/opcode'
 require_relative '../../lib/gruesome/z/memory'
 require_relative '../../lib/gruesome/z/processor'
+require_relative '../../lib/gruesome/z/abbreviation_table'
 
 # Note: The Z-Machine implementation, upon execution, 
 # already moves the PC to the next instruction
@@ -12,7 +13,8 @@ describe Gruesome::Z::Processor do
 		before(:each) do
 			zork = File.open('test/zork1.z3', 'r')
 			@zork_memory = Gruesome::Z::Memory.new(zork.read(zork.size))
-			@processor = Gruesome::Z::Processor.new(@zork_memory)
+			abbreviation_table = Gruesome::Z::AbbreviationTable.new(@zork_memory)
+			@processor = Gruesome::Z::Processor.new(@zork_memory, abbreviation_table)
 			@zork_memory.program_counter = 12345
 		end
 

@@ -20,10 +20,11 @@ module Gruesome
 		
 		# This is the instruction decoder
 		class Decoder
-			def initialize(memory)
+			def initialize(memory, abbreviation_table)
 				@memory = memory
 				@instruction_cache = {}
 				@header = Header.new(@memory.contents)
+				@abbreviation_table = abbreviation_table
 
 				# For versions 1 and 2, there is a permanent alphabet
 				@alphabet = 0
@@ -227,17 +228,17 @@ module Gruesome
 						alphabet = @alphabet
 					end
 
-					result = @memory.force_readzstr(pc, alphabet)
+					result = @memory.force_readzstr(pc)
 					pc = pc + result[0]
 					chrs = result[1]
 
 					# convert the string from ZSCII to UTF8
 					operand_types << OperandType::STRING
-					operand_values << ZSCII.translate(@alphabet, @header.version, chrs)
+					operand_values << ZSCII.translate(@alphabet, @header.version, chrs, @abbreviation_table)
 
 					# determine shift locks
 					if (@header.version < 3)
-						@alphabet = ZSCII.eval_alphabet(@alphabet, @header.version, chrs)
+						@alphabet = ZSCII.eval_alphabet(@alphabet, @header.version, chrs, @abbreviation_table)
 					end
 				end
 
