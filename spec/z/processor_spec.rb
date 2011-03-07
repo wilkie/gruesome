@@ -1116,17 +1116,18 @@ describe Gruesome::Z::Processor do
 
 					@zork_memory.readv(128).should eql(-13+65536)
 				end
-			end
 
-			describe "store" do
-				it "should store the value into the variable referenced by the operand" do
+				it "should write to the stack in-place when variable %00 is used" do
+					@zork_memory.writev(0, 11111)
+					@zork_memory.writev(0, 12345)
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::STORE,
 													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
-													 [128, -13+65536], nil, nil, nil, 0)
+													 [0, -13+65536], nil, nil, nil, 0)
 
 					@processor.execute(i)
 
-					@zork_memory.readv(128).should eql(-13+65536)
+					@zork_memory.readv(0).should eql(-13+65536)
+					@zork_memory.readv(0).should eql(11111)
 				end
 			end
 

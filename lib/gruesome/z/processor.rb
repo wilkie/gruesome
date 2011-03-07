@@ -218,6 +218,9 @@ module Gruesome
 				when Opcode::AND
 					@memory.writev(instruction.destination, operands[0] & operands[1])
 				when Opcode::STORE
+					if operands[0] == 0
+						@memory.readv(operands[0])
+					end
 					@memory.writev(operands[0], operands[1])
 				when Opcode::STOREB
 					@memory.writeb(operands[0] + unsigned_to_signed(operands[1]), operands[2])
