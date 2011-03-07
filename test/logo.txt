@@ -2,4 +2,76 @@
 
 █▄▀░▒▓
 
-   
+
+    █   █ 
+    █▄ ▄█ 
+    ▀███▀ 
+
+                                                          .                      
+         .                                               G ^                    
+        ^ G.                                         ..GG^                     
+          ^GG..               .    ...      ...      GGGG                      
+           GGGGG.      .G    .G   GGGGG    GGGG.   GG^  GG                     
+           GG   GG.    GG    GG  GG. ^GG  GG     .GG    GG  .G   .G.           
+  ....     GG     GG.  GG    GG  GGGGGGG   GGGG. GG     GG  GGG GGG^  .GGG.   
+.GGGGGG    GG.     GG  GG.   GG  GG           GG GG    .GG  GG G GG  GG^ GG.  
+GG         ^GGG. .GG^   GG. GG   ^GGGGG.  ^GGGG^ ^GG. .GG^ .G G .G   GG   GG        
+GG.         GG^GGG       GGG^     ^^^^^    ^^^^    GGGGG   GG   GG  GG^GGGG^                            
+^GG.  GG    GG   GGG.                                     ^^   ^^   GG. ^G^                            
+ ^GG. GGG   GG.    GG.                                              ^GGG.            
+  ^GGGGG^   ^GG    ^GG                                                ^GG.        
+    ^^^      GG.   .GG                                                 ^GG                
+                   G^                                                  .GG                           
+                  ^                                                    G^                                                  
+                                                                      ^
+
+                                                                                 
+                                                                                 
+  ......   ........   ...   ...   ......   .....     .....   ...   ...   ......
+.GGGGGGGG. GGGGGGGGG. GGG   GGG .GGGGGGG .GGGGGGG. .GGGGGGG. GGGG.GGGG .GGGGGGG
+GGG    GGG ^GGG   GGG GGG   GGG GGG      GGG   GGG GGG   GGG GGGGGGGGG GGG
+GGG         GGG   GGG GGG   GGG GGG      GGG       GGG   GGG GGG^G^GGG GGG
+GGG  GGGGG GGGGGGGG   GGG   GGG GGGGGGGG ^GGGGGG.  GGG   GGG GGG   GGG GGGGGGGG
+GGG  ^^GGG ^GGG^^^G.. GGG   GGG GGG^^^^^   ^^^^GGG GGG   GGG GGG   GGG GGG^^^^^
+GGG    GGG  GGG   GGG GGG   GGG GGG      GGG   GGG GGG   GGG GGG   GGG GGG
+^GGGGGGGG^  GGG   GGG ^GGGGGGG^ ^GGGGGGG ^GGGGGGG^ ^GGGGGGG^ GGG   GGG ^GGGGGGG
+  ^^^^^^    ^^^   ^^^   ^^^^^     ^^^^^^   ^^^^^     ^^^^^   ^^^   ^^^   ^^^^^^
+
+
+                                                                                 
+        .....                                                                    
+         ^GGGG.                                          .....                      
+           ^GGGG.                                      .GGGG^                       
+  ......    GGGGGG.   ...   ...   ......   .....     .GGGG^  ...   ...   ......
+.GGGGGGGG.  GGG^GGGG. GGG   GGG .GGGGGGG .GGGGGGG. .GGGG^GG. GGGG.GGGG .GGGGGGG
+GGG    GGG  GGG  ^GGG GGG   GGG GGG      GGG   GGG GGG^  GGG GGGGGGGGG GGG
+GGG         GGG   GGG GGG   GGG GGG      GGG       GGG   GGG GGG^G^GGG GGG
+GGG  GGGGG GGGGGGGG   GGG   GGG GGGGGGGG ^GGGGGG.  GGG   GGG GGG   GGG GGGGGGGG
+GGG  ^^GGG ^GGG^^^G.. GGG   GGG GGG^^^^^   ^^^^GGG GGG   GGG GGG   GGG GGG^^^^^
+GGG    GGG  GGG   GGG GGG   GGG GGG      GGG   GGG GGG   GGG GGG   GGG GGG
+^GGGGGGGG^  GGG   GGG ^GGGGGGG^ ^GGGGGGG ^GGGGGGG^ ^GGGGGGG^ GGG   GGG ^GGGGGGG
+  ^^^^^^    ^^^   ^^^   ^^^^^     ^^^^^^   ^^^^^     ^^^^^   ^^^   ^^^   ^^^^^^
+
+
+!IG.^
+
+█▄▀░▒▓▓
+                                                                                 
+        ▄▄▄▄▄                                                                    
+         ▀████▄                                          ▄▄▄▄▄                      
+           ▀████▄                                      ▄████▀                       
+  ▄▄▄▄▄▄    ██████▄   ▄▄▄   ▄▄▄   ▄▄▄▄▄▄   ▄▄▄▄▄     ▄████▀  ▄▄▄   ▄▄▄   ▄▄▄▄▄▄
+▄████████▄  ██▓▀████▄ ██▓   ███ ▄███████ ▄███████▄ ▄████▀██▄ ████▄████ ▄███████
+██▓    ███  ██▓  ▀███ ██▓   ███ ██▓      ██▓   ███ ███▀  ███ █████████ ██▓
+██▓         ██▓   ███ ██▓   ███ ██▓      ██▓       ██▓   ███ ███▀█▀███ ██▓
+██▓  █████ ████████   ███   ███ ████████ ▀██████▄  ██▓   ███ ██▓   ███ ████████
+██▓  ▀▀███ ▀██▓▀▀▀█▄▄ ███   ███ ███▀▀▀▀▀   ▀▀▀▀███ ██▓   ███ ██▓   ███ ███▀▀▀▀▀
+██▓    ███  ██▓   ███ ██▓   ███ ██▓      ██▓   ███ ██▓   ███ ███   ███ ██▓
+▀████████▀  ██▓   ███ ▀███████▀ ▀███████ ▀███████▀ ▀███████▀ ██▓   ███ ▀███████
+  ▀▀▀▀▀▀    ▀▀▀   ▀▀▀   ▀▀▀▀▀     ▀▀▀▀▀▀   ▀▀▀▀▀     ▀▀▀▀▀   ▀▀▀   ▀▀▀   ▀▀▀▀▀▀
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
+                                                                                 
