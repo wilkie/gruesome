@@ -187,6 +187,57 @@ describe Gruesome::Z::Processor do
 			end
 
 			# not necessarily a branch
+			describe "ret_popped" do
+				it "should return to the routine that called it" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RET_POPPED,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [123], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.program_counter.should eql(12345)
+				end
+				
+				it "should be able to push top of callee stack to the stack of the caller" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+					@zork_memory.writev(0, 11111)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 0, nil, nil, 0)
+
+					@processor.execute(i)
+					@zork_memory.writev(0, 22222)
+					@zork_memory.writev(0, 23456)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RET_POPPED,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [123], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(0).should eql(23456)
+					@zork_memory.readv(0).should eql(11111)
+				end
+			end
+
+			# not necessarily a branch
 			describe "rfalse" do
 				it "should set the variable indicated by the call with 0" do
 					# set up a routine at address $2000

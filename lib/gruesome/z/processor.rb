@@ -158,6 +158,8 @@ module Gruesome
 					@memory.writev(0, operands[0])
 				when Opcode::RET
 					routine_return(operands[0])
+				when Opcode::RET_POPPED
+					routine_return(@memory.readv(0))
 				when Opcode::RTRUE
 					routine_return(1)
 				when Opcode::RFALSE
