@@ -1256,6 +1256,28 @@ describe Gruesome::Z::Processor do
 					@zork_memory.program_counter.should eql(12345)
 				end
 
+				describe "insert_obj" do
+					it "should insert the object given as the child of the other object given" do
+						@object_table.object_get_child(2).should eql(0)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INSERT_OBJ,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 2], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_get_child(2).should eql(3)
+					end
+
+					it "should set the sibling of the given object as the previous child of the other object given" do
+						@object_table.object_get_sibling(3).should eql(2)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INSERT_OBJ,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 2], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_get_sibling(3).should eql(0)
+					end
+				end
+
 				describe "clear_attr" do
 					it "should clear the attribute when it exists in the object attribute list without altering other attributes" do
 						@object_table.object_has_attribute?(2, 25).should eql(true)

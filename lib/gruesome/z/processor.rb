@@ -95,6 +95,8 @@ module Gruesome
 					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) - 1)
 				when Opcode::INC
 					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) + 1)
+				when Opcode::INSERT_OBJ
+					@object_table.object_insert_object(operands[1], operands[0])
 				when Opcode::GET_CHILD
 					child = @object_table.object_get_child(operands[0])
 					@memory.writev(instruction.destination, child)

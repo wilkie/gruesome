@@ -110,6 +110,64 @@ module Gruesome
 				object_entry(index)[:parent_id]
 			end
 
+			def object_set_child(index, child_id)
+				entry = object_entry(index)
+				addr = entry[:attributes_address] + @attributes_size + @object_id_size*2
+
+				if @object_id_size == 1
+					@memory.force_writeb(addr, child_id)
+				else
+					@memory.force_writew(addr, child_id)
+				end
+			end
+
+			def object_set_sibling(index, sibling_id)
+				entry = object_entry(index)
+				addr = entry[:attributes_address] + @attributes_size + @object_id_size
+
+				if @object_id_size == 1
+					@memory.force_writeb(addr, sibling_id)
+				else
+					@memory.force_writew(addr, sibling_id)
+				end
+			end
+
+			def object_set_parent(index, parent_id)
+				entry = object_entry(index)
+				addr = entry[:attributes_address] + @attributes_size
+
+				if @object_id_size == 1
+					@memory.force_writeb(addr, parent_id)
+				else
+					@memory.force_writew(addr, parent_id)
+				end
+			end
+
+			def object_insert_object(index, new_child)
+				#object_set_parent(new_child, index)
+				object_set_sibling(new_child, object_get_child(index))
+				object_set_child(index, new_child)
+			end
+
+			def object_remove_object(index)
+				#parent_id = object_get_parent(index)
+				#sibling_id = object_get_sibling(index)
+				#child_of_parent = object_get_child(parent_id)
+
+				# if the parent's child is this node, we must change it
+				#if child_of_parent == index
+				#	if sibling_id == index or sibling_id == 0
+				#		# our old parent has no children because we were an only child
+				#		object_set_child(parent_id, 0)
+				#	else
+				#		# our parents still have our sibling
+				#		object_set_child(parent_id, sibling_id)
+				#	end
+				#end
+				
+				object_set_parent(index, 0)
+			end
+
 			def object_short_text(index)
 				entry = object_entry(index)
 				prop_address = entry[:properties_address]
