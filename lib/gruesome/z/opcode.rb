@@ -204,7 +204,7 @@ module Gruesome
 		def Opcode.is_variable_by_reference?(opcode, version)
 			case opcode
 			when Opcode::PULL, Opcode::STORE, 
-					Opcode::INC, Opcode::DEC,
+					Opcode::INC, Opcode::DEC, Opcode::LOAD,
 					Opcode::DEC_CHK, Opcode::INC_CHK
 				return true
 			end

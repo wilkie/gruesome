@@ -128,7 +128,15 @@ module Gruesome
 						@memory.program_counter -= 2
 					end
 				when Opcode::LOAD
-					@memory.writev(instruction.destination, operands[0])
+					if operands[0] != instruction.destination
+						@memory.writev(instruction.destination, @memory.readv(operands[0]))
+
+						# make sure to re-push the value since LOAD does not
+						# change the stack but uses the value directly
+						if operands[0] == 0
+							@memory.writev(0, @memory.readv(instruction.destination))
+						end
+					end
 				when Opcode::LOADB
 					@memory.writev(instruction.destination, @memory.readb(operands[0] + unsigned_to_signed(operands[1])))
 				when Opcode::LOADW

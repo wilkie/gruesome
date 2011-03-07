@@ -659,6 +659,18 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 					@zork_memory.readv(130).should eql(30)
 				end
+				
+				it "should not pop the value off of the stack if variable %00 is used" do
+					@zork_memory.writev(0, 11111)
+					@zork_memory.writev(0, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::LOAD,
+													 [Gruesome::Z::OperandType::VARIABLE],
+													 [0], 130, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(130).should eql(12345)
+					@zork_memory.readv(0).should eql(12345)
+					@zork_memory.readv(0).should eql(11111)
+				end
 			end
 
 			describe "loadb" do
