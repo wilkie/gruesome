@@ -20,6 +20,60 @@ describe Gruesome::Z::Processor do
 			after(:each) do
 			end
 
+			# not necessarily a branch (like call)
+			describe "call" do
+				it "should branch to the routine with two local variables given as first operand and store result in destination variable" do
+					# set up a routine at address $2000
+					@zork_memory.writeb(2000, 2)
+					@zork_memory.writew(2001, 0)
+					@zork_memory.writew(2003, 0)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [2000], 128, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(2005)
+				end
+
+				it "should simply set the destination variable to false when routine address is 0" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0], 128, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(128).should eql(0)
+				end
+				
+				it "should create a stack with only the return address when no arguments or local variables are used" do
+					# set up a routine at address $2000 with no locals
+					@zork_memory.writeb(2000, 0)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [2000], 128, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(2001)
+					@zork_memory.readv(0).should eql(12345)
+				end
+	
+				it "should create a stack with only the return address and all arguments copied to locals" do
+					# set up a routine at address $2000 with two locals
+					@zork_memory.writeb(2000, 2)
+					@zork_memory.writew(2001, 345)
+					@zork_memory.writew(2003, 456)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [2000], 128, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(2005)
+					@zork_memory.readv(0).should eql(456)
+					@zork_memory.readv(0).should eql(345)
+					@zork_memory.readv(0).should eql(12345)
+				end
+
+			end
+
 			describe "jg" do
 				it "should branch if the first operand is greater than the second" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JG,
@@ -261,8 +315,35 @@ describe Gruesome::Z::Processor do
 		end
 
 		describe "Store Instruction" do
+			before(:each) do
+				@zork_memory.writev(128, 0)
+			end
+
 			after(:each) do
+				# instructions should not affect PC
 				@zork_memory.program_counter.should eql(12345)
+			end
+
+			describe "art_shift" do
+				it "should shift left when places is positive" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::ART_SHIFT,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [1234, 2], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql(((1234 << 2) & 65535))
+				end
+
+				it "should shift right when places is positive and sign extend" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::ART_SHIFT,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [-123+65536, -2+65536], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql((-123 >> 2) & 65535)
+				end
 			end
 
 			describe "load" do
@@ -314,6 +395,15 @@ describe Gruesome::Z::Processor do
 				@zork_memory.program_counter.should eql(12345)
 			end
 
+			describe "new_line" do
+				it "should print a carriage return" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::NEW_LINE,
+													 [], [], nil, nil, nil, 0)
+					@processor.execute(i)
+					$stdout.string.should eql("\n")
+				end
+			end
+
 			describe "print" do
 				it "should print out the string given as an operand to stdout" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT,
@@ -347,12 +437,26 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
-		end
+			describe "log_shift" do
+				it "should shift left when places is positive" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::LOG_SHIFT,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [-12345+65536, 2], 128, nil, nil, 0)
 
-		describe "Instruction" do
-			after(:each) do
-				# The program counter should not be changed
-				@zork_memory.program_counter.should eql(12345)
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql((((-12345+65536) << 2) & 65535))
+				end
+
+				it "should shift right when places is positive and not sign extend" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::LOG_SHIFT,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [-123+65536, -2+65536], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql(((-123+65536) >> 2))
+				end
 			end
 
 			describe "not" do
@@ -509,6 +613,13 @@ describe Gruesome::Z::Processor do
 
 					@zork_memory.readv(128).should eql(-3+65536)
 				end
+			end
+		end
+
+		describe "Instruction" do
+			after(:each) do
+				# The program counter should not be changed
+				@zork_memory.program_counter.should eql(12345)
 			end
 
 			describe "store" do

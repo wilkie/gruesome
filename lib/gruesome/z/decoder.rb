@@ -118,7 +118,7 @@ module Gruesome
 				end
 
 				# We need the opcode and opcode_class to be combined
-				opcode = (opcode << 2) | opcode_class
+				opcode = (opcode << 3) | opcode_class
 
 				# convert some moved opcodes
 				if (@header.version <= 4)

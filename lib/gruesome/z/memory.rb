@@ -13,13 +13,24 @@ require_relative 'header'
 # Memory is stored in big endian
 
 # Also included as memory space, yet separated from the
-# RAM itself: the stack, program counter, local vars ($01 to $0f)
-# and item at top of stack (variable $00)
+# RAM itself: the stack, program counter, and a routine
+# call stack which holds the stacks of the currently
+# invocated routines
 
 # The stack is weird. Every function call starts with an empty stack
 # and any work left in the stack upon a return is lost. So there are
 # actually many stacks... one stack to hold the stacks in play, and
 # a stack for each active function.
+#
+# The stack holds the return address and the (up to) 15 local variables
+# for the routine as accessed by variables %01 to %0f.
+#
+# Variable %00 is the top of the stack, writing to it pushes, reading
+# from it pulls.
+#
+# Illegal access to variables will halt the machine. Such as illegally
+# accessing local variables that do not exist as the routine header
+# will specify an exact number.
 
 module Gruesome
 	module Z
@@ -27,10 +38,13 @@ module Gruesome
 		# This class holds the memory for the virtual machine
 		class Memory
 			attr_accessor :program_counter
+			attr_reader :num_locals
 
 			def initialize(contents)
+				@call_stack = []
 				@stack = []
 				@memory = contents
+				@num_locals = 0
 
 				# Get the header information
 				@header = Header.new(@memory)
@@ -55,6 +69,36 @@ module Gruesome
 
 				# Check machine endianess
 				@endian = [1].pack('S')[0] == 1 ? 'little' : 'big'
+			end
+
+			# Sets up the environment for a new routine
+			def push_routine(return_addr, num_locals)
+				# pushes the stack onto the call stack
+				@call_stack.push @num_locals
+				@call_stack.push @stack
+
+				# empties the current stack
+				@stack = Array.new()
+
+				# pushes the return address onto the stack
+				@stack.push(return_addr)
+
+				# push locals
+				num_locals.times do
+					@stack.push 0
+				end
+
+				@num_locals = num_locals
+			end
+
+			# Tears down the environment for the current routine
+			def pop_routine()
+				# return the return address
+				return_addr = @stack[0]
+				@stack = @call_stack.pop
+				@num_locals = @call_stack.pop
+
+				return_addr
 			end
 
 			def readb(address)
@@ -155,20 +199,26 @@ module Gruesome
 				elsif index >= 16
 					index -= 16
 					readw(@header.global_var_addr + (index*2))
+				elsif index <= @num_locals
+					@stack[index]
 				else
+					# XXX: Error
 				end
 			end
 
 			# Write value to variable number index
 			def writev(index, value)
-				value %= 65536
+				value &= 65535
 				if index == 0
 					# push to stack
 					@stack.push value
 				elsif index >= 16
 					index -= 16
 					writew(@header.global_var_addr + (index*2), value)
+				elsif index <= @num_locals
+					@stack[index] = value
 				else
+					# XXX: Error
 				end
 			end
 

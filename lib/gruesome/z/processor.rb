@@ -15,6 +15,48 @@ module Gruesome
 
 			def execute(instruction)
 				case instruction.opcode
+				when Opcode::ART_SHIFT
+					places = unsigned_to_signed(instruction.operands[1])
+					if places < 0
+						@memory.writev(instruction.destination, unsigned_to_signed(instruction.operands[0]) >> places.abs)
+					else
+						@memory.writev(instruction.destination, instruction.operands[0] << places)
+					end
+				when Opcode::CALL
+					if instruction.operands[0] == 0
+						# special case, do not call, simply return false
+						@memory.writev(instruction.destination, 0)
+					else
+						return_addr = @memory.program_counter
+						@memory.program_counter = instruction.operands[0]
+
+						# read routine
+						num_locals = @memory.readb(@memory.program_counter)
+						@memory.program_counter += 1
+
+						# create environment
+						@memory.push_routine(return_addr, num_locals)
+
+						if @header.version <= 4
+							# read initial values when version 1-4
+							(1..num_locals).each do |i|
+								@memory.writev(i, @memory.readw(@memory.program_counter))
+								@memory.program_counter += 2
+							end
+						else
+							# reset local vars to 0
+							(1..num_locals).each do |i|
+								@memory.writev(i, 0)
+							end
+						end
+
+						# copy arguments over into locals
+						idx = 1
+						instruction.operands[1..-1].each do |i|
+							@memory.writev(idx, instruction.operands[i])
+							idx += 1
+						end
+					end
 				when Opcode::JUMP
 					@memory.program_counter += unsigned_to_signed(instruction.operands[0])
 					@memory.program_counter -= 2
@@ -52,6 +94,15 @@ module Gruesome
 					@memory.writev(instruction.destination, @memory.readb(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])))
 				when Opcode::LOADW
 					@memory.writev(instruction.destination, @memory.readw(instruction.operands[0] + unsigned_to_signed(instruction.operands[1])*2))
+				when Opcode::LOG_SHIFT
+					places = unsigned_to_signed(instruction.operands[1])
+					if places < 0
+						@memory.writev(instruction.destination, instruction.operands[0] >> places.abs)
+					else
+						@memory.writev(instruction.destination, instruction.operands[0] << places)
+					end
+				when Opcode::NEW_LINE
+					puts
 				when Opcode::PRINT
 					print instruction.operands[0]
 				when Opcode::PRINT_ADDR

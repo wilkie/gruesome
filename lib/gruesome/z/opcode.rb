@@ -6,142 +6,142 @@ module Gruesome
 
 			# 2OP
 			
-			JE				= (0x01 << 2) | OpcodeClass::OP2
-			JL				= (0x02 << 2) | OpcodeClass::OP2
-			JG				= (0x03 << 2) | OpcodeClass::OP2
-			DEC_CHK			= (0x04 << 2) | OpcodeClass::OP2
-			INC_CHK			= (0x05 << 2) | OpcodeClass::OP2
-			JIN				= (0x06 << 2) | OpcodeClass::OP2
-			TEST			= (0x07 << 2) | OpcodeClass::OP2
-			OR				= (0x08 << 2) | OpcodeClass::OP2
-			AND				= (0x09 << 2) | OpcodeClass::OP2
-			TEST_ATTR		= (0x0a << 2) | OpcodeClass::OP2
-			SET_ATTR		= (0x0b << 2) | OpcodeClass::OP2
-			CLEAR_ATTR		= (0x0c << 2) | OpcodeClass::OP2
-			STORE			= (0x0d << 2) | OpcodeClass::OP2
-			INSERT_OBJ		= (0x0e << 2) | OpcodeClass::OP2
-			LOADW			= (0x0f << 2) | OpcodeClass::OP2
-			LOADB			= (0x10 << 2) | OpcodeClass::OP2
-			GET_PROP		= (0x11 << 2) | OpcodeClass::OP2
-			GET_PROP_ADDR	= (0x12 << 2) | OpcodeClass::OP2
-			GET_NEXT_PROP	= (0x13 << 2) | OpcodeClass::OP2
-			ADD				= (0x14 << 2) | OpcodeClass::OP2
-			SUB				= (0x15 << 2) | OpcodeClass::OP2
-			MUL				= (0x16 << 2) | OpcodeClass::OP2
-			DIV				= (0x17 << 2) | OpcodeClass::OP2
-			MOD				= (0x18 << 2) | OpcodeClass::OP2
-			CALL_2S			= (0x19 << 2) | OpcodeClass::OP2
-			CALL_2N			= (0x1a << 2) | OpcodeClass::OP2
-			SET_COLOUR		= (0x1b << 2) | OpcodeClass::OP2
-			THROW			= (0x1c << 2) | OpcodeClass::OP2
+			JE				= (0x01 << 3) | OpcodeClass::OP2
+			JL				= (0x02 << 3) | OpcodeClass::OP2
+			JG				= (0x03 << 3) | OpcodeClass::OP2
+			DEC_CHK			= (0x04 << 3) | OpcodeClass::OP2
+			INC_CHK			= (0x05 << 3) | OpcodeClass::OP2
+			JIN				= (0x06 << 3) | OpcodeClass::OP2
+			TEST			= (0x07 << 3) | OpcodeClass::OP2
+			OR				= (0x08 << 3) | OpcodeClass::OP2
+			AND				= (0x09 << 3) | OpcodeClass::OP2
+			TEST_ATTR		= (0x0a << 3) | OpcodeClass::OP2
+			SET_ATTR		= (0x0b << 3) | OpcodeClass::OP2
+			CLEAR_ATTR		= (0x0c << 3) | OpcodeClass::OP2
+			STORE			= (0x0d << 3) | OpcodeClass::OP2
+			INSERT_OBJ		= (0x0e << 3) | OpcodeClass::OP2
+			LOADW			= (0x0f << 3) | OpcodeClass::OP2
+			LOADB			= (0x10 << 3) | OpcodeClass::OP2
+			GET_PROP		= (0x11 << 3) | OpcodeClass::OP2
+			GET_PROP_ADDR	= (0x12 << 3) | OpcodeClass::OP2
+			GET_NPROP	= (0x13 << 3) | OpcodeClass::OP2
+			ADD				= (0x14 << 3) | OpcodeClass::OP2
+			SUB				= (0x15 << 3) | OpcodeClass::OP2
+			MUL				= (0x16 << 3) | OpcodeClass::OP2
+			DIV				= (0x17 << 3) | OpcodeClass::OP2
+			MOD				= (0x18 << 3) | OpcodeClass::OP2
+			CALL_2S			= (0x19 << 3) | OpcodeClass::OP2
+			CALL_2N			= (0x1a << 3) | OpcodeClass::OP2
+			SET_COLOUR		= (0x1b << 3) | OpcodeClass::OP2
+			THROW			= (0x1c << 3) | OpcodeClass::OP2
 
 			# 1OP
 
-			JZ				= (0x00 << 2) | OpcodeClass::OP1
-			GET_SIBLING		= (0x01 << 2) | OpcodeClass::OP1
-			GET_CHILD		= (0x02 << 2) | OpcodeClass::OP1
-			GET_PARENT		= (0x03 << 2) | OpcodeClass::OP1
-			GET_PROP_LEN	= (0x04 << 2) | OpcodeClass::OP1
-			INC				= (0x05 << 2) | OpcodeClass::OP1
-			DEC				= (0x06 << 2) | OpcodeClass::OP1
-			PRINT_ADDR		= (0x07 << 2) | OpcodeClass::OP1
-			CALL_1S			= (0x08 << 2) | OpcodeClass::OP1
-			REMOVE_OBJ		= (0x09 << 2) | OpcodeClass::OP1
-			PRINT_OBJ		= (0x0a << 2) | OpcodeClass::OP1
-			RET				= (0x0b << 2) | OpcodeClass::OP1
-			JUMP			= (0x0c << 2) | OpcodeClass::OP1
-			PRINT_PADDR		= (0x0d << 2) | OpcodeClass::OP1
-			LOAD			= (0x0e << 2) | OpcodeClass::OP1
-			NOT_2			= (0x0f << 2) | OpcodeClass::OP1 # version 1-4
-			CALL_1N			= (0x0f << 2) | OpcodeClass::OP1 # version 5
+			JZ				= (0x00 << 3) | OpcodeClass::OP1
+			GET_SIBLING		= (0x01 << 3) | OpcodeClass::OP1
+			GET_CHILD		= (0x02 << 3) | OpcodeClass::OP1
+			GET_PARENT		= (0x03 << 3) | OpcodeClass::OP1
+			GET_PROP_LEN	= (0x04 << 3) | OpcodeClass::OP1
+			INC				= (0x05 << 3) | OpcodeClass::OP1
+			DEC				= (0x06 << 3) | OpcodeClass::OP1
+			PRINT_ADDR		= (0x07 << 3) | OpcodeClass::OP1
+			CALL_1S			= (0x08 << 3) | OpcodeClass::OP1
+			REMOVE_OBJ		= (0x09 << 3) | OpcodeClass::OP1
+			PRINT_OBJ		= (0x0a << 3) | OpcodeClass::OP1
+			RET				= (0x0b << 3) | OpcodeClass::OP1
+			JUMP			= (0x0c << 3) | OpcodeClass::OP1
+			PRINT_PADDR		= (0x0d << 3) | OpcodeClass::OP1
+			LOAD			= (0x0e << 3) | OpcodeClass::OP1
+			NOT_2			= (0x0f << 3) | OpcodeClass::OP1 # version 1-4
+			CALL_1N			= (0x0f << 3) | OpcodeClass::OP1 # version 5
 
 			# 0OP
 			
-			RTRUE			= (0x00 << 2) | OpcodeClass::OP0
-			RFALSE			= (0x01 << 2) | OpcodeClass::OP0
-			PRINT			= (0x02 << 2) | OpcodeClass::OP0
-			PRINT_RET		= (0x03 << 2) | OpcodeClass::OP0
-			NOP				= (0x04 << 2) | OpcodeClass::OP0
-			SAVE			= (0x05 << 2) | OpcodeClass::OP0
-			RESTORE			= (0x06 << 2) | OpcodeClass::OP0
-			RESTART			= (0x07 << 2) | OpcodeClass::OP0
-			RET_POPPED		= (0x08 << 2) | OpcodeClass::OP0
-			POP				= (0x09 << 2) | OpcodeClass::OP0 # version 1
-			CATCH			= (0x09 << 2) | OpcodeClass::OP0 # version 5/6
-			QUIT			= (0x0a << 2) | OpcodeClass::OP0
-			NEW_LINE		= (0x0b << 2) | OpcodeClass::OP0
-			SHOW_STATUS		= (0x0c << 2) | OpcodeClass::OP0 # version 3
-			VERIFY			= (0x0d << 2) | OpcodeClass::OP0 # version 3
-			EXTENDED		= (0x0e << 2) | OpcodeClass::OP0
-			PIRACY			= (0x0f << 2) | OpcodeClass::OP0 # version 5/-
+			RTRUE			= (0x00 << 3) | OpcodeClass::OP0
+			RFALSE			= (0x01 << 3) | OpcodeClass::OP0
+			PRINT			= (0x02 << 3) | OpcodeClass::OP0
+			PRINT_RET		= (0x03 << 3) | OpcodeClass::OP0
+			NOP				= (0x04 << 3) | OpcodeClass::OP0
+			SAVE			= (0x05 << 3) | OpcodeClass::OP0
+			RESTORE			= (0x06 << 3) | OpcodeClass::OP0
+			RESTART			= (0x07 << 3) | OpcodeClass::OP0
+			RET_POPPED		= (0x08 << 3) | OpcodeClass::OP0
+			POP				= (0x09 << 3) | OpcodeClass::OP0 # version 1
+			CATCH			= (0x09 << 3) | OpcodeClass::OP0 # version 5/6
+			QUIT			= (0x0a << 3) | OpcodeClass::OP0
+			NEW_LINE		= (0x0b << 3) | OpcodeClass::OP0
+			SHOW_STATUS		= (0x0c << 3) | OpcodeClass::OP0 # version 3
+			VERIFY			= (0x0d << 3) | OpcodeClass::OP0 # version 3
+			EXTENDED		= (0x0e << 3) | OpcodeClass::OP0
+			PIRACY			= (0x0f << 3) | OpcodeClass::OP0 # version 5/-
 
 			# VAR
 
-			CALL			= (0x00 << 2) | OpcodeClass::VAR # version 1
-			CALL_VS			= (0x00 << 2) | OpcodeClass::VAR # version 4
-			STOREW			= (0x01 << 2) | OpcodeClass::VAR
-			STOREB			= (0x02 << 2) | OpcodeClass::VAR
-			PUT_PROP		= (0x03 << 2) | OpcodeClass::VAR
-			SREAD			= (0x04 << 2) | OpcodeClass::VAR # version 1 (4 changes semantics)
-			AREAD			= (0x04 << 2) | OpcodeClass::VAR # version 5
-			PRINT_CHAR		= (0x05 << 2) | OpcodeClass::VAR
-			PRINT_NUM		= (0x06 << 2) | OpcodeClass::VAR
-			RANDOM			= (0x07 << 2) | OpcodeClass::VAR
-			PUSH			= (0x08 << 2) | OpcodeClass::VAR
-			PULL			= (0x09 << 2) | OpcodeClass::VAR
-			SPLIT_WINDOW	= (0x0a << 2) | OpcodeClass::VAR
-			SET_WINDOW		= (0x0b << 2) | OpcodeClass::VAR
-			CALL_VS2		= (0x0c << 2) | OpcodeClass::VAR
-			ERASE_WINDOW	= (0x0d << 2) | OpcodeClass::VAR
-			ERASE_LINE		= (0x0e << 2) | OpcodeClass::VAR
-			SET_CURSOR		= (0x0f << 2) | OpcodeClass::VAR
-			GET_CURSOR		= (0x10 << 2) | OpcodeClass::VAR
-			SET_TEXT_STYLE	= (0x11 << 2) | OpcodeClass::VAR
-			BUFFER_MODE		= (0x12 << 2) | OpcodeClass::VAR
-			OUTPUT_STREAM	= (0x13 << 2) | OpcodeClass::VAR
-			INPUT_STREAM	= (0x14 << 2) | OpcodeClass::VAR
-			SOUND_EFFECT	= (0x15 << 2) | OpcodeClass::VAR
-			READ_CHAR		= (0x16 << 2) | OpcodeClass::VAR
-			SCAN_TABLE		= (0x17 << 2) | OpcodeClass::VAR
-			NOT				= (0x18 << 2) | OpcodeClass::VAR # version 5/6
-			CALL_VN			= (0x19 << 2) | OpcodeClass::VAR
-			CALL_VN2		= (0x1a << 2) | OpcodeClass::VAR
-			TOKENIZE		= (0x1b << 2) | OpcodeClass::VAR
-			ENCODE_TEXT		= (0x1c << 2) | OpcodeClass::VAR
-			COPY_TABLE		= (0x1d << 2) | OpcodeClass::VAR
-			PRINT_TABLE		= (0x1e << 2) | OpcodeClass::VAR
-			CHECK_ARG_COUNT	= (0x1f << 2) | OpcodeClass::VAR
+			CALL			= (0x00 << 3) | OpcodeClass::VAR # version 1
+			CALL_VS			= (0x00 << 3) | OpcodeClass::VAR # version 4
+			STOREW			= (0x01 << 3) | OpcodeClass::VAR
+			STOREB			= (0x02 << 3) | OpcodeClass::VAR
+			PUT_PROP		= (0x03 << 3) | OpcodeClass::VAR
+			SREAD			= (0x04 << 3) | OpcodeClass::VAR # version 1 (4 changes semantics)
+			AREAD			= (0x04 << 3) | OpcodeClass::VAR # version 5
+			PRINT_CHAR		= (0x05 << 3) | OpcodeClass::VAR
+			PRINT_NUM		= (0x06 << 3) | OpcodeClass::VAR
+			RANDOM			= (0x07 << 3) | OpcodeClass::VAR
+			PUSH			= (0x08 << 3) | OpcodeClass::VAR
+			PULL			= (0x09 << 3) | OpcodeClass::VAR
+			SPLIT_WINDOW	= (0x0a << 3) | OpcodeClass::VAR
+			SET_WINDOW		= (0x0b << 3) | OpcodeClass::VAR
+			CALL_VS2		= (0x0c << 3) | OpcodeClass::VAR
+			ERASE_WINDOW	= (0x0d << 3) | OpcodeClass::VAR
+			ERASE_LINE		= (0x0e << 3) | OpcodeClass::VAR
+			SET_CURSOR		= (0x0f << 3) | OpcodeClass::VAR
+			GET_CURSOR		= (0x10 << 3) | OpcodeClass::VAR
+			SET_TSTYLE		= (0x11 << 3) | OpcodeClass::VAR
+			BUFFER_MODE		= (0x12 << 3) | OpcodeClass::VAR
+			OUTPUT_STREAM	= (0x13 << 3) | OpcodeClass::VAR
+			INPUT_STREAM	= (0x14 << 3) | OpcodeClass::VAR
+			SOUND_EFFECT	= (0x15 << 3) | OpcodeClass::VAR
+			READ_CHAR		= (0x16 << 3) | OpcodeClass::VAR
+			SCAN_TABLE		= (0x17 << 3) | OpcodeClass::VAR
+			NOT				= (0x18 << 3) | OpcodeClass::VAR # version 5/6
+			CALL_VN			= (0x19 << 3) | OpcodeClass::VAR
+			CALL_VN2		= (0x1a << 3) | OpcodeClass::VAR
+			TOKENIZE		= (0x1b << 3) | OpcodeClass::VAR
+			ENCODE_TEXT		= (0x1c << 3) | OpcodeClass::VAR
+			COPY_TABLE		= (0x1d << 3) | OpcodeClass::VAR
+			PRINT_TABLE		= (0x1e << 3) | OpcodeClass::VAR
+			CHECK_ARG_COUNT	= (0x1f << 3) | OpcodeClass::VAR
 
-			EXT_SAVE		= (0x00 << 2) | OpcodeClass::EXT
-			EXT_RESTORE		= (0x01 << 2) | OpcodeClass::EXT
-			EXT_LOG_SHIFT	= (0x02 << 2) | OpcodeClass::EXT
-			EXT_ART_SHIFT	= (0x03 << 2) | OpcodeClass::EXT
-			EXT_SET_FONT	= (0x04 << 2) | OpcodeClass::EXT
-			EXT_DRAW_PICTURE = (0x05 << 2) | OpcodeClass::EXT
-			EXT_PICTURE_DATA = (0x06 << 2) | OpcodeClass::EXT
-			EXT_ERASE_PICTURE = (0x07 << 2) | OpcodeClass::EXT
-			EXT_SET_MARGINS	= (0x08 << 2) | OpcodeClass::EXT
-			EXT_SAVE_UNDO	= (0x09 << 2) | OpcodeClass::EXT
-			EXT_RESTORE_UNDO = (0x0a << 2) | OpcodeClass::EXT
-			EXT_PRINT_UNICODE = (0x0b << 2) | OpcodeClass::EXT
-			EXT_CHECK_UNICODE = (0x0c << 2) | OpcodeClass::EXT
-			EXT_MOVE_WINDOW = (0x10 << 2) | OpcodeClass::EXT
-			EXT_WINDOW_SIZE = (0x11 << 2) | OpcodeClass::EXT
-			EXT_WINDOW_STYLE = (0x12 << 2) | OpcodeClass::EXT
-			EXT_GET_WIND_PROP = (0x13 << 2) | OpcodeClass::EXT
-			EXT_SCROLL_WINDOW = (0x14 << 2) | OpcodeClass::EXT
-			EXT_POP_STACK = (0x15 << 2) | OpcodeClass::EXT
-			EXT_READ_MOUSE = (0x16 << 2) | OpcodeClass::EXT
-			EXT_MOUSE_WINDOW = (0x17 << 2) | OpcodeClass::EXT
-			EXT_PUSH_STACK = (0x18 << 2) | OpcodeClass::EXT
-			EXT_PUT_WIND_PROP = (0x19 << 2) | OpcodeClass::EXT
-			EXT_PRINT_FORM	= (0x1a << 2) | OpcodeClass::EXT
-			EXT_MAKE_MENU	= (0x1b << 2) | OpcodeClass::EXT
-			EXT_PICTURE_TABLE = (0x1c << 2) | OpcodeClass::EXT
+			SAVE_EXT		= (0x00 << 3) | OpcodeClass::EXT
+			RESTORE_EXT		= (0x01 << 3) | OpcodeClass::EXT
+			LOG_SHIFT		= (0x02 << 3) | OpcodeClass::EXT
+			ART_SHIFT		= (0x03 << 3) | OpcodeClass::EXT
+			SET_FONT		= (0x04 << 3) | OpcodeClass::EXT
+			DRAW_PICTURE 	= (0x05 << 3) | OpcodeClass::EXT
+			PICTURE_DATA 	= (0x06 << 3) | OpcodeClass::EXT
+			ERASE_PICTURE 	= (0x07 << 3) | OpcodeClass::EXT
+			SET_MARGINS		= (0x08 << 3) | OpcodeClass::EXT
+			SAVE_UNDO		= (0x09 << 3) | OpcodeClass::EXT
+			RESTORE_UNDO 	= (0x0a << 3) | OpcodeClass::EXT
+			PRINT_UNICODE 	= (0x0b << 3) | OpcodeClass::EXT
+			CHECK_UNICODE 	= (0x0c << 3) | OpcodeClass::EXT
+			MOVE_WINDOW 	= (0x10 << 3) | OpcodeClass::EXT
+			WINDOW_SIZE 	= (0x11 << 3) | OpcodeClass::EXT
+			WINDOW_STYLE 	= (0x12 << 3) | OpcodeClass::EXT
+			GET_WIND_PROP 	= (0x13 << 3) | OpcodeClass::EXT
+			SCROLL_WINDOW 	= (0x14 << 3) | OpcodeClass::EXT
+			POP_STACK 		= (0x15 << 3) | OpcodeClass::EXT
+			READ_MOUSE 		= (0x16 << 3) | OpcodeClass::EXT
+			MOUSE_WINDOW 	= (0x17 << 3) | OpcodeClass::EXT
+			PUSH_STACK 		= (0x18 << 3) | OpcodeClass::EXT
+			PUT_WIND_PROP 	= (0x19 << 3) | OpcodeClass::EXT
+			PRINT_FORM		= (0x1a << 3) | OpcodeClass::EXT
+			MAKE_MENU		= (0x1b << 3) | OpcodeClass::EXT
+			PICTURE_TABLE 	= (0x1c << 3) | OpcodeClass::EXT
 		end
 
 		def Opcode.has_string?(opcode, version)
-			opcode_class = opcode & 3
+			opcode_class = opcode & 7
 
 			result = false
 			if opcode_class == OpcodeClass::OP0
@@ -155,13 +155,13 @@ module Gruesome
 		end
 
 		def Opcode.is_store?(opcode, version)
-			opcode_class = opcode & 3
+			opcode_class = opcode & 7
 
 			result = false
 			if opcode_class == OpcodeClass::OP2
 				case opcode
 				when Opcode::OR, Opcode::AND, Opcode::LOADB, Opcode::LOADW,
-					Opcode::GET_PROP, Opcode::GET_PROP_ADDR, Opcode::GET_NEXT_PROP,
+					Opcode::GET_PROP, Opcode::GET_PROP_ADDR, Opcode::GET_NPROP,
 					Opcode::ADD, Opcode::SUB, Opcode::MUL, Opcode::DIV, Opcode::MOD,
 					Opcode::CALL_2S
 					result = true
@@ -202,7 +202,7 @@ module Gruesome
 		end
 
 		def Opcode.is_valid?(opcode, version)
-			opcode_class = opcode & 3
+			opcode_class = opcode & 7
 
 			result = true
 			if opcode_class == OpcodeClass::OP0
@@ -254,7 +254,7 @@ module Gruesome
 					result = false if version < 4
 				when Opcode::GET_CURSOR
 					result = false if version < 4
-				when Opcode::SET_TEXT_STYLE
+				when Opcode::SET_TSTYLE
 					result = false if version < 4
 				when Opcode::BUFFER_MODE
 					result = false if version < 4
@@ -289,9 +289,9 @@ module Gruesome
 				result = false if version < 5
 
 				case opcode
-				when Opcode::EXT_SAVE_TABLE, EXT_RESTORE_TABLE, EXT_LOG_SHIFT,
-						EXT_ART_SHIFT, EXT_SET_FONT, EXT_SAVE_UNDO, EXT_RESTORE_UNDO,
-						EXT_PRINT_UNICODE, EXT_CHECK_UNICODE
+				when Opcode::SAVE_TABLE, EXT_RESTORE_TABLE, EXT_LOG_SHIFT,
+						ART_SHIFT, EXT_SET_FONT, EXT_SAVE_UNDO, EXT_RESTORE_UNDO,
+						PRINT_UNICODE, EXT_CHECK_UNICODE
 				else
 					result = false if version < 6
 				end
@@ -300,7 +300,7 @@ module Gruesome
 		end
 
 		def Opcode.is_branch?(opcode, version)
-			opcode_class = opcode & 3
+			opcode_class = opcode & 7
 			if not is_valid?(opcode, version)
 				return false
 			end
@@ -338,7 +338,7 @@ module Gruesome
 				end
 			elsif opcode_class == OpcodeClass::EXT
 				case opcode
-				when Opcode::EXT_PICTURE_DATA, 
+				when Opcode::PICTURE_DATA, 
 						Opcode::PUSH_STACK, Opcode::MAKE_MENU
 					result = true
 				end
@@ -348,7 +348,7 @@ module Gruesome
 		end
 
 		def Opcode.name(opcode, version)
-			opcode_class = opcode & 3
+			opcode_class = opcode & 7
 			if not is_valid?(opcode, version)
 				"invalid"
 			elsif opcode_class == OpcodeClass::OP0
@@ -418,7 +418,7 @@ module Gruesome
 				when Opcode::LOADB then "loadb"
 				when Opcode::GET_PROP then "get_prop"
 				when Opcode::GET_PROP_ADDR then "get_prop_addr"
-				when Opcode::GET_NEXT_PROP then "get_next_prop"
+				when Opcode::GET_NPROP then "get_next_prop"
 				when Opcode::ADD then "add"
 				when Opcode::SUB then "sub"
 				when Opcode::MUL then "mul"
@@ -458,7 +458,7 @@ module Gruesome
 				when Opcode::ERASE_LINE then "erase_line"
 				when Opcode::SET_CURSOR then "set_cursor"
 				when Opcode::GET_CURSOR then "get_cursor"
-				when Opcode::SET_TEXT_STYLE then "set_text_style"
+				when Opcode::SET_TSTYLE then "set_text_style"
 				when Opcode::BUFFER_MODE then "buffer_mode"
 				when Opcode::OUTPUT_STREAM then "output_stream"
 				when Opcode::INPUT_STREAM then "input_stream"
@@ -476,32 +476,32 @@ module Gruesome
 				end
 			elsif opcode_class == OpcodeClass::EXT
 				case opcode
-				when Opcode::EXT_SAVE_TABLE then "save_table"
-				when Opcode::EXT_RESTORE_TABLE then "restore_table"
-				when Opcode::EXT_LOG_SHIFT then "log_shift"
-				when Opcode::EXT_ART_SHIFT then "art_shift"
-				when Opcode::EXT_SET_FONT then "set_font"
-				when Opcode::EXT_DRAW_PICTURE then "draw_picture"
-				when Opcode::EXT_PICTURE_DATA then "picture_data"
-				when Opcode::EXT_ERASE_PICTURE then "erase_picture"
-				when Opcode::EXT_SET_MARGINS then "set_margins"
-				when Opcode::EXT_SAVE_UNDO then "save_undo"
-				when Opcode::EXT_RESTORE_UNDO then "restore_undo"
-				when Opcode::EXT_PRINT_UNICODE then "print_unicode"
-				when Opcode::EXT_CHECK_UNICODE then "check_unicode"
-				when Opcode::EXT_MOVE_WINDOW then "move_window"
-				when Opcode::EXT_WINDOW_SIZE then "window_size"
-				when Opcode::EXT_WINDOW_STYLE then "window_style"
-				when Opcode::EXT_GET_WIND_PROP then "get_wind_prop"
-				when Opcode::EXT_SCROLL_WINDOW then "scroll_window"
-				when Opcode::EXT_POP_STACK then "pop_stack"
-				when Opcode::EXT_READ_MOUSE then "read_mouse"
-				when Opcode::EXT_MOUSE_WINDOW then "mouse_window"
-				when Opcode::EXT_PUSH_STACK then "push_stack"
-				when Opcode::EXT_PUT_WIND_PROP then "put_wind_prop"
-				when Opcode::EXT_PRINT_FORM then "print_form"
-				when Opcode::EXT_MAKE_MENU then "make_menu"
-				when Opcode::EXT_PICTURE_TABLE then "picture_table"
+				when Opcode::SAVE_TABLE then "save_table"
+				when Opcode::RESTORE_TABLE then "restore_table"
+				when Opcode::LOG_SHIFT then "log_shift"
+				when Opcode::ART_SHIFT then "art_shift"
+				when Opcode::SET_FONT then "set_font"
+				when Opcode::DRAW_PICTURE then "draw_picture"
+				when Opcode::PICTURE_DATA then "picture_data"
+				when Opcode::ERASE_PICTURE then "erase_picture"
+				when Opcode::SET_MARGINS then "set_margins"
+				when Opcode::SAVE_UNDO then "save_undo"
+				when Opcode::RESTORE_UNDO then "restore_undo"
+				when Opcode::PRINT_UNICODE then "print_unicode"
+				when Opcode::CHECK_UNICODE then "check_unicode"
+				when Opcode::MOVE_WINDOW then "move_window"
+				when Opcode::WINDOW_SIZE then "window_size"
+				when Opcode::WINDOW_STYLE then "window_style"
+				when Opcode::GET_WIND_PROP then "get_wind_prop"
+				when Opcode::SCROLL_WINDOW then "scroll_window"
+				when Opcode::POP_STACK then "pop_stack"
+				when Opcode::READ_MOUSE then "read_mouse"
+				when Opcode::MOUSE_WINDOW then "mouse_window"
+				when Opcode::PUSH_STACK then "push_stack"
+				when Opcode::PUT_WIND_PROP then "put_wind_prop"
+				when Opcode::PRINT_FORM then "print_form"
+				when Opcode::MAKE_MENU then "make_menu"
+				when Opcode::PICTURE_TABLE then "picture_table"
 				end
 			end
 		end

@@ -25,7 +25,6 @@ module Gruesome
 
 			def to_s(version)
 				line = Opcode.name(@opcode, version)
-
 				idx = -1
 				line = line + @operands.inject("") do |result, element|
 					idx += 1
