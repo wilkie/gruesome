@@ -921,85 +921,130 @@ describe Gruesome::Z::Processor do
 		end
 
 		describe "Object" do
-			describe "Instruction" do
-				before(:each) do
-					# Build object table
-					@zork_memory.force_writew(0x0a, 0x200)
+			before(:each) do
+				# Build object table
+				@zork_memory.force_writew(0x0a, 0x200)
 
-					# Build property defaults (for versions 1-3)
-					32.times do |i|
-						@zork_memory.force_writew(0x200 + (i*2), 0)
-					end
-					addr = 0x200 + (32 * 2)
-
-					# Build a couple of objects
-
-					# Object #1
-
-					# Attributes: 2, 3, 10, 31
-					# Parent: nil
-					# Sibling: nil
-					# Child: #2
-
-					@zork_memory.force_writeb(addr+0, 0b00110000)
-					@zork_memory.force_writeb(addr+1, 0b00100000)
-					@zork_memory.force_writeb(addr+2, 0b00000000)
-					@zork_memory.force_writeb(addr+3, 0b00000001)
-
-					@zork_memory.force_writeb(addr+4, 0)
-					@zork_memory.force_writeb(addr+5, 0)
-					@zork_memory.force_writeb(addr+6, 2)
-
-					@zork_memory.force_writew(addr+7, 0)
-
-					addr += 9
-
-					# Object #2
-
-					# Attributes: 5, 7, 11, 18, 25
-					# Parent: #1
-					# Sibling: #3
-					# Child: nil
-
-					@zork_memory.force_writeb(addr+0, 0b00000101)
-					@zork_memory.force_writeb(addr+1, 0b00010000)
-					@zork_memory.force_writeb(addr+2, 0b00100000)
-					@zork_memory.force_writeb(addr+3, 0b01000001)
-
-					@zork_memory.force_writeb(addr+4, 1)
-					@zork_memory.force_writeb(addr+5, 3)
-					@zork_memory.force_writeb(addr+6, 0)
-
-					@zork_memory.force_writew(addr+7, 0)
-
-					addr += 9
-
-					# Object #3
-
-					# Attributes: 0
-					# Parent: #1
-					# Sibling: #2
-					# Child: nil
-
-					@zork_memory.force_writeb(addr+0, 0b10000000)
-					@zork_memory.force_writeb(addr+1, 0b00000000)
-					@zork_memory.force_writeb(addr+2, 0b00000000)
-					@zork_memory.force_writeb(addr+3, 0b00000000)
-
-					@zork_memory.force_writeb(addr+4, 1)
-					@zork_memory.force_writeb(addr+5, 2)
-					@zork_memory.force_writeb(addr+6, 0)
-
-					@zork_memory.force_writew(addr+7, 0)
-
-					addr += 9
-
-					@object_table = Gruesome::Z::ObjectTable.new(@zork_memory)
-
-					# need to reinstantiate the processor
-					@processor = Gruesome::Z::Processor.new(@zork_memory)
+				# Build property defaults (for versions 1-3)
+				32.times do |i|
+					@zork_memory.force_writew(0x200 + (i*2), 0)
 				end
+				addr = 0x200 + (32 * 2)
 
+				# Build a couple of objects
+
+				# Object #1
+
+				# Attributes: 2, 3, 10, 31
+				# Parent: nil
+				# Sibling: nil
+				# Child: #2
+
+				@zork_memory.force_writeb(addr+0, 0b00110000)
+				@zork_memory.force_writeb(addr+1, 0b00100000)
+				@zork_memory.force_writeb(addr+2, 0b00000000)
+				@zork_memory.force_writeb(addr+3, 0b00000001)
+
+				@zork_memory.force_writeb(addr+4, 0)
+				@zork_memory.force_writeb(addr+5, 0)
+				@zork_memory.force_writeb(addr+6, 2)
+
+				@zork_memory.force_writew(addr+7, 0)
+
+				addr += 9
+
+				# Object #2
+
+				# Attributes: 5, 7, 11, 18, 25
+				# Parent: #1
+				# Sibling: #3
+				# Child: nil
+
+				@zork_memory.force_writeb(addr+0, 0b00000101)
+				@zork_memory.force_writeb(addr+1, 0b00010000)
+				@zork_memory.force_writeb(addr+2, 0b00100000)
+				@zork_memory.force_writeb(addr+3, 0b01000001)
+
+				@zork_memory.force_writeb(addr+4, 1)
+				@zork_memory.force_writeb(addr+5, 3)
+				@zork_memory.force_writeb(addr+6, 0)
+
+				@zork_memory.force_writew(addr+7, 0)
+
+				addr += 9
+
+				# Object #3
+
+				# Attributes: 0
+				# Parent: #1
+				# Sibling: #2
+				# Child: nil
+
+				@zork_memory.force_writeb(addr+0, 0b10000000)
+				@zork_memory.force_writeb(addr+1, 0b00000000)
+				@zork_memory.force_writeb(addr+2, 0b00000000)
+				@zork_memory.force_writeb(addr+3, 0b00000000)
+
+				@zork_memory.force_writeb(addr+4, 1)
+				@zork_memory.force_writeb(addr+5, 2)
+				@zork_memory.force_writeb(addr+6, 0)
+
+				@zork_memory.force_writew(addr+7, 0)
+
+				addr += 9
+
+				@object_table = Gruesome::Z::ObjectTable.new(@zork_memory)
+
+				# need to reinstantiate the processor
+				@processor = Gruesome::Z::Processor.new(@zork_memory)
+			end
+
+			describe "Branch Instruction" do
+				describe "test_attr" do
+					it "should branch if the object has the attribute set" do
+						@object_table.object_has_attribute?(1, 10).should eql(true)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1, 10], nil, 2000, true, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345+2000-2)
+					end
+
+					it "should not branch if the object does not have the attribute set" do
+						@object_table.object_has_attribute?(1, 11).should eql(false)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1, 11], nil, 2000, true, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+					it "should not branch if the first operand has all bits set that the second has set and condition is negated" do
+						@object_table.object_has_attribute?(1, 10).should eql(true)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1, 10], nil, 2000, false, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+					it "should branch if the first operand does not have all bits set that the second has set and condition is negated" do
+						@object_table.object_has_attribute?(1, 11).should eql(false)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1, 11], nil, 2000, false, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345+2000-2)
+					end
+
+				end
+			end
+
+			describe "Instruction" do
 				after(:each) do
 					# The program counter should not be changed
 					@zork_memory.program_counter.should eql(12345)

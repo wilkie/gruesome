@@ -178,6 +178,12 @@ module Gruesome
 						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
+				when Opcode::TEST_ATTR
+					result = @object_table.object_has_attribute?(operands[0], operands[1])
+					if (result == instruction.branch_on)
+						@memory.program_counter += instruction.branch_to
+						@memory.program_counter -= 2
+					end
 				when Opcode::ADD
 					@memory.writev(instruction.destination,
 						unsigned_to_signed(operands[0]) + unsigned_to_signed(operands[1]))
