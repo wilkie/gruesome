@@ -263,7 +263,7 @@ module Gruesome
 						branch_offset = branch_offset << 8
 						branch_offset = branch_offset | @memory.force_readb(pc)
 						if (negative)
-							branch_offset = -(16384 - op)
+							branch_offset = -(16384 - branch_offset)
 						end
 						pc = pc + 1
 					else # otherwise, the offset is simply the remaining 6 bits _unsigned_
