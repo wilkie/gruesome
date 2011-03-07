@@ -24,15 +24,16 @@ describe Gruesome::Z::Processor do
 			describe "call" do
 				it "should branch to the routine with two local variables given as first operand and store result in destination variable" do
 					# set up a routine at address $2000
-					@zork_memory.writeb(2000, 2)
-					@zork_memory.writew(2001, 0)
-					@zork_memory.writew(2003, 0)
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
 
+					# The packed address is 0x2000 / 2
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
 													 [Gruesome::Z::OperandType::LARGE],
-													 [2000], 128, nil, nil, 0)
+													 [0x1000], 128, nil, nil, 0)
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(2005)
+					@zork_memory.program_counter.should eql(0x2005)
 				end
 
 				it "should simply set the destination variable to false when routine address is 0" do
@@ -42,31 +43,35 @@ describe Gruesome::Z::Processor do
 													 [0], 128, nil, nil, 0)
 					@processor.execute(i)
 					@zork_memory.readv(128).should eql(0)
+					@zork_memory.program_counter.should eql(12345)
 				end
 				
 				it "should create a stack with only the return address when no arguments or local variables are used" do
 					# set up a routine at address $2000 with no locals
-					@zork_memory.writeb(2000, 0)
+					@zork_memory.force_writeb(0x2000, 0)
 
+					# The packed address is 0x2000 / 2
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
 													 [Gruesome::Z::OperandType::LARGE],
-													 [2000], 128, nil, nil, 0)
+													 [0x1000], 128, nil, nil, 0)
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(2001)
+					@zork_memory.program_counter.should eql(0x2001)
 					@zork_memory.readv(0).should eql(12345)
 				end
 	
 				it "should create a stack with only the return address and all arguments copied to locals" do
 					# set up a routine at address $2000 with two locals
-					@zork_memory.writeb(2000, 2)
-					@zork_memory.writew(2001, 345)
-					@zork_memory.writew(2003, 456)
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 345)
+					@zork_memory.force_writew(0x2003, 456)
 
+					# The packed address is 0x2000 / 2
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
 													 [Gruesome::Z::OperandType::LARGE],
-													 [2000], 128, nil, nil, 0)
+													 [0x1000], 128, nil, nil, 0)
+
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(2005)
+					@zork_memory.program_counter.should eql(0x2005)
 					@zork_memory.readv(0).should eql(456)
 					@zork_memory.readv(0).should eql(345)
 					@zork_memory.readv(0).should eql(12345)

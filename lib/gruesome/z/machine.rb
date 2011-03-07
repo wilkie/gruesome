@@ -28,18 +28,13 @@ module Gruesome
 				@decoder = Decoder.new(@memory)
 				@processor = Processor.new(@memory)
 
-#				@memory.program_counter = 10809
-#				num_locals = @memory.force_readb(@memory.program_counter)
-#				@memory.program_counter += 1
-#				@memory.program_counter += num_locals * 2
-
 				100.times do
 					i = @decoder.fetch
 					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
 					@processor.execute(i)
 
-					if i.opcode == Opcode::RET or i.opcode == Opcode::QUIT or i.opcode == Opcode::JUMP
+					if i.opcode == Opcode::QUIT
 						break
 					end
 				end
@@ -47,6 +42,8 @@ module Gruesome
 				i = @decoder.fetch
 				puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 				@memory.program_counter += i.length
+
+				puts "Done."
 			end
 		end
 	end

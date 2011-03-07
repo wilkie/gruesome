@@ -24,7 +24,7 @@ module Gruesome
 			LOADB			= (0x10 << 3) | OpcodeClass::OP2
 			GET_PROP		= (0x11 << 3) | OpcodeClass::OP2
 			GET_PROP_ADDR	= (0x12 << 3) | OpcodeClass::OP2
-			GET_NPROP	= (0x13 << 3) | OpcodeClass::OP2
+			GET_NPROP		= (0x13 << 3) | OpcodeClass::OP2
 			ADD				= (0x14 << 3) | OpcodeClass::OP2
 			SUB				= (0x15 << 3) | OpcodeClass::OP2
 			MUL				= (0x16 << 3) | OpcodeClass::OP2
@@ -235,7 +235,7 @@ module Gruesome
 					result = false if version < 5
 				end
 
-				if (opcode >> 2) > 0x1c or (opcode >> 2) == 0x00
+				if (opcode >> 3) > 0x1c or (opcode >> 3) == 0x00
 					result = false
 				end
 			elsif opcode_class == OpcodeClass::VAR

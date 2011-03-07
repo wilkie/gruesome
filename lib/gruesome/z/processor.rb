@@ -13,6 +13,9 @@ module Gruesome
 				@header = Header.new(@memory.contents)
 			end
 
+			def routine_return(result)
+			end
+
 			def execute(instruction)
 				case instruction.opcode
 				when Opcode::ART_SHIFT
@@ -28,11 +31,14 @@ module Gruesome
 						@memory.writev(instruction.destination, 0)
 					else
 						return_addr = @memory.program_counter
-						@memory.program_counter = instruction.operands[0]
+						routine_addr = @memory.packed_address_to_byte_address(instruction.operands[0])
+						@memory.program_counter = routine_addr
 
 						# read routine
-						num_locals = @memory.readb(@memory.program_counter)
+						num_locals = @memory.force_readb(@memory.program_counter)
 						@memory.program_counter += 1
+
+						puts "routine called at $" + sprintf("%04x", routine_addr) + " with " + num_locals.to_s + " locals"
 
 						# create environment
 						@memory.push_routine(return_addr, num_locals)

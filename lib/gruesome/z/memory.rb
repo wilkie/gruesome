@@ -91,6 +91,13 @@ module Gruesome
 				@num_locals = num_locals
 			end
 
+			def packed_address_to_byte_address(address)
+				if @header.version <=3
+					address * 2
+				else
+				end
+			end
+
 			# Tears down the environment for the current routine
 			def pop_routine()
 				# return the return address
