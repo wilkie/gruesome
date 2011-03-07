@@ -23,6 +23,16 @@ module Gruesome
 				memory_size = [0x10000, file.size].min
 				@memory = Memory.new(file.read(memory_size))
 
+				# Set flags
+				flags = @memory.force_readb(0x01)
+				flags &= ~(0b1110000)
+				@memory.force_writeb(0x01, flags)
+
+				# Set flags 2
+				flags = @memory.force_readb(0x10)
+				flags &= ~(0b11111100)
+				@memory.force_writeb(0x10, flags)
+
 				# II. Read header (at address 0x0000) and associated tables
 				@header = Header.new(@memory.contents)
 				@object_table = ObjectTable.new(@memory)
