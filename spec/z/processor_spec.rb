@@ -79,6 +79,7 @@ describe Gruesome::Z::Processor do
 
 			end
 
+			# not necessarily a branch
 			describe "ret" do
 				it "should return to the routine that called it" do
 					# set up a routine at address $2000
@@ -147,6 +148,7 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			# not necessarily a branch
 			describe "rfalse" do
 				it "should set the variable indicated by the call with 0" do
 					# set up a routine at address $2000
@@ -191,6 +193,7 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			# not necessarily a branch
 			describe "rtrue" do
 				it "should set the variable indicated by the call with 1" do
 					# set up a routine at address $2000
