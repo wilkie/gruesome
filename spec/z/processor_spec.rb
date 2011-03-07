@@ -514,6 +514,44 @@ describe Gruesome::Z::Processor do
 					@zork_memory.program_counter.should eql(0)
 				end
 			end
+
+			describe "test" do
+				it "should branch if the first operand has all bits set that the second has set" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [0b1000110110111101, 0b1000100010001000], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+
+				it "should not branch if the first operand does not have all bits set that the second has set" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [0b1000110110111101, 0b1111100010001000], nil, 2000, true, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should not branch if the first operand has all bits set that the second has set and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [0b1000110110111101, 0b1000100010001000], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should branch if the first operand does not have all bits set that the second has set and condition is negated" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+													 [0b1000110110111101, 0b1111100010001000], nil, 2000, false, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345+2000-2)
+				end
+			end
 		end
 
 		describe "Store Instruction" do
