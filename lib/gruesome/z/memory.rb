@@ -115,6 +115,7 @@ module Gruesome
 					force_readb(address)
 				else
 					# XXX: Access violation
+					puts "Error: Access Violation accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -124,6 +125,7 @@ module Gruesome
 					force_readw(address)
 				else
 					# XXX: Access violation
+					puts "Error: Access Violation accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -133,6 +135,7 @@ module Gruesome
 					force_writeb(address, value)
 				else
 					# XXX: Access violation
+					puts "Error: Access Violation (W) accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -142,6 +145,7 @@ module Gruesome
 					force_writew(address, value)
 				else
 					# XXX: Access violation
+					puts "Error: Access Violation (W) accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -151,6 +155,7 @@ module Gruesome
 					@memory.getbyte(address)
 				else
 					# XXX: Access Violation
+					puts "Error: Major Access Violation accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -164,6 +169,7 @@ module Gruesome
 					end
 				else
 					# XXX: Access Violation
+					puts "Error: Major Access Violation accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -173,6 +179,7 @@ module Gruesome
 					@memory.setbyte(address, (value & 255))
 				else
 					# XXX: Access Violation
+					puts "Error: Major Access (W) Violation accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end
@@ -192,6 +199,7 @@ module Gruesome
 					@memory.setbyte(address+1, low_byte)
 				else
 					# XXX: Access Violation
+					puts "Error: Major Access (W) Violation accessing $" + sprintf("%04x", address)
 					nil
 				end
 			end

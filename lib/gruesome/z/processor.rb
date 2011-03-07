@@ -37,7 +37,7 @@ module Gruesome
 					if @header.version <= 4
 						# read initial values when version 1-4
 						(1..num_locals).each do |i|
-							@memory.writev(i, @memory.readw(@memory.program_counter))
+							@memory.writev(i, @memory.force_readw(@memory.program_counter))
 							@memory.program_counter += 2
 						end
 					else
@@ -68,9 +68,9 @@ module Gruesome
 			def branch(branch_to, branch_on, result)
 				if (result == branch_on)
 					if branch_to == 0
-						routine_return(false)
+						routine_return(0)
 					elsif branch_to == 1
-						routine_return(true)
+						routine_return(1)
 					else
 						@memory.program_counter = branch_to
 #						@memory.program_counter -= 2
@@ -170,6 +170,7 @@ module Gruesome
 					else
 						@memory.writev(instruction.destination, operands[0] << places)
 					end
+				when Opcode::NOP
 				when Opcode::NEW_LINE
 					puts
 				when Opcode::POP
@@ -257,6 +258,8 @@ module Gruesome
 					@memory.writeb(operands[0] + unsigned_to_signed(operands[1]), operands[2])
 				when Opcode::STOREW
 					@memory.writew(operands[0] + unsigned_to_signed(operands[1])*2, operands[2])
+				else
+					raise "opcode not implemented"
 				end
 			end
 
