@@ -336,7 +336,7 @@ describe Gruesome::Z::Processor do
 													 [(-12345+65536), (-23456+65536)], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand is not greater than the second" do
@@ -363,7 +363,7 @@ describe Gruesome::Z::Processor do
 													 [(-12345+65536), 12345], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 			end
 
@@ -375,7 +375,7 @@ describe Gruesome::Z::Processor do
 													 [(-12345+65536), 123, 1234, (-12345+65536)], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand is not equal to one of four operands" do
@@ -405,7 +405,7 @@ describe Gruesome::Z::Processor do
 													 [(-123+65536), 123, 12345, 12344], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should branch if the first operand is equal to one of three operands" do
@@ -414,7 +414,7 @@ describe Gruesome::Z::Processor do
 													 [(-12345+65536), 123, (-12345+65536)], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand is not equal to one of three operands" do
@@ -441,7 +441,7 @@ describe Gruesome::Z::Processor do
 													 [(-123+65536), 12345, 12344], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should branch if the first operand is equal to the second of two operands" do
@@ -450,7 +450,7 @@ describe Gruesome::Z::Processor do
 													 [(-12345+65536), (-12345+65536)], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand is not equal to the second of two operands" do
@@ -477,7 +477,7 @@ describe Gruesome::Z::Processor do
 													 [(-123+65536), (12345+65536)], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 			end
 
@@ -488,7 +488,7 @@ describe Gruesome::Z::Processor do
 													 [(-23456+65536), (-12345+65536)], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand is not less than the second" do
@@ -515,7 +515,7 @@ describe Gruesome::Z::Processor do
 													 [12345, (-12345+65536)], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 			end
 
@@ -526,7 +526,7 @@ describe Gruesome::Z::Processor do
 													 [0], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand is not zero" do
@@ -553,7 +553,7 @@ describe Gruesome::Z::Processor do
 													 [12345], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 			end
 
@@ -586,7 +586,7 @@ describe Gruesome::Z::Processor do
 													 [0b1000110110111101, 0b1000100010001000], nil, 2000, true, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 
 				it "should not branch if the first operand does not have all bits set that the second has set" do
@@ -613,7 +613,7 @@ describe Gruesome::Z::Processor do
 													 [0b1000110110111101, 0b1111100010001000], nil, 2000, false, 0)
 
 					@processor.execute(i)
-					@zork_memory.program_counter.should eql(12345+2000-2)
+					@zork_memory.program_counter.should eql(2000)
 				end
 			end
 		end
@@ -1078,7 +1078,7 @@ describe Gruesome::Z::Processor do
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [1], 128, 2000, true, 0)
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should branch if the child object index of the requested object is 0 and condition is negated" do
@@ -1087,7 +1087,7 @@ describe Gruesome::Z::Processor do
 														 [2], 128, 2000, false, 0)
 
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should not branch if the child object index exists for the requested object and condition is negated" do
@@ -1127,7 +1127,7 @@ describe Gruesome::Z::Processor do
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [2], 128, 2000, true, 0)
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should branch if the sibling object index of the requested object is 0 and condition is negated" do
@@ -1136,7 +1136,7 @@ describe Gruesome::Z::Processor do
 														 [1], 128, 2000, false, 0)
 
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should not branch if the sibling object index exists for the requested object and condition is negated" do
@@ -1176,7 +1176,7 @@ describe Gruesome::Z::Processor do
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [2], 128, 2000, true, 0)
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should branch if the parent object index of the requested object is 0 and condition is negated" do
@@ -1185,7 +1185,7 @@ describe Gruesome::Z::Processor do
 														 [1], 128, 2000, false, 0)
 
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should not branch if the parent object index exists for the requested object and condition is negated" do
@@ -1206,6 +1206,46 @@ describe Gruesome::Z::Processor do
 					end
 				end
 
+				describe "jin" do
+					# Note:
+					#  - Object 1 has no parents
+					#  - Object 2 has a parent: Object 1
+
+					it "should not branch if the given object is not a child of the other" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JIN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1, 2], 128, 2000, true, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+					it "should branch if the given object is a child of the other" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JIN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2,1], 128, 2000, true, 0)
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(2000)
+					end
+
+					it "should branch if the given object is not a child of the other and condition is negated" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JIN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1, 2], 128, 2000, false, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(2000)
+					end
+
+					it "should not branch if the given object is a child of the other and condition is negated" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::JIN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2,1], 128, 2000, false, 0)
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+				end
+
 				describe "test_attr" do
 					it "should branch if the object has the attribute set" do
 						@object_table.object_has_attribute?(1, 10).should eql(true)
@@ -1214,7 +1254,7 @@ describe Gruesome::Z::Processor do
 														 [1, 10], nil, 2000, true, 0)
 
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 					it "should not branch if the object does not have the attribute set" do
@@ -1244,7 +1284,7 @@ describe Gruesome::Z::Processor do
 														 [1, 11], nil, 2000, false, 0)
 
 						@processor.execute(i)
-						@zork_memory.program_counter.should eql(12345+2000-2)
+						@zork_memory.program_counter.should eql(2000)
 					end
 
 				end

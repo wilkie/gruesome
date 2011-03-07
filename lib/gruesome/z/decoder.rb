@@ -47,6 +47,7 @@ module Gruesome
 				operand_types = Array.new(8) { OperandType::OMITTED }
 				operand_values = []
 
+					puts "opcode: " + sprintf("%02x", opcode)
 				# SHORT
 				if opcode_form == 2
 					# operand count is determined by bits 4 and 5

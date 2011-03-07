@@ -72,8 +72,8 @@ module Gruesome
 					elsif branch_to == 1
 						routine_return(true)
 					else
-						@memory.program_counter += branch_to
-						@memory.program_counter -= 2
+						@memory.program_counter = branch_to
+#						@memory.program_counter -= 2
 					end
 				end
 			end
@@ -137,7 +137,8 @@ module Gruesome
 					result = unsigned_to_signed(operands[0]) > unsigned_to_signed(operands[1])
 					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JIN
-					# XXX: JIN is an object instruction
+					result = @object_table.object_get_parent(operands[0]) == operands[1]
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JL
 					result = unsigned_to_signed(operands[0]) < unsigned_to_signed(operands[1])
 					branch(instruction.branch_to, instruction.branch_on, result)

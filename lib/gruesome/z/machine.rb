@@ -41,7 +41,7 @@ module Gruesome
 				@decoder = Decoder.new(@memory)
 				@processor = Processor.new(@memory)
 
-				100.times do
+				while true do
 					i = @decoder.fetch
 					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
