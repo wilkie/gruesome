@@ -65,6 +65,19 @@ module Gruesome
 				@memory.program_counter = frame[:return_address]
 			end
 
+			def branch(branch_to, branch_on, result)
+				if (result == branch_on)
+					if branch_to == 0
+						routine_return(false)
+					elsif branch_to == 1
+						routine_return(true)
+					else
+						@memory.program_counter += branch_to
+						@memory.program_counter -= 2
+					end
+				end
+			end
+
 			def execute(instruction)
 				# there are some exceptions for variable-by-reference instructions
 				if Opcode.is_variable_by_reference?(instruction.opcode, @header.version)
@@ -101,26 +114,17 @@ module Gruesome
 					child = @object_table.object_get_child(operands[0])
 					@memory.writev(instruction.destination, child)
 					result = child != 0
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::GET_PARENT
 					parent = @object_table.object_get_parent(operands[0])
 					@memory.writev(instruction.destination, parent)
 					result = parent != 0
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::GET_SIBLING
 					sibling = @object_table.object_get_sibling(operands[0])
 					@memory.writev(instruction.destination, sibling)
 					result = sibling != 0
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JUMP, Opcode::PIRACY
 					@memory.program_counter += unsigned_to_signed(operands[0])
 					@memory.program_counter -= 2
@@ -128,31 +132,18 @@ module Gruesome
 					result = operands[1..-1].inject(false) { |result, element|
 						result | (operands[0] == element)
 					}
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter &= 0xffff
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JG
 					result = unsigned_to_signed(operands[0]) > unsigned_to_signed(operands[1])
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JIN
 					# XXX: JIN is an object instruction
 				when Opcode::JL
 					result = unsigned_to_signed(operands[0]) < unsigned_to_signed(operands[1])
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JZ
 					result = operands[0] == 0
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::LOAD
 					if operands[0] != instruction.destination
 						@memory.writev(instruction.destination, @memory.readv(operands[0]))
@@ -217,16 +208,10 @@ module Gruesome
 					@object_table.object_set_attribute(operands[0], operands[1])
 				when Opcode::TEST
 					result = (operands[0] & operands[1]) == operands[1]
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::TEST_ATTR
 					result = @object_table.object_has_attribute?(operands[0], operands[1])
-					if (result == instruction.branch_on)
-						@memory.program_counter += instruction.branch_to
-						@memory.program_counter -= 2
-					end
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::ADD
 					@memory.writev(instruction.destination,
 						unsigned_to_signed(operands[0]) + unsigned_to_signed(operands[1]))
