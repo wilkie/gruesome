@@ -20,7 +20,7 @@ describe Gruesome::Z::Processor do
 			after(:each) do
 			end
 
-			# not necessarily a branch (like call)
+			# not necessarily a branch
 			describe "call" do
 				it "should branch to the routine with two local variables given as first operand and store result in destination variable" do
 					# set up a routine at address $2000
@@ -77,6 +77,52 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readv(0).should eql(12345)
 				end
 
+			end
+
+			describe "ret" do
+				it "should return to the routine that called it" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RET,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [123], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should set the variable indicated by the call with the return value as an immediate" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RET,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [123], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql(123)
+				end
 			end
 
 			describe "jg" do

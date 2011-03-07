@@ -14,6 +14,10 @@ module Gruesome
 			end
 
 			def routine_return(result)
+				frame = @memory.pop_routine
+
+				@memory.writev(frame[:destination], result)
+				@memory.program_counter = frame[:return_address]
 			end
 
 			def execute(instruction)
@@ -38,10 +42,8 @@ module Gruesome
 						num_locals = @memory.force_readb(@memory.program_counter)
 						@memory.program_counter += 1
 
-						puts "routine called at $" + sprintf("%04x", routine_addr) + " with " + num_locals.to_s + " locals"
-
 						# create environment
-						@memory.push_routine(return_addr, num_locals)
+						@memory.push_routine(return_addr, num_locals, instruction.destination)
 
 						if @header.version <= 4
 							# read initial values when version 1-4
@@ -71,12 +73,9 @@ module Gruesome
 						result | (instruction.operands[0] == element)
 					}
 					if (result == instruction.branch_on)
-						puts "old pc " + @memory.program_counter.to_s
-						puts "applying " + instruction.branch_to.to_s
 						@memory.program_counter += instruction.branch_to
 						@memory.program_counter &= 0xffff
 						@memory.program_counter -= 2
-						puts "new pc " + @memory.program_counter.to_s
 					end
 				when Opcode::JG
 					result = unsigned_to_signed(instruction.operands[0]) > unsigned_to_signed(instruction.operands[1])
@@ -119,6 +118,8 @@ module Gruesome
 					print ZSCII.translate(0, @header.version, @memory.force_readzstr(instruction.operands[0], 0)[1])
 				when Opcode::PRINT_CHAR
 					print ZSCII.translate(0, @header.version, [instruction.operands[0]])
+				when Opcode::RET
+					routine_return(instruction.operands[0])
 				when Opcode::ADD
 					@memory.writev(instruction.destination,
 						unsigned_to_signed(instruction.operands[0]) + unsigned_to_signed(instruction.operands[1]))

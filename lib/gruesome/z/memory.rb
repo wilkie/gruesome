@@ -71,10 +71,18 @@ module Gruesome
 				@endian = [1].pack('S')[0] == 1 ? 'little' : 'big'
 			end
 
+			def packed_address_to_byte_address(address)
+				if @header.version <=3
+					address * 2
+				else
+				end
+			end
+
 			# Sets up the environment for a new routine
-			def push_routine(return_addr, num_locals)
+			def push_routine(return_addr, num_locals, destination)
 				# pushes the stack onto the call stack
 				@call_stack.push @num_locals
+				@call_stack.push destination
 				@call_stack.push @stack
 
 				# empties the current stack
@@ -91,21 +99,15 @@ module Gruesome
 				@num_locals = num_locals
 			end
 
-			def packed_address_to_byte_address(address)
-				if @header.version <=3
-					address * 2
-				else
-				end
-			end
-
 			# Tears down the environment for the current routine
 			def pop_routine()
 				# return the return address
 				return_addr = @stack[0]
 				@stack = @call_stack.pop
+				destination = @call_stack.pop
 				@num_locals = @call_stack.pop
 
-				return_addr
+				{:destination => destination, :return_address => return_addr}
 			end
 
 			def readb(address)
