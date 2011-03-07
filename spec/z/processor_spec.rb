@@ -743,6 +743,18 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "print_paddr" do
+				it "should print out the string located at the packed address given by the operand" do
+					# 'ZORK I: The Great Underground Empire' is written at 0x6ee4 (packed: 0x3772)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_PADDR,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x3772], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					$stdout.string[/(.*)\n/,1].should eql("ZORK I: The Great Underground Empire")
+				end
+			end
+
 			describe "print_char" do
 				it "should print out the Z-character given by the operand" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_CHAR,

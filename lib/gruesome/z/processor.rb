@@ -161,6 +161,9 @@ module Gruesome
 					print ZSCII.translate(0, @header.version, [operands[0]], @abbreviation_table)
 				when Opcode::PRINT_OBJ
 					print @object_table.object_short_text(operands[0])
+				when Opcode::PRINT_PADDR
+					str_addr = @memory.packed_address_to_byte_address(operands[0])
+					print ZSCII.translate(0, @header.version, @memory.force_readzstr(str_addr)[1], @abbreviation_table)
 				when Opcode::PULL
 					if @header.version == 6
 						# TODO: Version 6 PULL instruction

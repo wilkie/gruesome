@@ -228,6 +228,7 @@ module Gruesome
 						alphabet = @alphabet
 					end
 
+					puts sprintf("%04x", pc)
 					result = @memory.force_readzstr(pc)
 					pc = pc + result[0]
 					chrs = result[1]
