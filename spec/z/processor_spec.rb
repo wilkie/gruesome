@@ -1073,7 +1073,7 @@ describe Gruesome::Z::Processor do
 						@zork_memory.program_counter.should eql(12345)
 					end
 
-					it "should branch if the child object exists for the requested object" do
+					it "should branch if the child object index exists for the requested object" do
 						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_CHILD,
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [1], 128, 2000, true, 0)
@@ -1090,7 +1090,7 @@ describe Gruesome::Z::Processor do
 						@zork_memory.program_counter.should eql(12345+2000-2)
 					end
 
-					it "should not branch if the child object exists for the requested object and condition is negated" do
+					it "should not branch if the child object index exists for the requested object and condition is negated" do
 						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_CHILD,
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [1], 128, 2000, false, 0)
@@ -1107,6 +1107,56 @@ describe Gruesome::Z::Processor do
 						@zork_memory.readv(128).should eql(2)
 					end
 				end
+
+				describe "get_sibling" do
+					# Note:
+					#  - Object 1 has no siblings
+					#  - Object 2 has one sibling: Object 3
+
+					it "should not branch if the sibling object index of the requested object is 0" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_SIBLING,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1], 128, 2000, true, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+					it "should branch if the sibling object index exists for the requested object" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_SIBLING,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2], 128, 2000, true, 0)
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345+2000-2)
+					end
+
+					it "should branch if the sibling object index of the requested object is 0 and condition is negated" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_SIBLING,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [1], 128, 2000, false, 0)
+
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345+2000-2)
+					end
+
+					it "should not branch if the sibling object index exists for the requested object and condition is negated" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_SIBLING,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2], 128, 2000, false, 0)
+						@processor.execute(i)
+						@zork_memory.program_counter.should eql(12345)
+					end
+
+
+					it "should store the sibling object index to the destination variable" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_SIBLING,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2], 128, 2000, true, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(3)
+					end
+				end
+
 
 				describe "test_attr" do
 					it "should branch if the object has the attribute set" do

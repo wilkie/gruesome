@@ -103,6 +103,14 @@ module Gruesome
 						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
+				when Opcode::GET_SIBLING
+					sibling = @object_table.object_get_sibling(operands[0])
+					@memory.writev(instruction.destination, sibling)
+					result = sibling != 0
+					if (result == instruction.branch_on)
+						@memory.program_counter += instruction.branch_to
+						@memory.program_counter -= 2
+					end
 				when Opcode::JUMP, Opcode::PIRACY
 					@memory.program_counter += unsigned_to_signed(operands[0])
 					@memory.program_counter -= 2
