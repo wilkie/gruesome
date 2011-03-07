@@ -93,6 +93,8 @@ module Gruesome
 					routine_call(@memory.packed_address_to_byte_address(operands[0]), operands[1..-1], instruction.destination)
 				when Opcode::CLEAR_ATTR
 					@object_table.object_clear_attribute(operands[0], operands[1])
+				when Opcode::INC
+					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) + 1)
 				when Opcode::JUMP, Opcode::PIRACY
 					@memory.program_counter += unsigned_to_signed(operands[0])
 					@memory.program_counter -= 2
