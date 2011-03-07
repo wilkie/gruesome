@@ -14,13 +14,13 @@ module Gruesome
 
 				if @header.version <= 3
 					# versions 1-3 have 32 entries
-					num_properties = 32
+					@num_properties = 31
 				else
 					# versions 4+ have 32 entries
-					num_properties = 64
+					@num_properties = 63
 				end
 
-				@object_tree_address = @address + num_properties*2
+				@object_tree_address = @address + @num_properties*2
 
 				if @header.version <= 3
 					@attributes_size = 4
@@ -53,7 +53,8 @@ module Gruesome
 			end
 
 			def property_default(index)
-				index %= num_properties
+				index -= 1
+				index %= @num_properties
 
 				# The first thing in the table is the property defaults list
 				# So, simply lookup the 16-bit word at the entry given by index
@@ -315,10 +316,16 @@ module Gruesome
 
 				property_data = []
 
-				address = properties[property_number][:property_data_address]
-				properties[property_number][:size].times do
-					property_data << @memory.force_readb(address)
-					address += 1
+				property_info = properties[property_number]
+				
+				if property_info == nil
+					property_data = nil
+				else
+					address = property_info[:property_data_address]
+					properties[property_number][:size].times do
+						property_data << @memory.force_readb(address)
+						address += 1
+					end
 				end
 
 				property_data
@@ -326,8 +333,9 @@ module Gruesome
 
 			def object_get_property_word(index, property_number)
 				property_data = object_get_property(index, property_number)
-
-				if property_data.size > 1
+				if property_data == nil
+					property_default(property_number)
+				elsif property_data.size > 1
 					if @endian == 'little'
 						(property_data[1] << 8) | property_data[0]
 					else

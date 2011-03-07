@@ -953,10 +953,13 @@ describe Gruesome::Z::Processor do
 				@zork_memory.force_writew(0x0a, 0x200)
 
 				# Build property defaults (for versions 1-3)
-				32.times do |i|
-					@zork_memory.force_writew(0x200 + (i*2), 0)
+				# Each property will have the default value as
+				# equally the property number (remember properties
+				# start counting at 1)
+				31.times do |i|
+					@zork_memory.force_writew(0x200 + (i*2), i+1)
 				end
-				addr = 0x200 + (32 * 2)
+				addr = 0x200 + (31 * 2)
 
 				# Build a couple of objects
 
@@ -1027,6 +1030,20 @@ describe Gruesome::Z::Processor do
 				#
 				# Give the short-name a length of 4
 				@zork_memory.force_writeb(0x4290, 2)
+
+				# Now the property list
+				written_size = (2 - 1) << 5
+				property_number = 15
+				@zork_memory.force_writeb(0x4295, written_size + property_number)
+				@zork_memory.force_writew(0x4296, 34567)
+
+				written_size = (1 - 1) << 5
+				property_number = 20
+				@zork_memory.force_writeb(0x4298, written_size + property_number)
+				@zork_memory.force_writeb(0x4299, 123)
+
+				# End list
+				@zork_memory.force_writeb(0x429a, 0)
 
 				@object_table = Gruesome::Z::ObjectTable.new(@zork_memory)
 
@@ -1261,6 +1278,32 @@ describe Gruesome::Z::Processor do
 				after(:each) do
 					# The program counter should not be changed
 					@zork_memory.program_counter.should eql(12345)
+				end
+
+				describe "get_prop" do
+					it "should retrieve the property in the object's list when it is a byte" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 20], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(123)
+					end
+
+					it "should retrieve the property in the object's list when it is a word" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 15], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(34567)
+					end
+
+					it "should retrieve the default property when the object list does not have the property listed" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 28], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(28)
+					end
 				end
 
 				describe "insert_obj" do
