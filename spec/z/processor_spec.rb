@@ -4,6 +4,7 @@ require_relative '../../lib/gruesome/z/opcode'
 require_relative '../../lib/gruesome/z/memory'
 require_relative '../../lib/gruesome/z/processor'
 require_relative '../../lib/gruesome/z/abbreviation_table'
+require_relative '../../lib/gruesome/z/object_table'
 
 # Note: The Z-Machine implementation, upon execution, 
 # already moves the PC to the next instruction
@@ -916,6 +917,107 @@ describe Gruesome::Z::Processor do
 					@processor.execute(i)
 
 					@zork_memory.readv(128).should eql(-3+65536)
+				end
+			end
+		end
+
+		describe "Object" do
+			describe "Instruction" do
+				before(:each) do
+					# Build object table
+					@zork_memory.force_writew(0x0a, 0x200)
+
+					# Build property defaults (for versions 1-3)
+					32.times do |i|
+						@zork_memory.force_writew(0x200 + (i*2), 0)
+					end
+					addr = 0x200 + (32 * 2)
+
+					# Build a couple of objects
+
+					# Object #1
+
+					# Attributes: 2, 3, 10, 31
+					# Parent: nil
+					# Sibling: nil
+					# Child: #2
+
+					@zork_memory.force_writeb(addr+0, 0b00110000)
+					@zork_memory.force_writeb(addr+1, 0b00100000)
+					@zork_memory.force_writeb(addr+2, 0b00000000)
+					@zork_memory.force_writeb(addr+3, 0b00000001)
+
+					@zork_memory.force_writeb(addr+4, 0)
+					@zork_memory.force_writeb(addr+5, 0)
+					@zork_memory.force_writeb(addr+6, 2)
+
+					@zork_memory.force_writew(addr+7, 0)
+
+					addr += 9
+
+					# Object #2
+
+					# Attributes: 5, 7, 11, 18, 25
+					# Parent: #1
+					# Sibling: #3
+					# Child: nil
+
+					@zork_memory.force_writeb(addr+0, 0b00000101)
+					@zork_memory.force_writeb(addr+1, 0b00010000)
+					@zork_memory.force_writeb(addr+2, 0b00100000)
+					@zork_memory.force_writeb(addr+3, 0b01000001)
+
+					@zork_memory.force_writeb(addr+4, 1)
+					@zork_memory.force_writeb(addr+5, 3)
+					@zork_memory.force_writeb(addr+6, 0)
+
+					@zork_memory.force_writew(addr+7, 0)
+
+					addr += 9
+
+					# Object #3
+
+					# Attributes: 0
+					# Parent: #1
+					# Sibling: #2
+					# Child: nil
+
+					@zork_memory.force_writeb(addr+0, 0b10000000)
+					@zork_memory.force_writeb(addr+1, 0b00000000)
+					@zork_memory.force_writeb(addr+2, 0b00000000)
+					@zork_memory.force_writeb(addr+3, 0b00000000)
+
+					@zork_memory.force_writeb(addr+4, 1)
+					@zork_memory.force_writeb(addr+5, 2)
+					@zork_memory.force_writeb(addr+6, 0)
+
+					@zork_memory.force_writew(addr+7, 0)
+
+					addr += 9
+
+					@object_table = Gruesome::Z::ObjectTable.new(@zork_memory)
+
+					# need to reinstantiate the processor
+					abbreviation_table = Gruesome::Z::AbbreviationTable.new(@zork_memory)
+					@processor = Gruesome::Z::Processor.new(@zork_memory, abbreviation_table)
+				end
+
+				after(:each) do
+					# The program counter should not be changed
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				describe "clear_attr" do
+					it "should clear the attribute when it exists in the object attribute list without altering other attributes" do
+						@object_table.object_has_attribute?(2, 25).should eql(true)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CLEAR_ATTR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [2, 25], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_has_attribute?(2, 25).should eql(false)
+						@object_table.object_has_attribute?(2, 31).should eql(true)
+					end
 				end
 			end
 		end

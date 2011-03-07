@@ -59,21 +59,22 @@ module Gruesome
 			end
 
 			def object_entry(index)
-				obj_entry_addr = @object_tree_address + (index * obj_entry_size)
+				index -= 1
+				obj_entry_addr = @object_tree_address + (index * @obj_entry_size)
 
-				cur_addr = obj_entry_addr
+				attributes_address = obj_entry_addr
+				cur_addr = attributes_address
 
 				# read the attributes
-				attributes = 0
-				attributes_size.times do
-					attributes = attributes << 8
-					attributes |= @memory.force_readb(cur_addr)
+				attribute_bytes = []
+				@attributes_size.times do
+					attribute_bytes << @memory.force_readb(cur_addr)
 					cur_addr += 1
 				end
 
 				# read the object ids of associated objects
 				ids = (0..2).map do |i|
-					if object_id_size == 2
+					if @object_id_size == 2
 						id = @memory.force_readw(cur_addr)
 						cur_addr += 2
 					else
@@ -86,7 +87,8 @@ module Gruesome
 				properties_address = @memory.force_readw(cur_addr)
 
 				# return a hash with the information of the entry
-				{	:attributes => attributes, 
+				{	:attributes_address => attributes_address,
+					:attributes => attribute_bytes, 
 					:parent_id => ids[0], 
 					:sibling_id => ids[1], 
 					:child_id => ids[2], 
@@ -101,6 +103,60 @@ module Gruesome
 				chrs = @memory.force_readzstr(prop_address+1, text_len)[1]
 
 				ZSCII.translate(0, @header.version, chrs, @abbreviation_table)
+			end
+
+			def attribute_number_to_byte_bit_pair(attribute_number)
+				# get the byte and bit number
+				#
+				# Note: it counts from the MSB, so it has to
+				# reverse the bit_number by subtracting from 7
+				#
+				# That is, attribute  7 is byte 0, bit 0
+				#          attribute 17 is byte 2, bit 6
+				#          etc
+
+				byte_number = (attribute_number / 8).to_i
+				bit_number = attribute_number % 8
+				bit_number = 7 - bit_number
+
+				{ :byte => byte_number, :bit => bit_number }
+			end
+			private :attribute_number_to_byte_bit_pair
+
+			def object_has_attribute?(index, attribute_number)
+				entry = object_entry(index)
+
+				location = attribute_number_to_byte_bit_pair(attribute_number)
+				attribute_byte = entry[:attributes][location[:byte]]
+				mask = 1 << location[:bit]
+
+				(attribute_byte & mask) > 0
+			end
+
+			def object_set_attribute(index, attribute_number)
+				entry = object_entry(index)
+
+				location = attribute_number_to_byte_bit_pair(attribute_number)
+				attribute_byte = entry[:attributes][location[:byte]]
+				mask = 1 << location[:bit]
+
+				attribute_byte |= mask
+
+				byte_addr = entry[:attributes_address] + location[:byte]
+				@memory.force_writeb(byte_addr, attribute_byte)
+			end
+
+			def object_clear_attribute(index, attribute_number)
+				entry = object_entry(index)
+
+				location = attribute_number_to_byte_bit_pair(attribute_number)
+				attribute_byte = entry[:attributes][location[:byte]]
+				mask = 1 << location[:bit]
+
+				attribute_byte &= ~mask
+
+				byte_addr = entry[:attributes_address] + location[:byte]
+				@memory.force_writeb(byte_addr, attribute_byte)
 			end
 
 			def object_properties(index)
