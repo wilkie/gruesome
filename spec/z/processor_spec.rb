@@ -1166,6 +1166,17 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readv(128).should eql(34567)
 					@zork_memory.readv(0).should eql(23456)
 				end
+
+				it "should not change the stack if the given variable is %00" do
+					@zork_memory.writev(0, 23456)
+					@zork_memory.writev(0, 34567)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PULL, 
+													 [Gruesome::Z::OperandType::VARIABLE], [0], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					@zork_memory.readv(0).should eql(34567)
+					@zork_memory.readv(0).should eql(23456)
+				end
 			end
 
 			describe "push" do
