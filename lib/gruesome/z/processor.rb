@@ -66,8 +66,6 @@ module Gruesome
 			end
 
 			def execute(instruction)
-				# TODO: Replace VARIABLE types with the values of the VARIABLE at that location
-
 				# there are some exceptions for variable-by-reference instructions
 				if Opcode.is_variable_by_reference?(instruction.opcode, @header.version)
 					operands = instruction.operands
