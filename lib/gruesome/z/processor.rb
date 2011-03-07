@@ -64,8 +64,8 @@ module Gruesome
 			def execute(instruction)
 				# TODO: Replace VARIABLE types with the values of the VARIABLE at that location
 
-				# there are some exceptions
-				if instruction.opcode == Opcode::STORE
+				# there are some exceptions for variable-by-reference instructions
+				if Opcode.is_variable_by_reference?(instruction.opcode, @header.version)
 					operands = instruction.operands
 				else
 					operands = instruction.operands.each_with_index.map do |operand, idx|
@@ -143,6 +143,16 @@ module Gruesome
 					print ZSCII.translate(0, @header.version, @memory.force_readzstr(operands[0], 0)[1])
 				when Opcode::PRINT_CHAR
 					print ZSCII.translate(0, @header.version, [operands[0]])
+				when Opcode::PULL
+					if @header.version == 6
+						# TODO: Version 6 PULL instruction
+						#
+						# stack to pull from is given as operand[0]
+						# instruction.destination is the destination resister
+					else
+						# pop value from stack
+						@memory.writev(operands[0], @memory.readv(0))
+					end
 				when Opcode::PUSH
 					# add value to stack
 					@memory.writev(0, operands[0])

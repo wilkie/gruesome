@@ -921,6 +921,19 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "pull" do
+				it "should pop the value from the stack that was most recently pushed" do
+					@zork_memory.writev(0, 23456)
+					@zork_memory.writev(0, 34567)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PULL, 
+													 [Gruesome::Z::OperandType::VARIABLE], [128], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					@zork_memory.readv(128).should eql(34567)
+					@zork_memory.readv(0).should eql(23456)
+				end
+			end
+
 			describe "push" do
 				it "should push the value on the stack such that a read of variable %00 will yield that value" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PUSH,
