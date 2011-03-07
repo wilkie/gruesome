@@ -47,6 +47,9 @@ module Gruesome
 				end
 
 				@obj_entry_size = @attributes_size + (@object_id_size * 3) + 2
+
+				# Check machine endianess
+				@endian = [1].pack('S')[0] == 1 ? 'little' : 'big'
 			end
 
 			def property_default(index)
@@ -93,6 +96,18 @@ module Gruesome
 					:sibling_id => ids[1], 
 					:child_id => ids[2], 
 					:properties_address => properties_address	}
+			end
+
+			def object_get_child(index)
+				object_entry(index)[:child_id]
+			end
+
+			def object_get_sibling(index)
+				object_entry(index)[:sibling_id]
+			end
+
+			def object_get_parent(index)
+				object_entry(index)[:parent_id]
 			end
 
 			def object_short_text(index)
@@ -237,7 +252,7 @@ module Gruesome
 				properties
 			end
 
-			def object_property(index, property_number)
+			def object_get_property(index, property_number)
 				properties = object_properties(index)
 
 				property_data = []
@@ -249,6 +264,20 @@ module Gruesome
 				end
 
 				property_data
+			end
+
+			def object_get_property_word(index, property_number)
+				property_data = object_get_property(index, property_number)
+
+				if property_data.size > 1
+					if @endian == 'little'
+						(property_data[1] << 8) | property_data[0]
+					else
+						(property_data[0] << 8) | property_data[1]
+					end
+				else
+					property_data[0]
+				end
 			end
 		end
 	end

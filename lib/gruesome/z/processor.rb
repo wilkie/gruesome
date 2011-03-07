@@ -95,6 +95,14 @@ module Gruesome
 					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) - 1)
 				when Opcode::INC
 					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) + 1)
+				when Opcode::GET_CHILD
+					child = @object_table.object_get_child(operands[0])
+					@memory.writev(instruction.destination, child)
+					result = child != 0
+					if (result == instruction.branch_on)
+						@memory.program_counter += instruction.branch_to
+						@memory.program_counter -= 2
+					end
 				when Opcode::JUMP, Opcode::PIRACY
 					@memory.program_counter += unsigned_to_signed(operands[0])
 					@memory.program_counter -= 2
