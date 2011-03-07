@@ -13,14 +13,57 @@ module Gruesome
 				@header = Header.new(@memory.contents)
 			end
 
+			def routine_call(address, arguments, result_variable = nil)
+				if address == 0
+					# special case, do not call, simply return false
+					if result_variable != nil
+						@memory.writev(result_variable, 0)
+					end
+				else
+					return_addr = @memory.program_counter
+					@memory.program_counter = address
+
+					# read routine
+					num_locals = @memory.force_readb(@memory.program_counter)
+					@memory.program_counter += 1
+
+					# create environment
+					@memory.push_routine(return_addr, num_locals, result_variable)
+
+					if @header.version <= 4
+						# read initial values when version 1-4
+						(1..num_locals).each do |i|
+							@memory.writev(i, @memory.readw(@memory.program_counter))
+							@memory.program_counter += 2
+						end
+					else
+						# reset local vars to 0
+						(1..num_locals).each do |i|
+							@memory.writev(i, 0)
+						end
+					end
+
+					# copy arguments over into locals
+					idx = 1
+					arguments.each do |i|
+						@memory.writev(idx, i)
+						idx += 1
+					end
+				end
+			end
+
 			def routine_return(result)
 				frame = @memory.pop_routine
 
-				@memory.writev(frame[:destination], result)
+				if frame[:destination] != nil
+					@memory.writev(frame[:destination], result)
+				end
 				@memory.program_counter = frame[:return_address]
 			end
 
 			def execute(instruction)
+				# TODO: Replace VARIABLE types with the values of the VARIABLE at that location
+
 				case instruction.opcode
 				when Opcode::ART_SHIFT
 					places = unsigned_to_signed(instruction.operands[1])
@@ -29,42 +72,8 @@ module Gruesome
 					else
 						@memory.writev(instruction.destination, instruction.operands[0] << places)
 					end
-				when Opcode::CALL
-					if instruction.operands[0] == 0
-						# special case, do not call, simply return false
-						@memory.writev(instruction.destination, 0)
-					else
-						return_addr = @memory.program_counter
-						routine_addr = @memory.packed_address_to_byte_address(instruction.operands[0])
-						@memory.program_counter = routine_addr
-
-						# read routine
-						num_locals = @memory.force_readb(@memory.program_counter)
-						@memory.program_counter += 1
-
-						# create environment
-						@memory.push_routine(return_addr, num_locals, instruction.destination)
-
-						if @header.version <= 4
-							# read initial values when version 1-4
-							(1..num_locals).each do |i|
-								@memory.writev(i, @memory.readw(@memory.program_counter))
-								@memory.program_counter += 2
-							end
-						else
-							# reset local vars to 0
-							(1..num_locals).each do |i|
-								@memory.writev(i, 0)
-							end
-						end
-
-						# copy arguments over into locals
-						idx = 1
-						instruction.operands[1..-1].each do |i|
-							@memory.writev(idx, instruction.operands[i])
-							idx += 1
-						end
-					end
+				when Opcode::CALL, Opcode::CALL_1N
+					routine_call(@memory.packed_address_to_byte_address(instruction.operands[0]), instruction.operands[1..-1], instruction.destination)
 				when Opcode::JUMP
 					@memory.program_counter += unsigned_to_signed(instruction.operands[0])
 					@memory.program_counter -= 2

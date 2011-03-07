@@ -76,7 +76,45 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readv(0).should eql(345)
 					@zork_memory.readv(0).should eql(12345)
 				end
+			end
 
+			# not necessarily a branch
+			describe "call_1n" do
+				it "should branch to the routine with two local variables given as first operand" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL_1N,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(0x2005)
+				end
+
+				it "should simply do nothing when routine address is 0" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL_1N,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(12345)
+				end
+				
+				it "should create a stack with only the return address when no arguments or local variables are used" do
+					# set up a routine at address $2000 with no locals
+					@zork_memory.force_writeb(0x2000, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL_1N,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(0x2001)
+					@zork_memory.readv(0).should eql(12345)
+				end
 			end
 
 			# not necessarily a branch
