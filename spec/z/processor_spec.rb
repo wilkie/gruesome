@@ -1306,6 +1306,24 @@ describe Gruesome::Z::Processor do
 					end
 				end
 
+				describe "get_prop_addr" do
+					it "should retrieve the address of the property in the object's list" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_ADDR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 20], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(0x4299)
+					end
+
+					it "should set the variable given to 0 when the property is not in the object's list" do
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_ADDR,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [3, 28], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(0)
+					end
+				end
+
 				describe "insert_obj" do
 					it "should insert the object given as the child of the other object given" do
 						@object_table.object_get_child(2).should eql(0)

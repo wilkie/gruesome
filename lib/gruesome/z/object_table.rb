@@ -331,6 +331,18 @@ module Gruesome
 				property_data
 			end
 
+			def object_get_property_addr(index, property_number)
+				properties = object_properties(index)
+
+				property_info = properties[property_number]
+				
+				if property_info == nil
+					0
+				else
+					property_info[:property_data_address]
+				end
+			end
+
 			def object_get_property_word(index, property_number)
 				property_data = object_get_property(index, property_number)
 				if property_data == nil
