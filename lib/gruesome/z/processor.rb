@@ -10,10 +10,10 @@ require_relative 'object_table'
 module Gruesome
 	module Z
 		class Processor
-			def initialize(memory, abbreviation_table)
+			def initialize(memory)
 				@memory = memory
 				@header = Header.new(@memory.contents)
-				@abbreviation_table = abbreviation_table
+				@abbreviation_table = AbbreviationTable.new(@memory)
 				@object_table = ObjectTable.new(@memory)
 			end
 

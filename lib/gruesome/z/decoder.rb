@@ -20,11 +20,11 @@ module Gruesome
 		
 		# This is the instruction decoder
 		class Decoder
-			def initialize(memory, abbreviation_table)
+			def initialize(memory)
 				@memory = memory
 				@instruction_cache = {}
 				@header = Header.new(@memory.contents)
-				@abbreviation_table = abbreviation_table
+				@abbreviation_table = AbbreviationTable.new(@memory)
 
 				# For versions 1 and 2, there is a permanent alphabet
 				@alphabet = 0

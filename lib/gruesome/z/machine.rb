@@ -25,12 +25,11 @@ module Gruesome
 
 				# II. Read header (at address 0x0000) and associated tables
 				@header = Header.new(@memory.contents)
-				@abbreviation_table = AbbreviationTable.new(@memory)
 				@object_table = ObjectTable.new(@memory)
 
 				# III. Instantiate CPU
-				@decoder = Decoder.new(@memory, @abbreviation_table)
-				@processor = Processor.new(@memory, @abbreviation_table)
+				@decoder = Decoder.new(@memory)
+				@processor = Processor.new(@memory)
 
 				100.times do
 					i = @decoder.fetch
