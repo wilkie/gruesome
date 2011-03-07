@@ -203,6 +203,8 @@ module Gruesome
 				when Opcode::PUSH
 					# add value to stack
 					@memory.writev(0, operands[0])
+				when Opcode::REMOVE_OBJ
+					@object_table.object_remove_object(operands[0])
 				when Opcode::RET
 					routine_return(operands[0])
 				when Opcode::RET_POPPED

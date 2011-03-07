@@ -1278,6 +1278,19 @@ describe Gruesome::Z::Processor do
 					end
 				end
 
+				describe "remove_obj" do
+					it "should clear the parent of the given object" do
+						@object_table.object_get_parent(2).should eql(1)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::REMOVE_OBJ,
+														 [Gruesome::Z::OperandType::LARGE],
+														 [2], nil, nil, nil, 0)
+						@processor.execute(i)
+
+						@object_table.object_get_parent(2).should eql(0)
+					end
+				end
+
+
 				describe "clear_attr" do
 					it "should clear the attribute when it exists in the object attribute list without altering other attributes" do
 						@object_table.object_has_attribute?(2, 25).should eql(true)
