@@ -258,8 +258,12 @@ module Gruesome
 					# and the 8 from the next byte) This is _signed_
 					if (branch_offset & 0b01000000) == 0
 						branch_offset = branch_offset & 0b111111
+						negative = (branch_offset & 0b100000) > 0
 						branch_offset = branch_offset << 8
 						branch_offset = branch_offset | @memory.force_readb(pc)
+						if (negative)
+							branch_offset = -(16384 - op)
+						end
 						pc = pc + 1
 					else # otherwise, the offset is simply the remaining 6 bits _unsigned_
 						branch_offset = branch_offset & 0b111111

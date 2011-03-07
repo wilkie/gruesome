@@ -71,13 +71,17 @@ module Gruesome
 						result | (instruction.operands[0] == element)
 					}
 					if (result == instruction.branch_on)
-						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						puts "old pc " + @memory.program_counter.to_s
+						puts "applying " + instruction.branch_to.to_s
+						@memory.program_counter += instruction.branch_to
+						@memory.program_counter &= 0xffff
 						@memory.program_counter -= 2
+						puts "new pc " + @memory.program_counter.to_s
 					end
 				when Opcode::JG
 					result = unsigned_to_signed(instruction.operands[0]) > unsigned_to_signed(instruction.operands[1])
 					if (result == instruction.branch_on)
-						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
 				when Opcode::JIN
@@ -85,13 +89,13 @@ module Gruesome
 				when Opcode::JL
 					result = unsigned_to_signed(instruction.operands[0]) < unsigned_to_signed(instruction.operands[1])
 					if (result == instruction.branch_on)
-						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
 				when Opcode::JZ
 					result = instruction.operands[0] == 0
 					if (result == instruction.branch_on)
-						@memory.program_counter += unsigned_to_signed(instruction.branch_to)
+						@memory.program_counter += instruction.branch_to
 						@memory.program_counter -= 2
 					end
 				when Opcode::LOAD
