@@ -515,6 +515,17 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "piracy" do
+				it "should simply act as a jump and update the program counter via a signed offset" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PIRACY,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [(-12343+65536)], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					@zork_memory.program_counter.should eql(0)
+				end
+			end
+
 			describe "test" do
 				it "should branch if the first operand has all bits set that the second has set" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::TEST,

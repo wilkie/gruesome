@@ -87,7 +87,7 @@ module Gruesome
 					end
 				when Opcode::CALL, Opcode::CALL_1N
 					routine_call(@memory.packed_address_to_byte_address(operands[0]), operands[1..-1], instruction.destination)
-				when Opcode::JUMP
+				when Opcode::JUMP, Opcode::PIRACY
 					@memory.program_counter += unsigned_to_signed(operands[0])
 					@memory.program_counter -= 2
 				when Opcode::JE
