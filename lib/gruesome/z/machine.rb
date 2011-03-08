@@ -52,15 +52,15 @@ module Gruesome
 					#puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
 
+					if i.opcode == Opcode::QUIT
+						break
+					end
+
 					#begin
 						@processor.execute(i)
 					#rescue RuntimeError
 					#	"error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					#end
-
-					if i.opcode == Opcode::QUIT
-						break
-					end
 				end
 
 				puts "Done."
