@@ -182,6 +182,8 @@ module Gruesome
 					print ZSCII.translate(0, @header.version, @memory.force_readzstr(operands[0])[1], @abbreviation_table)
 				when Opcode::PRINT_CHAR
 					print ZSCII.translate(0, @header.version, [operands[0]], @abbreviation_table)
+				when Opcode::PRINT_NUM
+					print unsigned_to_signed(operands[0]).to_s
 				when Opcode::PRINT_OBJ
 					print @object_table.object_short_text(operands[0])
 				when Opcode::PRINT_PADDR

@@ -722,6 +722,26 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "print_num" do
+				it "should print out a number given as an operand in decimal to stdout" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_NUM,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [12345], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					$stdout.string.should eql("12345")
+				end
+
+				it "should print out a signed number given as an operand in decimal to stdout" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_NUM,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [-12345+65536], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					$stdout.string.should eql("-12345")
+				end
+			end
+
 			describe "print" do
 				it "should print out the string given as an operand to stdout" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT,
