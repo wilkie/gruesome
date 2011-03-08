@@ -1494,7 +1494,6 @@ describe Gruesome::Z::Processor do
 					# XXX: Check for halt when property does not exist
 				end
 
-
 				describe "get_prop" do
 					it "should retrieve the property in the object's list when it is a byte" do
 						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP,
@@ -1523,6 +1522,7 @@ describe Gruesome::Z::Processor do
 
 				describe "get_prop_addr" do
 					it "should retrieve the address of the property in the object's list" do
+						@zork_memory.writev(128, 11111)
 						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_ADDR,
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [3, 20], 128, nil, nil, 0)
@@ -1531,9 +1531,39 @@ describe Gruesome::Z::Processor do
 					end
 
 					it "should set the variable given to 0 when the property is not in the object's list" do
+						@zork_memory.writev(128, 11111)
 						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_ADDR,
 														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
 														 [3, 28], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(0)
+					end
+				end
+
+				describe "get_prop_len" do
+					it "should retrieve the property data size for the byte property in the object's list" do
+						@zork_memory.writev(128, 11111)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_LEN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [0x4299], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(1)
+					end
+
+					it "should retrieve the property data size for the word property in the object's list" do
+						@zork_memory.writev(128, 11111)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_LEN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [0x4296], 128, nil, nil, 0)
+						@processor.execute(i)
+						@zork_memory.readv(128).should eql(2)
+					end
+
+					it "should return 0 when the property address given is 0" do
+						@zork_memory.writev(128, 11111)
+						i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::GET_PROP_LEN,
+														 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE],
+														 [0], 128, nil, nil, 0)
 						@processor.execute(i)
 						@zork_memory.readv(128).should eql(0)
 					end

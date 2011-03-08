@@ -81,16 +81,15 @@ module Gruesome
 			end
 
 			def execute(instruction)
+				# Pull values from the variables if needed by the instruction
 				# there are some exceptions for variable-by-reference instructions
-				if Opcode.is_variable_by_reference?(instruction.opcode, @header.version)
-					operands = instruction.operands
-				else
-					operands = instruction.operands.each_with_index.map do |operand, idx|
-						if instruction.types[idx] == OperandType::VARIABLE
-							@memory.readv(operand)
-						else
-							operand
-						end
+				operands = instruction.operands.each_with_index.map do |operand, idx|
+					if idx == 0 and Opcode.is_variable_by_reference?(instruction.opcode, @header.version)
+						operand
+					elsif instruction.types[idx] == OperandType::VARIABLE
+						@memory.readv(operand)
+					else
+						operand
 					end
 				end
 
@@ -136,6 +135,13 @@ module Gruesome
 				when Opcode::GET_PROP_ADDR
 					prop = @object_table.object_get_property_addr(operands[0], operands[1])
 					@memory.writev(instruction.destination, prop)
+				when Opcode::GET_PROP_LEN
+					if operands[0] == 0
+						result = 0
+					else
+						result = @object_table.object_get_property_data_size_from_address(operands[0])
+					end
+					@memory.writev(instruction.destination, result)
 				when Opcode::GET_SIBLING
 					sibling = @object_table.object_get_sibling(operands[0])
 					@memory.writev(instruction.destination, sibling)
@@ -150,13 +156,17 @@ module Gruesome
 					}
 					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JG
-					result = unsigned_to_signed(operands[0]) > unsigned_to_signed(operands[1])
+					result = operands[1..-1].inject(false) { |result, element|
+						result | (unsigned_to_signed(operands[0]) > unsigned_to_signed(element))
+					}
 					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JIN
 					result = @object_table.object_get_parent(operands[0]) == operands[1]
 					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JL
-					result = unsigned_to_signed(operands[0]) < unsigned_to_signed(operands[1])
+					result = operands[1..-1].inject(false) { |result, element|
+						result | (unsigned_to_signed(operands[0]) < unsigned_to_signed(element))
+					}
 					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::JZ
 					result = operands[0] == 0
@@ -221,6 +231,7 @@ module Gruesome
 
 					@object_table.object_set_property_word(object_id, prop_id, prop_value)
 				when Opcode::REMOVE_OBJ
+					puts "remove_obj"
 					@object_table.object_remove_object(operands[0])
 				when Opcode::RET
 					routine_return(operands[0])
@@ -284,6 +295,7 @@ module Gruesome
 
 					# write the parse-buffer
 					max_bytes = @memory.force_readb(operands[1])
+					max_bytes = 2 + max_bytes * 4
 					addr = operands[1] + 1
 					num_bytes = 1
 

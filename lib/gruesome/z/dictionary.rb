@@ -68,6 +68,11 @@ module Gruesome
 			end
 
 			def lookup_word(token)
+				if token.length > 6 and @header.version <= 3
+					token = token[0..5]
+				elsif token.length > 9
+					token = token[0..8]
+				end
 				cached_index = @lookup_cache[token]
 				if cached_index != nil
 					if self.word(cached_index) == token

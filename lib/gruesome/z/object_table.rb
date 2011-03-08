@@ -148,6 +148,7 @@ module Gruesome
 				#object_set_parent(new_child, index)
 				object_set_sibling(new_child, object_get_child(index))
 				object_set_child(index, new_child)
+				object_set_parent(new_child, index)
 			end
 
 			def object_remove_object(index)
@@ -166,6 +167,7 @@ module Gruesome
 				#	end
 				#end
 				
+				object_set_child(object_get_parent(index), object_get_sibling(index))
 				object_set_parent(index, 0)
 			end
 
@@ -234,10 +236,71 @@ module Gruesome
 				@memory.force_writeb(byte_addr, attribute_byte)
 			end
 
+			def object_get_size_and_number(prop_address)
+				size = 0
+				property_number = 0
+				if @header.version <= 3
+					size = @memory.force_readb(prop_address)
+					prop_address += 1
+
+					# when size is 0, this is the end of the list
+					if size == 0
+						return nil
+					end
+
+					# size is considered 32 times the data size minus one
+					# property number is the first 5 bits
+					property_number = size & 0b11111
+
+					size = size >> 5
+					size += 1
+				else
+					# in versions 4+, the size and property number are given
+					# as two bytes.
+					#
+					# if bit 7 is set in the first byte:
+					#    The second byte is read where first 6 bits 
+					#    indicate size, bit 6 is ignored, bit 7 is set
+					# if bit 7 is clear in the first byte:
+					#    bit 6 is clear = size of 1
+					#    bit 6 is set = size of 2
+					#
+					# property number is first 6 bits of first byte
+
+					first_byte = @memory.force_readb(prop_address)
+					prop_address += 1
+
+					property_number = first_byte & 0b111111
+					if first_byte & 0b10000000 > 0
+						# bit 7 is set
+						second_byte = @memory.force_readb(prop_address)
+						prop_address += 1
+
+						size = second_byte & 0b111111
+
+						# a size of 0 is allowed, and will indicate a size of 64
+						if size == 0
+							size = 64
+						end
+					else
+						# bit 7 is clear
+						if first_byte & 0b1000000 > 0
+							# bit 6 is set
+							size = 2
+						else
+							# bit 6 is clear
+							size = 1
+						end
+					end
+				end
+
+				{ :size => size, :property_number => property_number, :property_data_address => prop_address }
+			end
+
 			def object_properties(index)
 				entry = object_entry(index)
 				prop_address = entry[:properties_address]
-				
+
 				# get the length of the string in bytes
 				text_len = @memory.force_readb(prop_address) * 2
 				prop_address += 1
@@ -247,65 +310,16 @@ module Gruesome
 				properties = {}
 
 				while true do
-					if @header.version <= 3
-						size = @memory.force_readb(prop_address)
-						prop_address += 1
+					entry_info = object_get_size_and_number(prop_address)
 
-						# when size is 0, this is the end of the list
-						if size == 0
-							break
-						end
-
-						# size is considered 32 times the data size minus one
-						# property number is the first 5 bits
-						property_number = size & 0b11111
-
-						size = size >> 5
-						size += 1
-					else
-						# in versions 4+, the size and property number are given
-						# as two bytes.
-						#
-						# if bit 7 is set in the first byte:
-						#    The second byte is read where first 6 bits 
-						#    indicate size, bit 6 is ignored, bit 7 is set
-						# if bit 7 is clear in the first byte:
-						#    bit 6 is clear = size of 1
-						#    bit 6 is set = size of 2
-						#
-						# property number is first 6 bits of first byte
-
-						first_byte = @memory.force_readb(prop_address)
-						prop_address += 1
-
-						property_number = first_byte & 0b111111
-						if first_byte & 0b10000000 > 0
-							# bit 7 is set
-							second_byte = @memory.force_readb(prop_address)
-							prop_address += 1
-
-							size = second_byte & 0b111111
-
-							# a size of 0 is allowed, and will indicate a size of 64
-							if size == 0
-								size = 64
-							end
-						else
-							# bit 7 is clear
-							if first_byte & 0b1000000 > 0
-								# bit 6 is set
-								size = 2
-							else
-								# bit 6 is clear
-								size = 1
-							end
-						end
+					if entry_info == nil
+						break
 					end
 
 					# regardless of version, we now have the property size and the number
 
-					properties[property_number] = {:size => size, :property_data_address => prop_address}
-					prop_address += size
+					properties[entry_info[:property_number]] = {:size => entry_info[:size], :property_data_address => entry_info[:property_data_address]}
+					prop_address = entry_info[:property_data_address] + entry_info[:size]
 				end
 
 				properties
@@ -317,7 +331,7 @@ module Gruesome
 				property_data = []
 
 				property_info = properties[property_number]
-				
+
 				if property_info == nil
 					property_data = nil
 				else
@@ -335,12 +349,27 @@ module Gruesome
 				properties = object_properties(index)
 
 				property_info = properties[property_number]
-				
+
 				if property_info == nil
 					0
 				else
 					property_info[:property_data_address]
 				end
+			end
+
+			def object_get_property_data_size_from_address(address)
+				if @header.version <= 3
+					prop_address = address - 1
+				else
+					first_byte = @memory.force_readb(address-1)
+
+					if first_byte & 0b10000000 > 0
+						prop_address = address - 2
+					else
+						prop_address = address - 1
+					end
+				end
+				object_get_size_and_number(prop_address)[:size]
 			end
 
 			def object_get_property_word(index, property_number)
