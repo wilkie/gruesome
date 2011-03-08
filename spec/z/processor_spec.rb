@@ -831,6 +831,48 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readv(130).should eql(12345)
 				end
 			end
+
+			describe "random" do
+				it "should return 0 when a negative value is used to seed the generator" do
+					@zork_memory.writev(130, 11111)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RANDOM,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [-1+65536], 130, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(130).should eql(0)
+				end
+
+				it "should return 0 when 0 is used to seed the generator" do
+					@zork_memory.writev(130, 11111)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RANDOM,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [-1+65536], 130, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(130).should eql(0)
+				end
+
+				it "should be able to be seeded with a negative value such that the behavior is predicable" do
+					srand = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RANDOM,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [-1+65536], 130, nil, nil, 0)
+					@processor.execute(srand)
+
+					rnd = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::RANDOM,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [1234], 130, nil, nil, 0)
+					@processor.execute(rnd)
+					store1 = @zork_memory.readv(130)
+					@processor.execute(rnd)
+					store2 = @zork_memory.readv(130)
+
+					@processor.execute(srand)
+
+					@processor.execute(rnd)
+					@zork_memory.readv(130).should eql(store1)
+					@processor.execute(rnd)
+					@zork_memory.readv(130).should eql(store2)
+				end
+			end
 		end
 
 		describe "Input Instruction" do

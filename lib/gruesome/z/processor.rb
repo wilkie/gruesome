@@ -233,6 +233,21 @@ module Gruesome
 					prop_value = operands[2]
 
 					@object_table.object_set_property_word(object_id, prop_id, prop_value)
+				when Opcode::RANDOM
+					value = unsigned_to_signed(operands[0])
+					if value < 0
+						# seed with value
+						srand(value)
+						result = 0
+					elsif value == 0
+						# seed with timestamp
+						srand()
+						result = 0
+					else
+						# pull random number from between 1 and value
+						result = rand(value-1) + 1
+					end
+					@memory.writev(instruction.destination, result)
 				when Opcode::REMOVE_OBJ
 					puts "remove_obj"
 					@object_table.object_remove_object(operands[0])
