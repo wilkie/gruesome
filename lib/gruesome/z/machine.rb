@@ -17,10 +17,7 @@ module Gruesome
 
 				# I. Create memory space
 
-				# The memory space is the size of the file (which is a memory snapshot) or
-				# 0x10000, whichever is smaller
-
-				memory_size = [0x10000, file.size].min
+				memory_size = file.size
 				@memory = Memory.new(file.read(memory_size))
 
 				# Set flags
@@ -43,7 +40,16 @@ module Gruesome
 
 				while true do
 					i = @decoder.fetch
-					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+					#var = @memory.readv(0)
+					#if var != nil
+					#	puts "var %00 = " + sprintf("%04x", var)
+					#	@memory.writev(0, var)
+					#end
+					#var = @memory.readv(1)
+					#if var != nil
+					#	puts "var %01 = " + sprintf("%04x", @memory.readv(0x01))
+					#end
+					#puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
 
 					#begin
