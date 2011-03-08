@@ -857,6 +857,17 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "print_char" do
+				it "should print out the zchar given as an operand to stdout" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_CHAR,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [215], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					$stdout.string.should eql("\u00fe")
+				end
+			end
+
 			describe "print_num" do
 				it "should print out a number given as an operand in decimal to stdout" do
 					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_NUM,
@@ -909,17 +920,6 @@ describe Gruesome::Z::Processor do
 
 					@processor.execute(i)
 					$stdout.string[/(.*)\n/,1].should eql("ZORK I: The Great Underground Empire")
-				end
-			end
-
-			describe "print_char" do
-				it "should print out the Z-character given by the operand" do
-					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_CHAR,
-													 [Gruesome::Z::OperandType::LARGE],
-													 [0x0c], nil, nil, nil, 0)
-
-					@processor.execute(i)
-					$stdout.string.should eql("g")
 				end
 			end
 

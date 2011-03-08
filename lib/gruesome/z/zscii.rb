@@ -21,6 +21,156 @@ module Gruesome
 				end
 			end
 
+			def ZSCII.translate_Zchar(zchar)
+				if zchar == 9
+					"\t"
+				elsif zchar == 11 
+					" "
+				elsif zchar == 13
+					"\n"
+				elsif zchar >= 32 and zchar <= 126
+					zchar.chr
+				elsif zchar == 155
+					"\u00e4"
+				elsif zchar == 156
+					"\u00f6"
+				elsif zchar == 157
+					"\u00fc"
+				elsif zchar == 158
+					"\u00c4"
+				elsif zchar == 159
+					"\u00d6"
+				elsif zchar == 160
+					"\u00dc"
+				elsif zchar == 161
+					"\u00df"
+				elsif zchar == 162
+					"\u00bb"
+				elsif zchar == 163
+					"\u00ab"
+				elsif zchar == 164
+					"\u00eb"
+				elsif zchar == 165
+					"\u00ef"
+				elsif zchar == 166
+					"\u00ff"
+				elsif zchar == 167
+					"\u00cb"
+				elsif zchar == 168
+					"\u00cf"
+				elsif zchar == 169
+					"\u00e1"
+				elsif zchar == 170
+					"\u00e9"
+				elsif zchar == 171
+					"\u00ed"
+				elsif zchar == 172
+					"\u00f3"
+				elsif zchar == 173
+					"\u00fa"
+				elsif zchar == 174
+					"\u00fd"
+				elsif zchar == 175
+					"\u00c1"
+				elsif zchar == 176
+					"\u00c9"
+				elsif zchar == 177
+					"\u00cd"
+				elsif zchar == 178
+					"\u00d3"
+				elsif zchar == 179
+					"\u00da"
+				elsif zchar == 180
+					"\u00dd"
+				elsif zchar == 181
+					"\u00e0"
+				elsif zchar == 182
+					"\u00e8"
+				elsif zchar == 183
+					"\u00ec"
+				elsif zchar == 184
+					"\u00f2"
+				elsif zchar == 185
+					"\u00f9"
+				elsif zchar == 186
+					"\u00c0"
+				elsif zchar == 187
+					"\u00c8"
+				elsif zchar == 188
+					"\u00cc"
+				elsif zchar == 189
+					"\u00d2"
+				elsif zchar == 190
+					"\u00d9"
+				elsif zchar == 191
+					"\u00e2"
+				elsif zchar == 192
+					"\u00ea"
+				elsif zchar == 193
+					"\u00ee"
+				elsif zchar == 194
+					"\u00f4"
+				elsif zchar == 195
+					"\u00fb"
+				elsif zchar == 196
+					"\u00c2"
+				elsif zchar == 197
+					"\u00ca"
+				elsif zchar == 198
+					"\u00ce"
+				elsif zchar == 199
+					"\u00d4"
+				elsif zchar == 200
+					"\u00db"
+				elsif zchar == 201
+					"\u00e5"
+				elsif zchar == 202
+					"\u00c5"
+				elsif zchar == 203
+					"\u00f8"
+				elsif zchar == 204
+					"\u00d8"
+				elsif zchar == 205
+					"\u00e3"
+				elsif zchar == 206
+					"\u00f1"
+				elsif zchar == 207
+					"\u00f5"
+				elsif zchar == 208
+					"\u00c3"
+				elsif zchar == 209
+					"\u00d1"
+				elsif zchar == 210
+					"\u00d5"
+				elsif zchar == 211
+					"\u00e6"
+				elsif zchar == 212
+					"\u00c6"
+				elsif zchar == 213
+					"\u00e7"
+				elsif zchar == 214
+					"\u00c7"
+				elsif zchar == 215
+					"\u00fe"
+				elsif zchar == 216
+					"\u00f0"
+				elsif zchar == 217
+					"\u00de"
+				elsif zchar == 218
+					"\u00d0"
+				elsif zchar == 219
+					"\u00a3"
+				elsif zchar == 220
+					"\u0153"
+				elsif zchar == 221
+					"\u0152"
+				elsif zchar == 222
+					"\u00a1"
+				elsif zchar == 223
+					"\u00bf"
+				end
+			end
+
 			# return the utf8 string for the given ZSCII code
 			def ZSCII.translate(initial_alphabet, version, zscii_str, abbreviation_table = nil, table = nil)
 				str = ""
@@ -47,6 +197,8 @@ module Gruesome
 
 						big_char = big_char << 5
 						big_char |= c
+
+						str += translate_Zchar(big_char)
 					elsif next_is_abbrev
 						next_is_abbrev = false
 
