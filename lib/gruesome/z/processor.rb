@@ -108,6 +108,16 @@ module Gruesome
 					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) - 1)
 				when Opcode::INC
 					@memory.writev(operands[0], unsigned_to_signed(@memory.readv(operands[0])) + 1)
+				when Opcode::INC_CHK
+					new_value = unsigned_to_signed(@memory.readv(operands[0])) + 1
+					@memory.writev(operands[0], new_value)
+					result = new_value > unsigned_to_signed(operands[1])
+					branch(instruction.branch_to, instruction.branch_on, result)
+				when Opcode::DEC_CHK
+					new_value = unsigned_to_signed(@memory.readv(operands[0])) - 1
+					@memory.writev(operands[0], new_value)
+					result = new_value < unsigned_to_signed(operands[1])
+					branch(instruction.branch_to, instruction.branch_on, result)
 				when Opcode::INSERT_OBJ
 					@object_table.object_insert_object(operands[1], operands[0])
 				when Opcode::GET_CHILD

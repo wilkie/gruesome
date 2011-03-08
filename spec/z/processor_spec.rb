@@ -121,6 +121,73 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "inc_chk" do
+				it "should increment the value in the variable given as the operand" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(128).should eql(12346)
+				end
+
+				it "should consider the value signed and increment -1 to 0" do
+					@zork_memory.writev(128, -1+65536)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(128).should eql(0)
+				end
+
+				it "should edit the value on the stack in place" do
+					@zork_memory.writev(0, 11111)
+					@zork_memory.writev(0, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [0, 12345], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(0).should eql(12346)
+					@zork_memory.readv(0).should eql(11111)
+				end
+
+				it "should branch if the value after incrementing is greater than the value given by the operand" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, 2000, true, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 2000
+				end
+
+				it "should not branch if the value after incrementing is not greater than the value given by the operand" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12346], nil, 2000, true, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 12345
+				end
+
+				it "should not branch if the value after incrementing is greater than the value given by the operand and condition is negated" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, 2000, false, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 12345
+				end
+
+				it "should branch if the value after incrementing is not greater than the value given by the operand and condition is negated" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::INC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12346], nil, 2000, false, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 2000
+				end
+			end
+
 			# not necessarily a branch
 			describe "ret" do
 				it "should return to the routine that called it" do
