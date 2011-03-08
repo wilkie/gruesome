@@ -121,6 +121,74 @@ describe Gruesome::Z::Processor do
 				end
 			end
 
+			describe "dec_chk" do
+				it "should decrement the value in the variable given as the operand" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(128).should eql(12344)
+				end
+
+				it "should consider the value signed and decrement 0 to -1" do
+					@zork_memory.writev(128, 0)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(128).should eql(-1+65536)
+				end
+
+				it "should edit the value on the stack in place" do
+					@zork_memory.writev(0, 11111)
+					@zork_memory.writev(0, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [0, 12345], nil, nil, nil, 0)
+					@processor.execute(i)
+					@zork_memory.readv(0).should eql(12344)
+					@zork_memory.readv(0).should eql(11111)
+				end
+
+				it "should branch if the value after decrementing is less than the value given by the operand" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, 2000, true, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 2000
+				end
+
+				it "should not branch if the value after decrementing is not less than the value given by the operand" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, 2000, true, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 12345
+				end
+
+				it "should not branch if the value after decrementing is less than the value given by the operand and condition is negated" do
+					@zork_memory.writev(128, 12345)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12345], nil, 2000, false, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 12345
+				end
+
+				it "should branch if the value after decrementing is not less than the value given by the operand and condition is negated" do
+					@zork_memory.writev(128, 12347)
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::DEC_CHK,
+													 [Gruesome::Z::OperandType::VARIABLE, Gruesome::Z::OperandType::LARGE],
+													 [128, 12346], nil, 2000, false, 0)
+					@processor.execute(i)
+					@zork_memory.program_counter = 2000
+				end
+
+			end
+
 			describe "inc_chk" do
 				it "should increment the value in the variable given as the operand" do
 					@zork_memory.writev(128, 12345)
