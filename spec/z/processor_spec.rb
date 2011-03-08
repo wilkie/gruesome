@@ -831,7 +831,38 @@ describe Gruesome::Z::Processor do
 					@zork_memory.readv(130).should eql(12345)
 				end
 			end
+		end
 
+		describe "Input Instruction" do
+			before(:each) do
+				# We take over stdin so that we can simulate the keyboard input
+				@stdin = $stdin
+
+				# sread text-buffer parse-buffer (v 1-3)
+				
+				# text-buffer byte 0 indicates maximum length
+				# parse-buffer byte 0 indicates maximum words
+
+				@zork_memory.force_writeb(0x1000, 50)
+			end
+
+			after(:each) do
+				$stdin = @stdin
+
+				# The program counter should not be changed
+				@zork_memory.program_counter.should eql(12345)
+			end
+
+			describe "sread" do
+				it "should read in a line of text" do
+					$stdin = StringIO.new("foo bar johnson\n")
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::SREAD,
+													 [Gruesome::Z::OperandType::LARGE, Gruesome::Z::OperandType::LARGE], 
+													 [0x1000, 0x1200], nil, nil, nil, 0)
+					@processor.execute(i)
+				end
+			end
 		end
 
 		describe "Output Instruction" do
@@ -1459,7 +1490,7 @@ describe Gruesome::Z::Processor do
 						@processor.execute(i)
 						@object_table.object_get_property_word(3, 15).should eql(54321)
 					end
-	
+
 					# XXX: Check for halt when property does not exist
 				end
 

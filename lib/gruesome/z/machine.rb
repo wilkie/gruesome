@@ -43,9 +43,14 @@ module Gruesome
 
 				while true do
 					i = @decoder.fetch
-					puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+					#puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					@memory.program_counter += i.length
-					@processor.execute(i)
+
+					#begin
+						@processor.execute(i)
+					#rescue RuntimeError
+					#	"error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+					#end
 
 					if i.opcode == Opcode::QUIT
 						break

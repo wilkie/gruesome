@@ -5,6 +5,7 @@ require_relative 'opcode'
 require_relative 'header'
 require_relative 'zscii'
 require_relative 'abbreviation_table'
+require_relative 'dictionary'
 require_relative 'object_table'
 
 module Gruesome
@@ -15,6 +16,7 @@ module Gruesome
 				@header = Header.new(@memory.contents)
 				@abbreviation_table = AbbreviationTable.new(@memory)
 				@object_table = ObjectTable.new(@memory)
+				@dictionary = Dictionary.new(@memory)
 			end
 
 			def routine_call(address, arguments, result_variable = nil)
@@ -230,6 +232,78 @@ module Gruesome
 					routine_return(0)
 				when Opcode::SET_ATTR
 					@object_table.object_set_attribute(operands[0], operands[1])
+				when Opcode::SREAD
+					# read the maximum number of bytes in the text-buffer
+					max_bytes = @memory.force_readb(operands[0])
+
+					# address of the next byte in the text-buffer
+					addr = operands[0] + 1
+
+					# read in a line of input from stdin
+					line = $stdin.readline[0..-2]
+
+					# truncate line to fit the max characters given by text-buffer
+					if line.length > max_bytes
+						line = line[0..max_bytes]
+					end
+
+					# tokenize
+					lexed = @dictionary.tokenize(line)
+
+					# parse
+					parsed = @dictionary.parse(lexed)
+
+					# encode the line into a ZChar stream
+					str = ZSCII.encode_to_zchars(line, @header.version)
+
+					# write the text to the text-buffer
+					num_bytes = 1
+					first_position = 1
+					if @header.version >= 5
+						num_bytes += 1
+						@memory.force_writeb(addr, line.length)
+						first_position = 2
+						addr += 1
+					end
+
+					str.each do |zchr|
+						num_bytes += 1
+						if num_bytes > max_bytes
+							break
+						end
+						@memory.force_writeb(addr, zchr)
+						addr += 1
+					end
+
+					if @header.version < 5
+						# terminator
+						if num_bytes <= max_bytes
+							@memory.force_writeb(addr, 0)
+						end
+					end
+
+					# write the parse-buffer
+					max_bytes = @memory.force_readb(operands[1])
+					addr = operands[1] + 1
+					num_bytes = 1
+
+					if num_bytes <= max_bytes
+						@memory.force_writeb(addr, lexed.length)
+						addr += 1
+					end
+
+					parsed.each do |token, index|
+						num_bytes += 4
+						if num_bytes > max_bytes
+							break
+						end
+						@memory.force_writew(addr, token[:address])
+						addr += 2
+						@memory.force_writeb(addr, token[:size])
+						addr += 1
+						@memory.force_writeb(addr, token[:position]+first_position)
+						addr += 1
+					end
 				when Opcode::TEST
 					result = (operands[0] & operands[1]) == operands[1]
 					branch(instruction.branch_to, instruction.branch_on, result)
@@ -277,7 +351,7 @@ module Gruesome
 				when Opcode::STOREW
 					@memory.writew(operands[0] + unsigned_to_signed(operands[1])*2, operands[2])
 				else
-					raise "opcode not implemented"
+					raise "opcode " + Opcode.name(instruction.opcode, @header.version) + " not implemented"
 				end
 			end
 

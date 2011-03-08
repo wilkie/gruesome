@@ -245,6 +245,10 @@ module Gruesome
 				orig_index = index
 
 				until continue == false do
+					if max_len != -1 and (index + 2 - orig_index) > max_len
+						break
+					end
+
 					byte1 = force_readb(index)
 					byte2 = force_readb(index+1)
 
@@ -255,10 +259,6 @@ module Gruesome
 					chrs << (byte2 & 0b11111)
 
 					continue = (byte1 & 0b10000000) == 0
-
-					if max_len != -1 and (index - orig_index) >= max_len
-						break
-					end
 				end
 
 				return [index - orig_index, chrs]

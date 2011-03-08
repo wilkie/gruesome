@@ -271,7 +271,7 @@ module Gruesome
 					end
 
 					# calculate actual destination from the offset
-					if branch_offset < 2
+					if branch_offset == 0 or branch_offset == 1
 						# a return
 						branch_destination = branch_offset
 					else

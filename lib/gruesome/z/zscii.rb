@@ -13,6 +13,23 @@ module Gruesome
 
 			V1_A2 = " 0123456789.,!?_#'\"/\\<-:()"
 
+			UNICODE_TRANSLATION_TABLE = {
+				155 => "\u00e4", 156 => "\u00f6", 157 => "\u00fc", 158 => "\u00c4", 159 => "\u00d6", 
+				160 => "\u00dc", 161 => "\u00df", 162 => "\u00bb", 163 => "\u00ab", 164 => "\u00eb", 
+				165 => "\u00ef", 166 => "\u00ff", 167 => "\u00cb", 168 => "\u00cf", 169 => "\u00e1",
+				170 => "\u00e9", 171 => "\u00ed", 172 => "\u00f3", 173 => "\u00fa", 174 => "\u00fd",
+				175 => "\u00c1", 176 => "\u00c9", 177 => "\u00cd", 178 => "\u00d3", 179 => "\u00da",
+				180 => "\u00dd", 181 => "\u00e0", 182 => "\u00e8", 183 => "\u00ec", 184 => "\u00f2",
+				185 => "\u00f9", 186 => "\u00c0", 187 => "\u00c8", 188 => "\u00cc", 189 => "\u00d2",
+				190 => "\u00d9", 191 => "\u00e2", 192 => "\u00ea", 193 => "\u00ee", 194 => "\u00f4",
+				195 => "\u00fb", 196 => "\u00c2", 197 => "\u00ca", 198 => "\u00ce", 199 => "\u00d4",
+				200 => "\u00db", 201 => "\u00e5", 202 => "\u00c5", 203 => "\u00f8", 204 => "\u00d8",
+				205 => "\u00e3", 206 => "\u00f1", 207 => "\u00f5", 208 => "\u00c3", 209 => "\u00d1",
+				210 => "\u00d5", 211 => "\u00e6", 212 => "\u00c6", 213 => "\u00e7", 214 => "\u00c7",
+				215 => "\u00fe", 216 => "\u00f0", 217 => "\u00de", 218 => "\u00d0", 219 => "\u00a3",
+				220 => "\u0153", 221 => "\u0152", 222 => "\u00a1", 223 => "\u00bf" 
+			}
+
 			# figure out if a shift lock is pressed and return it
 			def ZSCII.eval_alphabet(initial_alphabet, version, codes)
 				if version < 3
@@ -30,145 +47,205 @@ module Gruesome
 					"\n"
 				elsif zchar >= 32 and zchar <= 126
 					zchar.chr
-				elsif zchar == 155
-					"\u00e4"
-				elsif zchar == 156
-					"\u00f6"
-				elsif zchar == 157
-					"\u00fc"
-				elsif zchar == 158
-					"\u00c4"
-				elsif zchar == 159
-					"\u00d6"
-				elsif zchar == 160
-					"\u00dc"
-				elsif zchar == 161
-					"\u00df"
-				elsif zchar == 162
-					"\u00bb"
-				elsif zchar == 163
-					"\u00ab"
-				elsif zchar == 164
-					"\u00eb"
-				elsif zchar == 165
-					"\u00ef"
-				elsif zchar == 166
-					"\u00ff"
-				elsif zchar == 167
-					"\u00cb"
-				elsif zchar == 168
-					"\u00cf"
-				elsif zchar == 169
-					"\u00e1"
-				elsif zchar == 170
-					"\u00e9"
-				elsif zchar == 171
-					"\u00ed"
-				elsif zchar == 172
-					"\u00f3"
-				elsif zchar == 173
-					"\u00fa"
-				elsif zchar == 174
-					"\u00fd"
-				elsif zchar == 175
-					"\u00c1"
-				elsif zchar == 176
-					"\u00c9"
-				elsif zchar == 177
-					"\u00cd"
-				elsif zchar == 178
-					"\u00d3"
-				elsif zchar == 179
-					"\u00da"
-				elsif zchar == 180
-					"\u00dd"
-				elsif zchar == 181
-					"\u00e0"
-				elsif zchar == 182
-					"\u00e8"
-				elsif zchar == 183
-					"\u00ec"
-				elsif zchar == 184
-					"\u00f2"
-				elsif zchar == 185
-					"\u00f9"
-				elsif zchar == 186
-					"\u00c0"
-				elsif zchar == 187
-					"\u00c8"
-				elsif zchar == 188
-					"\u00cc"
-				elsif zchar == 189
-					"\u00d2"
-				elsif zchar == 190
-					"\u00d9"
-				elsif zchar == 191
-					"\u00e2"
-				elsif zchar == 192
-					"\u00ea"
-				elsif zchar == 193
-					"\u00ee"
-				elsif zchar == 194
-					"\u00f4"
-				elsif zchar == 195
-					"\u00fb"
-				elsif zchar == 196
-					"\u00c2"
-				elsif zchar == 197
-					"\u00ca"
-				elsif zchar == 198
-					"\u00ce"
-				elsif zchar == 199
-					"\u00d4"
-				elsif zchar == 200
-					"\u00db"
-				elsif zchar == 201
-					"\u00e5"
-				elsif zchar == 202
-					"\u00c5"
-				elsif zchar == 203
-					"\u00f8"
-				elsif zchar == 204
-					"\u00d8"
-				elsif zchar == 205
-					"\u00e3"
-				elsif zchar == 206
-					"\u00f1"
-				elsif zchar == 207
-					"\u00f5"
-				elsif zchar == 208
-					"\u00c3"
-				elsif zchar == 209
-					"\u00d1"
-				elsif zchar == 210
-					"\u00d5"
-				elsif zchar == 211
-					"\u00e6"
-				elsif zchar == 212
-					"\u00c6"
-				elsif zchar == 213
-					"\u00e7"
-				elsif zchar == 214
-					"\u00c7"
-				elsif zchar == 215
-					"\u00fe"
-				elsif zchar == 216
-					"\u00f0"
-				elsif zchar == 217
-					"\u00de"
-				elsif zchar == 218
-					"\u00d0"
-				elsif zchar == 219
-					"\u00a3"
-				elsif zchar == 220
-					"\u0153"
-				elsif zchar == 221
-					"\u0152"
-				elsif zchar == 222
-					"\u00a1"
-				elsif zchar == 223
-					"\u00bf"
+				elsif zchar >= 155 and zchar <= 223
+					UNICODE_TRANSLATION_TABLE[zchar]
 				end
+			end
+
+			def ZSCII.translate_char_to_zchar(chr, version)
+				if chr == "\t"
+					9
+				elsif chr == " "
+					11
+				elsif chr == "\n"
+					13
+				elsif chr.getbyte(0) >= 32 and chr.getbyte(0) <= 126
+					chr.getbyte(0)
+				else
+					# XXX: Unicode Translation Table reversed
+					"?".getbyte(0)
+				end 
+			end
+
+			# Give array of Z-codes
+			def ZSCII.translate_char(chr, version)
+				ret = []
+				if chr >= 'a'[0] and chr <= 'z'[0]
+					# A0
+					chr = chr.getbyte(0) - 'a'.getbyte(0)
+					chr += 6
+					ret << chr
+				elsif chr >= 'A'[0] and chr <= 'Z'[0]
+					# A1
+					chr = chr.getbyte(0) - 'A'.getbyte(0)
+					chr += 6
+
+					ret << 4
+					ret << chr
+				elsif chr == " "
+					ret << 0
+				elsif chr == "\n"
+					if version == 1
+						# use 10-bit code since newline is not in the alphabet 2
+						ret << 5
+						ret << 6
+						ret << 0
+						ret << 13
+					else
+						ret << 5
+						ret << 7
+					end
+				elsif chr >= '0'[0] and chr <= '9'[0]
+					chr = chr[0] - '0'[0]
+					if version == 1
+						chr += 7
+					else
+						chr += 8
+					end
+					ret << 5
+					ret << chr
+				elsif chr == "."
+					ret << 5
+					if version == 1
+						ret << 17
+					else
+						ret << 18
+					end
+				elsif chr == ","
+					ret << 5
+					if version == 1
+						ret << 18
+					else	
+						ret << 19
+					end
+				elsif chr == "!"
+					ret << 5
+					if version == 1
+						ret << 19
+					else
+						ret << 20
+					end
+				elsif chr == "?"
+					ret << 5
+					if version == 1
+						ret << 20
+					else
+						ret << 21
+					end
+				elsif chr == "_"
+					ret << 5
+					if version == 1
+						ret << 21
+					else
+						ret << 22
+					end
+				elsif chr == "#"
+					ret << 5
+					if version == 1
+						ret << 22
+					else
+						ret << 23
+					end
+				elsif chr == "'"
+					ret << 5
+					if version == 1
+						ret << 23
+					else
+						ret << 24
+					end
+				elsif chr == "\""
+					ret << 5
+					if version == 1
+						ret << 24
+					else
+						ret << 25
+					end
+				elsif chr == "/"
+					ret << 5
+					if version == 1
+						ret << 25
+					else
+						ret << 26
+					end
+				elsif chr == "\\"
+					ret << 5
+					if version == 1
+						ret << 26
+					else
+						ret << 27
+					end
+				elsif chr == "<"
+					if version == 1
+						ret << 5
+						ret << 27
+					else
+						# use 10-bit
+						ret << 5
+						ret << 6
+						ret << 0
+						ret << '<'[0]
+					end
+				elsif chr == "-"
+					ret << 5
+					ret << 28
+				elsif chr == ":"
+					ret << 5
+					ret << 29
+				elsif chr == "("
+					ret << 5
+					ret << 30
+				elsif chr == ")"
+					ret << 5
+					ret << 30
+				end
+				# TODO: Unicode
+
+				ret
+			end
+
+			def ZSCII.encode_to_zchars(string, version)
+				codes = []
+				string.each_char do |chr|
+					codes << ZSCII.translate_char_to_zchar(chr, version)
+				end
+
+				codes
+			end
+
+			def ZSCII.encode(string, version)
+				codes = []
+				string.each_char do |chr|
+					subcodes = ZSCII.translate_char(chr, version)
+					subcodes.each do |code|
+						codes << code
+					end
+				end
+
+				# pad codes to be divisible by three
+				# and pad with '5' shift code
+				(codes.length % 3).times do 
+					codes << 5
+				end
+				
+				# encode the z-codes
+				words = []
+
+				word = 0
+				codes.each_with_index do |code, i|
+					if (i % 3) == 0
+						word = (code & 0b11111) << 10
+					elsif (i % 3) == 1
+						word |= (code & 0b11111) << 5
+					else
+						word |= code & 0b11111
+						words << word
+					end
+				end
+
+				# Give single that it is the last word
+				words[-1] |= 0b10000000_00000000
+
+				words
 			end
 
 			# return the utf8 string for the given ZSCII code
@@ -202,7 +279,7 @@ module Gruesome
 					elsif next_is_abbrev
 						next_is_abbrev = false
 
-						str += abbreviation_table.lookup(abbrev_alphabet, c, alphabet)
+						str += abbreviation_table.lookup(abbrev_alphabet, c, 0)
 					elsif (version < 3 and c == 2) or c == 4
 						# handle shift characters
 						alphabet = (alphabet + 1) % 3
