@@ -864,6 +864,97 @@ describe Gruesome::Z::Processor do
 				end
 			end
 		end
+		
+		describe "Output and Branching Instruction" do
+			before(:each) do
+				# We take over stdout so that we can see what it prints
+				@stdout = $stdout
+				$stdout = StringIO.new
+			end
+
+			after(:each) do
+				$stdout = @stdout
+			end
+
+			describe "print_ret" do
+				it "should return to the routine that called it" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_RET,
+													 [Gruesome::Z::OperandType::STRING],
+													 ["Hello World"], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.program_counter.should eql(12345)
+				end
+
+				it "should print out the string given as an operand followed by a newline to stdout" do
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_RET,
+													 [Gruesome::Z::OperandType::STRING],
+													 ["Hello World"], nil, nil, nil, 0)
+
+					@processor.execute(i)
+					$stdout.string.should eql("Hello World\n")
+				end
+
+				it "should as a return value set the variable indicated by the call with 1" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 128, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_RET,
+													 [Gruesome::Z::OperandType::STRING],
+													 ["Hello World"], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(128).should eql(1)
+				end
+
+				it "should as a return value push 1 to the caller's stack when indicated" do
+					# set up a routine at address $2000
+					@zork_memory.force_writeb(0x2000, 2)
+					@zork_memory.force_writew(0x2001, 0)
+					@zork_memory.force_writew(0x2003, 0)
+					@zork_memory.writev(0, 11111)
+
+					# The packed address is 0x2000 / 2
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::CALL,
+													 [Gruesome::Z::OperandType::LARGE],
+													 [0x1000], 0, nil, nil, 0)
+
+					@processor.execute(i)
+
+					i = Gruesome::Z::Instruction.new(Gruesome::Z::Opcode::PRINT_RET,
+													 [Gruesome::Z::OperandType::STRING],
+													 ["Hello World"], nil, nil, nil, 0)
+
+					@processor.execute(i)
+
+					@zork_memory.readv(0).should eql(1)
+					@zork_memory.readv(0).should eql(11111)
+				end
+			end
+		end
 
 		describe "Output Instruction" do
 			before(:each) do

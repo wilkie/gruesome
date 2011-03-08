@@ -194,7 +194,7 @@ module Gruesome
 					end
 				when Opcode::NOP
 				when Opcode::NEW_LINE
-					puts
+					puts	
 				when Opcode::POP
 					# get rid of the first item on stack
 					@memory.readv(0)
@@ -211,6 +211,9 @@ module Gruesome
 				when Opcode::PRINT_PADDR
 					str_addr = @memory.packed_address_to_byte_address(operands[0])
 					print ZSCII.translate(0, @header.version, @memory.force_readzstr(str_addr)[1], @abbreviation_table)
+				when Opcode::PRINT_RET
+					puts operands[0]
+					routine_return(1)
 				when Opcode::PULL
 					if @header.version == 6
 						# TODO: Version 6 PULL instruction
