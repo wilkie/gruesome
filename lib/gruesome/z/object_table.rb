@@ -145,30 +145,50 @@ module Gruesome
 			end
 
 			def object_insert_object(index, new_child)
-				#object_set_parent(new_child, index)
+				# remove child from old parent
+				if object_get_parent(new_child) != 0
+					object_remove_object new_child
+				end
+
+				# add to new parent
 				object_set_sibling(new_child, object_get_child(index))
 				object_set_child(index, new_child)
 				object_set_parent(new_child, index)
 			end
 
 			def object_remove_object(index)
-				#parent_id = object_get_parent(index)
-				#sibling_id = object_get_sibling(index)
-				#child_of_parent = object_get_child(parent_id)
-
-				# if the parent's child is this node, we must change it
-				#if child_of_parent == index
-				#	if sibling_id == index or sibling_id == 0
-				#		# our old parent has no children because we were an only child
-				#		object_set_child(parent_id, 0)
-				#	else
-				#		# our parents still have our sibling
-				#		object_set_child(parent_id, sibling_id)
-				#	end
-				#end
-				
-				object_set_child(object_get_parent(index), object_get_sibling(index))
+				old_parent = object_get_parent(index)
 				object_set_parent(index, 0)
+
+				if old_parent != 0
+					current_child = object_get_child(old_parent)
+					if current_child == index
+						# if we are the primary child of our parent, we removed
+						# ourselves... so we have to set a new primary child
+						# to be my sibling
+						object_set_child(old_parent, object_get_sibling(index))
+					else
+						# if not, we are within some list of siblings
+						# we need to remove ourself from this linked list
+						# whose head is current_child
+						
+						last = current_child
+						sibling = object_get_sibling(current_child)
+						while sibling != 0
+							if sibling == index
+								# found me!
+								# now, set the sibling of the previous one
+								# to my sibling (removing me from the chain)
+								object_set_sibling(last, object_get_sibling(index))
+
+								# break out of the loop
+								break
+							end
+							last = sibling
+							sibling = object_get_sibling(sibling)
+						end
+					end
+				end
 			end
 
 			def object_short_text(index)
