@@ -169,7 +169,7 @@ module Gruesome
 			elsif opcode_class == OpcodeClass::OP1
 				case opcode
 				when Opcode::GET_SIBLING, Opcode::GET_CHILD, Opcode::GET_PARENT,
-					Opcode::GET_PROP_LEN, Opcode::CALL_1S
+					Opcode::GET_PROP_LEN, Opcode::CALL_1S, Opcode::LOAD
 					result = true
 				end
 

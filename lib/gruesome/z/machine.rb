@@ -56,11 +56,11 @@ module Gruesome
 						break
 					end
 
-					#begin
+					begin
 						@processor.execute(i)
-					#rescue RuntimeError
-					#	"error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
-					#end
+					rescue RuntimeError => fuh
+						"error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+					end
 				end
 
 				puts "Done."
