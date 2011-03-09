@@ -17,7 +17,7 @@ module Gruesome
 
 				# I. Create memory space
 
-				memory_size = file.size
+				memory_size = File.size(game_file)
 				@memory = Memory.new(file.read(memory_size))
 
 				# Set flags
