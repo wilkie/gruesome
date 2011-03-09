@@ -249,7 +249,6 @@ module Gruesome
 					end
 					@memory.writev(instruction.destination, result)
 				when Opcode::REMOVE_OBJ
-					puts "remove_obj"
 					@object_table.object_remove_object(operands[0])
 				when Opcode::RET
 					routine_return(operands[0])
