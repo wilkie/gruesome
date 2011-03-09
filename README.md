@@ -39,6 +39,7 @@ Play!
 ## Next
 
 * Versions 4+ (Goal: Run Photopia)
+* The ability to download and list stories from a repository.
 
 ## Overall Goals
 
