@@ -126,6 +126,9 @@ module Gruesome
           @memory.writev(instruction.destination, child)
           result = child != 0
           branch(instruction.branch_to, instruction.branch_on, result)
+        when Opcode::GET_NEXT_PROP
+          next_prop = @object_table.object_get_next_property(operands[0], operands[1])
+          @memory.writev(instruction.destination, next_prop)
         when Opcode::GET_PARENT
           parent = @object_table.object_get_parent(operands[0])
           @memory.writev(instruction.destination, parent)

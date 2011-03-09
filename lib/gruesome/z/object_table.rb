@@ -317,6 +317,34 @@ module Gruesome
         { :size => size, :property_number => property_number, :property_data_address => prop_address }
       end
 
+	  def object_properties_array(index)
+        entry = object_entry(index)
+        prop_address = entry[:properties_address]
+
+        # get the length of the string in bytes
+        text_len = @memory.force_readb(prop_address) * 2
+        prop_address += 1
+
+        prop_address += text_len
+
+        properties = []
+
+        while true do
+          entry_info = object_get_size_and_number(prop_address)
+
+          if entry_info == nil
+            break
+          end
+
+          # regardless of version, we now have the property size and the number
+
+          properties << {:property_number => entry_info[:property_number], :size => entry_info[:size], :property_data_address => entry_info[:property_data_address]}
+          prop_address = entry_info[:property_data_address] + entry_info[:size]
+        end
+
+        properties
+	  end
+
       def object_properties(index)
         entry = object_entry(index)
         prop_address = entry[:properties_address]
@@ -376,6 +404,34 @@ module Gruesome
           property_info[:property_data_address]
         end
       end
+
+	  def object_get_next_property(index, property_number)
+		  properties = object_properties_array(index)
+		  if property_number == 0
+			  next_number = properties[0][:property_number]
+		  else
+			  cur_prop_index = nil
+			  properties.each_with_index do |p, i|
+				  if p[:property_number] == property_number
+					  cur_prop_index = i
+				  end
+			  end
+
+			  if cur_prop_index == nil
+				  # Error: Cannot get the next property when the property given is invalid
+				  raise "get_prop_addr gave incorrect property_number"
+			  end
+
+			  next_prop_index = cur_prop_index + 1
+
+			  if next_prop_index == properties.length
+				  next_number = 0
+			  else
+				  next_number = properties[next_prop_index][:property_number]
+			  end
+		  end
+		  next_number
+	  end
 
       def object_get_property_data_size_from_address(address)
         if @header.version <= 3

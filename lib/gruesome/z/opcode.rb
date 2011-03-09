@@ -24,7 +24,7 @@ module Gruesome
       LOADB      = (0x10 << 3) | OpcodeClass::OP2
       GET_PROP    = (0x11 << 3) | OpcodeClass::OP2
       GET_PROP_ADDR  = (0x12 << 3) | OpcodeClass::OP2
-      GET_NPROP    = (0x13 << 3) | OpcodeClass::OP2
+      GET_NEXT_PROP  = (0x13 << 3) | OpcodeClass::OP2
       ADD        = (0x14 << 3) | OpcodeClass::OP2
       SUB        = (0x15 << 3) | OpcodeClass::OP2
       MUL        = (0x16 << 3) | OpcodeClass::OP2
@@ -161,7 +161,7 @@ module Gruesome
       if opcode_class == OpcodeClass::OP2
         case opcode
         when Opcode::OR, Opcode::AND, Opcode::LOADB, Opcode::LOADW,
-          Opcode::GET_PROP, Opcode::GET_PROP_ADDR, Opcode::GET_NPROP,
+          Opcode::GET_PROP, Opcode::GET_PROP_ADDR, Opcode::GET_NEXT_PROP,
           Opcode::ADD, Opcode::SUB, Opcode::MUL, Opcode::DIV, Opcode::MOD,
           Opcode::CALL_2S
           result = true
@@ -426,7 +426,7 @@ module Gruesome
         when Opcode::LOADB then "loadb"
         when Opcode::GET_PROP then "get_prop"
         when Opcode::GET_PROP_ADDR then "get_prop_addr"
-        when Opcode::GET_NPROP then "get_next_prop"
+        when Opcode::GET_NEXT_PROP then "get_next_prop"
         when Opcode::ADD then "add"
         when Opcode::SUB then "sub"
         when Opcode::MUL then "mul"
