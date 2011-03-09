@@ -181,8 +181,10 @@ module Gruesome
         end
       elsif opcode_class == OpcodeClass::OP0
         case opcode
-        when Opcode::SAVE, Opcode::RESTORE, Opcode::CATCH
-          result = true
+        when Opcode::SAVE, Opcode::RESTORE
+          result = true if version >= 4
+        when Opcode::CATCH
+          result = true if version >= 5
         end
       elsif opcode_class == OpcodeClass::VAR
         case opcode
@@ -217,10 +219,6 @@ module Gruesome
       result = true
       if opcode_class == OpcodeClass::OP0
         case opcode
-        when Opcode::SAVE
-          result = false if version < 5
-        when Opcode::RESTORE
-          result = false if version < 5
         when Opcode::SHOW_STATUS
           result = false if version < 3
         when Opcode::VERIFY

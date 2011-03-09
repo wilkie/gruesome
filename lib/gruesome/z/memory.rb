@@ -40,8 +40,9 @@ module Gruesome
       attr_accessor :program_counter
       attr_reader :num_locals
 
-      def initialize(contents)
+      def initialize(contents, save_file_name)
         @call_stack = []
+        @save_file_name = save_file_name
         @stack = []
         @memory = contents
         @num_locals = 0
@@ -262,6 +263,74 @@ module Gruesome
         end
 
         return [index - orig_index, chrs]
+      end
+
+      def save
+        # Save contents of dynamic memory to disk
+        File.open(@save_file_name, "wb+") do |f|
+          f.puts @program_counter
+          f.puts (@call_stack.size / 3)
+          @call_stack.each_with_index do |call_stack, i|
+            if (i % 3) == 0 or (i % 3) == 1
+              f.puts call_stack
+            else
+              # this is stack
+              stack = call_stack
+              f.puts stack.size
+              stack.each do |stack_entry|
+                f.puts stack_entry
+              end
+            end
+          end
+          f.puts @num_locals
+          f.puts @stack.size
+          @stack.each do |stack_entry|
+            f.puts stack_entry
+          end
+
+          @dyn_limit.times do |i|
+            f.write force_readb(i).chr
+          end
+        end
+      end
+
+      def restore
+        # Restore, if it can, the contents of memory from disk
+        File.open(@save_file_name, "rb") do |f|
+          @call_stack = []
+
+          @program_counter = f.readline.to_i
+          call_stack_size = f.readline.to_i
+
+          call_stack_size.times do
+            num_locals = f.readline.to_i
+            destination = f.readline.to_i
+            stack_size = f.readline.to_i
+
+            stack = []
+            stack_size.times do |i|
+              stack.push f.readline.to_i
+            end
+
+            @call_stack.push num_locals
+            @call_stack.push destination
+            @call_stack.push stack
+          end
+
+          @num_locals = f.readline.to_i
+          stack_size = f.readline.to_i
+
+          @stack = []
+          stack_size.times do |i|
+            @stack.push f.readline.to_i
+          end
+
+          i = 0
+          f.read.each_byte do |b|
+            force_writeb(i, b)
+            i += 1
+          end
+        end
       end
     end
   end

@@ -250,6 +250,14 @@ module Gruesome
           @memory.writev(instruction.destination, result)
         when Opcode::REMOVE_OBJ
           @object_table.object_remove_object(operands[0])
+        when Opcode::RESTORE
+          if @header.version <= 4
+            @memory.restore
+            if @header.version >= 4
+              @memory.writev(instruction.destination, 1)
+            end
+            branch(instruction.branch_to, instruction.branch_on, true)
+          end
         when Opcode::RET
           routine_return(operands[0])
         when Opcode::RET_POPPED
@@ -258,6 +266,14 @@ module Gruesome
           routine_return(1)
         when Opcode::RFALSE
           routine_return(0)
+        when Opcode::SAVE
+          if @header.version <= 4
+            @memory.save
+            if @header.version >= 4
+              @memory.writev(instruction.destination, 1)
+            end
+            branch(instruction.branch_to, instruction.branch_on, true)
+          end
         when Opcode::SET_ATTR
           @object_table.object_set_attribute(operands[0], operands[1])
         when Opcode::SREAD
@@ -380,6 +396,7 @@ module Gruesome
         when Opcode::STOREW
           @memory.writew(operands[0] + unsigned_to_signed(operands[1])*2, operands[2])
         else
+          puts instruction.opcode
           raise "opcode " + Opcode.name(instruction.opcode, @header.version) + " not implemented"
         end
       end

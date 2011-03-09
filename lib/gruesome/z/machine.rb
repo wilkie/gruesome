@@ -13,12 +13,13 @@ module Gruesome
 
       # Will create a new virtual machine for the game file
       def initialize(game_file)
-        file = File.open(game_file, "r")
+        file = File.open(game_file, "rb")
 
         # I. Create memory space
 
         memory_size = File.size(game_file)
-        @memory = Memory.new(file.read(memory_size))
+        save_file_name = File.basename(file, File.extname(file)) + ".sav"
+        @memory = Memory.new(file.read(memory_size), save_file_name)
 
         # Set flags
         flags = @memory.force_readb(0x01)
@@ -42,16 +43,16 @@ module Gruesome
       def execute
         while true do
           i = @decoder.fetch
-          #var = @memory.readv(0)
-          #if var != nil
-          #  puts "var %00 = " + sprintf("%04x", var)
-          #  @memory.writev(0, var)
-          #end
-          #var = @memory.readv(1)
-          #if var != nil
-          #  puts "var %01 = " + sprintf("%04x", @memory.readv(0x01))
-          #end
-          #puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+#          var = @memory.readv(0)
+#          if var != nil
+#            puts "var %00 = " + sprintf("%04x", var)
+#            @memory.writev(0, var)
+#          end
+#          var = @memory.readv(1)
+#          if var != nil
+#            puts "var %01 = " + sprintf("%04x", @memory.readv(0x01))
+#          end
+#          puts "at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
           @memory.program_counter += i.length
 
           if i.opcode == Opcode::QUIT
@@ -61,7 +62,7 @@ module Gruesome
           begin
             @processor.execute(i)
           rescue RuntimeError => fuh
-            "error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
+            puts "error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
           end
         end
       end
