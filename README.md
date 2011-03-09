@@ -22,6 +22,13 @@ play version 3 games such as the ZORK trilogy.
 
 * Majority of version 3 Z-Machine (Enough to play most games)
 
+## To play
+
+Download ZORK and play!
+
+ wget http://zmpp.sourceforge.net/games/zork1.z3
+ gruesome play zork1.z3
+
 ## Next
 
 * Versions 4+ (Goal: Run Photopia)
