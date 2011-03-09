@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "gruesome"
   s.version     = Grue::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.authors     = ["Dave Wilkinson"]
+  s.email       = ["wilkie05@gmail.com"]
+  s.homepage    = "http://github.com/wilkie/gruesome"
+  s.summary     = %q{An Interactive Fiction client that can play/read interactive stories}
+  s.description = %q{Reads and executes various interactive fiction technologies and helps easily download new stories from other sources on the Internet.}
 
   s.rubyforge_project = "gruesome"
 
