@@ -24,9 +24,16 @@ play version 3 games such as the ZORK trilogy.
 
 ## To play
 
-Download ZORK and play!
+* Install Gruesome
+
+    $ gem install gruesome
+
+* Download ZORK
 
     $ wget http://zmpp.sourceforge.net/games/zork1.z3
+
+* Play!
+
     $ gruesome play zork1.z3
 
 ## Next
