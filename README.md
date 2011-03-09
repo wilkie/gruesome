@@ -26,8 +26,8 @@ play version 3 games such as the ZORK trilogy.
 
 Download ZORK and play!
 
- wget http://zmpp.sourceforge.net/games/zork1.z3
- gruesome play zork1.z3
+    $ wget http://zmpp.sourceforge.net/games/zork1.z3
+    $ gruesome play zork1.z3
 
 ## Next
 
