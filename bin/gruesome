@@ -5,5 +5,6 @@ $: << File.dirname(__FILE__) + '/../lib'
 require 'gruesome'
 require 'gruesome/cli'
 
+puts RUBY_PLATFORM
 Gruesome::CLI.run
 

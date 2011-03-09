@@ -56,7 +56,7 @@ module Gruesome
         when 'play'
           fail unless ARGV[1]
 
-          Gruesome::Logo.print
+          Gruesome::Logo.display
 
           puts
           puts "--------------------------------------------------------------------------------"

@@ -7,9 +7,9 @@ module Gruesome
     # I'm just making sure this works regardless of the unicode format this
     # source file is saved as...
     LOGO = <<ENDLOGO
-        \u2584\u2584\u2584\u2584\u2584                                               \u2584\u2584\u2584\u2584\u2584                       
-         \u2580\u2588\u2588\u2588\u2588\u2584                                           \u2584\u2588\u2588\u2588\u2588\u2580                     
-           \u2580\u2588\u2588\u2588\u2588\u2584                                       \u2584\u2588\u2588\u2588\u2588\u2580                       
+        \u2584\u2584\u2584\u2584\u2584                                               \u2584\u2584\u2584\u2584\u2584
+         \u2580\u2588\u2588\u2588\u2588\u2584                                           \u2584\u2588\u2588\u2588\u2588\u2580
+           \u2580\u2588\u2588\u2588\u2588\u2584                                       \u2584\u2588\u2588\u2588\u2588\u2580
   \u2584\u2584\u2584\u2584\u2584\u2584    \u2588\u2588\u2588\u2588\u2588\u2588\u2584   \u2584\u2584\u2584   \u2584\u2584\u2584   \u2584\u2584\u2584\u2584\u2584\u2584   \u2584\u2584\u2584\u2584\u2584\u2584     \u2584\u2588\u2588\u2588\u2588\u2580  \u2584\u2584\u2584   \u2584\u2584\u2584   \u2584\u2584\u2584\u2584\u2584\u2584
 \u2584\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2584  \u2588\u2588\u2593\u2580\u2588\u2588\u2588\u2588\u2584 \u2588\u2588\u2593   \u2588\u2588\u2588 \u2584\u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2584\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2584 \u2584\u2588\u2588\u2588\u2588\u2580\u2588\u2588\u2584 \u2588\u2588\u2588\u2588\u2584\u2588\u2588\u2588\u2588 \u2584\u2588\u2588\u2588\u2588\u2588\u2588\u2588
 \u2588\u2588\u2593    \u2588\u2588\u2588  \u2588\u2588\u2593  \u2580\u2588\u2588\u2588 \u2588\u2588\u2593   \u2588\u2588\u2588 \u2588\u2588\u2593      \u2588\u2588\u2593    \u2588\u2588\u2588 \u2588\u2588\u2588\u2580  \u2588\u2588\u2588 \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588 \u2588\u2588\u2593
@@ -21,8 +21,41 @@ module Gruesome
   \u2580\u2580\u2580\u2580\u2580\u2580    \u2580\u2580\u2580   \u2580\u2580\u2580   \u2580\u2580\u2580\u2580\u2580     \u2580\u2580\u2580\u2580\u2580\u2580   \u2580\u2580\u2580\u2580\u2580\u2580     \u2580\u2580\u2580\u2580\u2580   \u2580\u2580\u2580   \u2580\u2580\u2580   \u2580\u2580\u2580\u2580\u2580\u2580
 ENDLOGO
 
-    def Logo.print
-      puts LOGO
+    def Logo.print_cp437
+      line_count = 0
+      LOGO.each_char do |c|
+        if c == "\u2580"
+          print 223.chr
+          line_count += 1
+        elsif c == "\u2584"
+          print 220.chr
+          line_count += 1
+        elsif c == "\u2588"
+          print 219.chr
+          line_count += 1
+        elsif c == "\u2593"
+          print 178.chr
+          line_count += 1
+        else
+		  if c == "\n"
+            if line_count != 80
+              puts
+            end
+            line_count = 0
+		  else
+            print c
+            line_count += 1
+		  end
+        end
+      end
+    end
+
+    def Logo.display
+      if RUBY_PLATFORM =~ /(win|w)32$/
+        Logo.print_cp437
+      else
+        puts LOGO
+      end
     end
   end
 end
