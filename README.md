@@ -15,9 +15,18 @@
 
 # Gruesome
 
-The Ruby Z-Code Emulator and IF Manager (Currently in progress)
+The Ruby Z-Code Emulator and IF Manager (Currently in progress). It current can
+play version 3 games such as the ZORK trilogy.
 
-## Goals
+## Currently implemented
+
+* Majority of version 3 Z-Machine (Enough to play most games)
+
+## Next
+
+* Versions 4+ (Goal: Run Photopia)
+
+## Overall Goals
 
 There are several goals:
 
