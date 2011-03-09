@@ -21,6 +21,7 @@ play version 3 games such as the ZORK trilogy.
 ## Currently implemented
 
 * Majority of version 3 Z-Machine (Enough to play most games)
+* WARNING: Save and Restore are not implemented!!!!! Don't get eaten by a grue!
 
 ## To play
 
