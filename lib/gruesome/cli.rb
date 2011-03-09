@@ -21,7 +21,7 @@ module Gruesome
     class << self
       def parse_options
         @opts = OptionParser.new do |opts|
-          opts.banner = BANNER.gsub(/^\t{2}/, '')
+          opts.banner = BANNER.gsub(/^    /, '')
 
           opts.separator ''
           opts.separator 'Options:'
