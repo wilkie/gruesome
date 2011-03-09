@@ -37,7 +37,9 @@ module Gruesome
 				# III. Instantiate CPU
 				@decoder = Decoder.new(@memory)
 				@processor = Processor.new(@memory)
+			end
 
+			def execute
 				while true do
 					i = @decoder.fetch
 					#var = @memory.readv(0)
@@ -62,8 +64,6 @@ module Gruesome
 						"error at $" + sprintf("%04x", @memory.program_counter) + ": " + i.to_s(@header.version)
 					end
 				end
-
-				puts "Done."
 			end
 		end
 	end
