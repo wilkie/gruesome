@@ -13,7 +13,7 @@ describe Gruesome::Z::Processor do
   describe "#execute" do
     before(:each) do
       zork = File.open('test/zork1.z3', 'r')
-      @zork_memory = Gruesome::Z::Memory.new(zork.read(zork.size))
+      @zork_memory = Gruesome::Z::Memory.new(zork.read(zork.size), '')
       @processor = Gruesome::Z::Processor.new(@zork_memory)
       @zork_memory.program_counter = 12345
     end
