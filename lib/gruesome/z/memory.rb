@@ -39,6 +39,7 @@ module Gruesome
     class Memory
       attr_accessor :program_counter
       attr_reader :num_locals
+      attr_reader :num_arguments
 
       def initialize(contents, save_file_name)
         @call_stack = []
@@ -46,6 +47,7 @@ module Gruesome
         @stack = []
         @memory = contents
         @num_locals = 0
+        @num_arguments = 0
 
         # Get the header information
         @header = Header.new(@memory)
@@ -75,14 +77,19 @@ module Gruesome
       def packed_address_to_byte_address(address)
         if @header.version <=3
           address * 2
-        else
+        elsif @header.version <= 5
+          address * 4
         end
       end
 
       # Sets up the environment for a new routine
-      def push_routine(return_addr, num_locals, destination)
+      def push_routine(return_addr, num_locals, num_arguments, destination)
+        @num_locals = num_locals
+        @num_arguments = num_arguments
+
         # pushes the stack onto the call stack
         @call_stack.push @num_locals
+        @call_stack.push @num_arguments
         @call_stack.push destination
         @call_stack.push @stack
 
@@ -106,6 +113,7 @@ module Gruesome
         return_addr = @stack[0]
         @stack = @call_stack.pop
         destination = @call_stack.pop
+        @num_arguments = @call_stack.pop
         @num_locals = @call_stack.pop
 
         {:destination => destination, :return_address => return_addr}
