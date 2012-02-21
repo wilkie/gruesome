@@ -102,7 +102,8 @@ module Gruesome
           else
             @memory.writev(instruction.destination, operands[0] << places)
           end
-        when Opcode::CALL, Opcode::CALL_1N, Opcode::CALL_VS, Opcode::CALL_VN
+        when Opcode::CALL, Opcode::CALL_1N, Opcode::CALL_VS, Opcode::CALL_VN, Opcode::CALL_VN2,
+             Opcode::CALL_2S, Opcode::CALL_1S, Opcode::CALL_2N
           routine_call(@memory.packed_address_to_byte_address(operands[0]), operands[1..-1], instruction.destination)
         when Opcode::CHECK_ARG_COUNT
           result = @memory.num_arguments == operands[0]
@@ -254,7 +255,13 @@ module Gruesome
             # pull random number from between 1 and value
             result = rand(value-1) + 1
           end
-          @memory.writev(instruction.destination, result)
+          @memory.writev(instruction.destination, result.to_i)
+        when Opcode::READ_CHAR
+          time = operands[2].to_f / 10.0
+          routine = operands[3]
+
+          char = $stdin.getc
+          @memory.writev(instruction.destination, ZSCII.translate_char_to_zchar(char, @header.version))
         when Opcode::REMOVE_OBJ
           @object_table.object_remove_object(operands[0])
         when Opcode::RESTORE
@@ -403,8 +410,7 @@ module Gruesome
         when Opcode::STOREW
           @memory.writew(operands[0] + unsigned_to_signed(operands[1])*2, operands[2])
         else
-          puts instruction.opcode
-          raise "opcode " + Opcode.name(instruction.opcode, @header.version) + " not implemented"
+          raise "opcode #{Opcode.name(instruction.opcode, @header.version)} not implemented"
         end
       end
 
