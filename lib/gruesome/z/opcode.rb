@@ -381,6 +381,7 @@ module Gruesome
         when Opcode::SHOW_STATUS then "show_status"
         when Opcode::VERIFY then "verify"
         when Opcode::PIRACY then "piracy"
+        else "invalid"
         end
       elsif opcode_class == OpcodeClass::OP1
         case opcode
@@ -399,12 +400,13 @@ module Gruesome
         when Opcode::JUMP then "jump"
         when Opcode::PRINT_PADDR then "print_paddr"
         when Opcode::LOAD then "load"
-        when Opcode::NOT, CALL_1N
+        when Opcode::NOT, Opcode::CALL_1N
           if version <= 4
             "not"
           else
             "call_1n"
           end
+        else "invalid"
         end
       elsif opcode_class == OpcodeClass::OP2
         case opcode
@@ -436,6 +438,7 @@ module Gruesome
         when Opcode::CALL_2N then "call_2n"
         when Opcode::SET_COLOUR then "set_colour"
         when Opcode::THROW then "throw"
+        else "invalid"
         end
       elsif opcode_class == OpcodeClass::VAR
         case opcode
@@ -481,6 +484,7 @@ module Gruesome
         when Opcode::COPY_TABLE then "copy_table"
         when Opcode::PRINT_TABLE then "print_table"
         when Opcode::CHECK_ARG_COUNT then "check_arg_count"
+        else "invalid"
         end
       elsif opcode_class == OpcodeClass::EXT
         case opcode
@@ -510,6 +514,7 @@ module Gruesome
         when Opcode::PRINT_FORM then "print_form"
         when Opcode::MAKE_MENU then "make_menu"
         when Opcode::PICTURE_TABLE then "picture_table"
+        else "invalid"
         end
       end
     end
