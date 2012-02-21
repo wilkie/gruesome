@@ -31,10 +31,11 @@ module Gruesome
 
           # read routine
           num_locals = @memory.force_readb(@memory.program_counter)
+          num_arguments = arguments.count
           @memory.program_counter += 1
 
           # create environment
-          @memory.push_routine(return_addr, num_locals, result_variable)
+          @memory.push_routine(return_addr, num_locals, num_arguments, result_variable)
 
           if @header.version <= 4
             # read initial values when version 1-4
@@ -101,8 +102,11 @@ module Gruesome
           else
             @memory.writev(instruction.destination, operands[0] << places)
           end
-        when Opcode::CALL, Opcode::CALL_1N
+        when Opcode::CALL, Opcode::CALL_1N, Opcode::CALL_VS, Opcode::CALL_VN
           routine_call(@memory.packed_address_to_byte_address(operands[0]), operands[1..-1], instruction.destination)
+        when Opcode::CHECK_ARG_COUNT
+          result = @memory.num_arguments == operands[0]
+          branch(instruction.branch_to, instruction.branch_on, result)
         when Opcode::CLEAR_ATTR
           @object_table.object_clear_attribute(operands[0], operands[1])
         when Opcode::DEC
