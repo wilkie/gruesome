@@ -16,7 +16,7 @@ module Gruesome
           # versions 1-3 have 32 entries
           @num_properties = 31
         else
-          # versions 4+ have 32 entries
+          # versions 4+ have 64 entries
           @num_properties = 63
         end
 
@@ -91,7 +91,7 @@ module Gruesome
         properties_address = @memory.force_readw(cur_addr)
 
         # return a hash with the information of the entry
-        {  :attributes_address => attributes_address,
+        { :attributes_address => attributes_address,
           :attributes => attribute_bytes, 
           :parent_id => ids[0], 
           :sibling_id => ids[1], 
@@ -289,6 +289,10 @@ module Gruesome
 
           first_byte = @memory.force_readb(prop_address)
           prop_address += 1
+
+          if first_byte == 0
+            return nil
+          end
 
           property_number = first_byte & 0b111111
           if first_byte & 0b10000000 > 0
