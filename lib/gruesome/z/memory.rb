@@ -84,9 +84,6 @@ module Gruesome
 
       # Sets up the environment for a new routine
       def push_routine(return_addr, num_locals, num_arguments, destination)
-        @num_locals = num_locals
-        @num_arguments = num_arguments
-
         # pushes the stack onto the call stack
         @call_stack.push @num_locals
         @call_stack.push @num_arguments
@@ -105,6 +102,7 @@ module Gruesome
         end
 
         @num_locals = num_locals
+        @num_arguments = num_arguments
       end
 
       # Tears down the environment for the current routine
@@ -228,6 +226,7 @@ module Gruesome
         elsif index <= @num_locals
           @stack[index]
         else
+          raise "Variable Access Violation. No such variable %#{index}."
           # XXX: Error
         end
       end
