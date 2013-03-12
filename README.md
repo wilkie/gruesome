@@ -20,7 +20,7 @@ play version 3 games such as the ZORK trilogy.
 
 ## Currently implemented
 
-* Majority of version 3 Z-Machine (Enough to play most games)
+* Majority of version 3 Z-Machine (Enough to play most games!!!)
 
 ## To play
 
